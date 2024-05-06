@@ -5,31 +5,36 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     private float horizontal;
-    private float speed = 8f;
-    private float jumpingPower = 16f;
+    private float speed = 1.5f;
     private bool isFacingRight = true;
 
+    private Animator animator;
     private Collider2D platformCollider;
 
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
 
+    void Start()
+    {
+        animator = GetComponentInChildren<Animator>(); // da Pitti in ParentPitti liegt
+
+        if (animator == null)
+        {
+            Debug.LogError("Kein Animator-Komponente im GameObject 'ParentPitti' oder seinen Kindern gefunden.");
+        }
+    }
+
     void Update()
     {
         horizontal = Input.GetAxisRaw("Horizontal");
+        bool isMoving = Mathf.Abs(horizontal) > 0;
+        animator.SetBool("IsRunning", isMoving);
 
-        if (Input.GetButtonDown("Jump") && IsGrounded())
-        {
-            rb.velocity = new Vector2(rb.velocity.x, jumpingPower);
-        }
-
-        if (Input.GetButtonUp("Jump") && rb.velocity.y > 0f)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, rb.velocity.y * 0.5f);
-        }
+        //Debug.Log($"Horizontal Input: {horizontal}, Is Running: {animator.GetBool("IsRunning")}");
 
         Flip();
+
     }
 
     private void FixedUpdate()
