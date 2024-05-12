@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
     private float horizontal;
     private float speed = 1.5f;
     private bool isFacingRight = true;
+    private bool switchMovement = false;
 
     private Animator animator;
     private Collider2D platformCollider;
@@ -27,14 +28,18 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        horizontal = Input.GetAxisRaw("Horizontal");
-        bool isMoving = Mathf.Abs(horizontal) > 0;
-        animator.SetBool("IsRunning", isMoving);
 
-        //Debug.Log($"Horizontal Input: {horizontal}, Is Running: {animator.GetBool("IsRunning")}");
+        // Aufheben
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            animator.SetTrigger("HandleGoDown");
 
-        Flip();
+            switchMovement = !switchMovement;
+            //Debug.LogError("Zustand des Switch: " + switchMovement);
+            animator.SetBool("HasObject", switchMovement);
+        }
 
+        Moving();    
     }
 
     private void FixedUpdate()
@@ -42,9 +47,15 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
     }
 
-    private bool IsGrounded()
+    private void Moving()
     {
-        return Physics2D.OverlapCircle(groundCheck.position, 0.2f, groundLayer);
+        //bool test = animator.GetBool("HasObject");
+        //Debug.LogError("Zustand im Movement: " + test);
+
+        horizontal = Input.GetAxisRaw("Horizontal");
+        bool isMoving = Mathf.Abs(horizontal) > 0;
+        animator.SetBool("IsRunning", isMoving);
+        Flip();
     }
 
     private void Flip()
