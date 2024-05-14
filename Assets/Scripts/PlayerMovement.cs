@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isFacingRight = true;
     private bool switchMovement = false; // Gibt an, ob der Charakter ein Objekt trägt
     private bool isPickingUp = false; // Zustand des Aufhebens/Ablegens
+    private bool isCrouching = false; // Gibt an, ob der Charakter sich gerade bückt
 
     private Animator animator;
     private Collider2D platformCollider;
@@ -48,9 +49,11 @@ public class PlayerMovement : MonoBehaviour
             if (!switchMovement)
             {
                 // Setze den Zustand auf Aufheben und überprüfe, ob sich ein Objekt in der Nähe befindet
-                if (IsObjectNearby())
+                GameObject nearestObject = GetNearestObject();
+                if (nearestObject != null)
                 {
                     isPickingUp = true;
+                    pickupScript.carriedObject = nearestObject; // Setze das zu tragende Objekt
                     Debug.LogError("Try to Grab");
                 }
             }
@@ -75,18 +78,26 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // Methode zur Überprüfung, ob sich ein aufhebbares Objekt in der Nähe befindet
-    private bool IsObjectNearby()
+    private GameObject GetNearestObject()
     {
         // Erstelle einen Kreis-Collider, um nach Objekten zu suchen
         Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 1f, LayerMask.GetMask("Objects"));
+        GameObject nearestObject = null;
+        float nearestDistance = float.MaxValue;
+
         foreach (Collider2D collider in colliders)
         {
             if (collider.gameObject != gameObject)
             {
-                return true;
+                float distance = Vector2.Distance(transform.position, collider.transform.position);
+                if (distance < nearestDistance)
+                {
+                    nearestDistance = distance;
+                    nearestObject = collider.gameObject;
+                }
             }
         }
-        return false;
+        return nearestObject;
     }
 
     // Diese Methode wird vom Animationsevent aufgerufen
