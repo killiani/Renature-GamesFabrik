@@ -7,7 +7,8 @@ public class PlayerMovement : MonoBehaviour
     private float horizontal;
     private float speed = 1.5f;
     private bool isFacingRight = true;
-    private bool switchMovement = false;
+    private bool switchMovement = false; // Gibt an, ob der Charakter ein Objekt trägt
+    private bool isPickingUp = false; // Zustand des Aufhebens/Ablegens
 
     private Animator animator;
     private Collider2D platformCollider;
@@ -15,6 +16,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
+
+    // Diese Referenz wird im Start-Methodenblock automatisch gesetzt
+    private PickupScript pickupScript;
 
     void Start()
     {
@@ -24,22 +28,81 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.LogError("Kein Animator-Komponente im GameObject 'ParentPitti' oder seinen Kindern gefunden.");
         }
+
+        // Automatische Zuweisung des PickupScript
+        pickupScript = GetComponent<PickupScript>();
+
+        if (pickupScript == null)
+        {
+            Debug.LogError("Kein PickupScript-Komponente im GameObject gefunden.");
+        }
     }
 
     void Update()
     {
-
-        // Aufheben
+        // Aufheben oder Ablegen
         if (Input.GetKeyDown(KeyCode.Space))
         {
             animator.SetTrigger("HandleGoDown");
 
-            switchMovement = !switchMovement;
-            //Debug.LogError("Zustand des Switch: " + switchMovement);
-            animator.SetBool("HasObject", switchMovement);
+            if (!switchMovement)
+            {
+                // Setze den Zustand auf Aufheben und überprüfe, ob sich ein Objekt in der Nähe befindet
+                if (IsObjectNearby())
+                {
+                    isPickingUp = true;
+                    Debug.LogError("Try to Grab");
+                }
+            }
+            else
+            {
+                // Setze den Zustand auf Ablegen
+                isPickingUp = false;
+
+                // Objekt ablegen
+                if (pickupScript.carriedObject != null)
+                {
+                    Debug.LogError("Drop OK");
+                    pickupScript.DropObject();
+
+                    switchMovement = false;
+                    animator.SetBool("HasObject", switchMovement);
+                }
+            }
         }
 
-        Moving();    
+        Moving();
+    }
+
+    // Methode zur Überprüfung, ob sich ein aufhebbares Objekt in der Nähe befindet
+    private bool IsObjectNearby()
+    {
+        // Erstelle einen Kreis-Collider, um nach Objekten zu suchen
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 1f, LayerMask.GetMask("Objects"));
+        foreach (Collider2D collider in colliders)
+        {
+            if (collider.gameObject != gameObject)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Diese Methode wird vom Animationsevent aufgerufen
+    public void OnPickupAnimationEnd()
+    {
+        Debug.Log("Zustand: " + switchMovement);
+        if (isPickingUp && !switchMovement && pickupScript.carriedObject != null)
+        {
+            Debug.LogError("Pickup OK");
+            pickupScript.PickupObject(pickupScript.carriedObject);
+
+            switchMovement = true;
+            animator.SetBool("HasObject", switchMovement);
+        }
+        // Setze den Zustand nach dem Aufheben oder Ablegen zurück
+        isPickingUp = false;
     }
 
     private void FixedUpdate()
@@ -49,9 +112,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void Moving()
     {
-        //bool test = animator.GetBool("HasObject");
-        //Debug.LogError("Zustand im Movement: " + test);
-
         horizontal = Input.GetAxisRaw("Horizontal");
         bool isMoving = Mathf.Abs(horizontal) > 0;
         animator.SetBool("IsRunning", isMoving);
