@@ -24,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
     // Diese Referenz wird im Start-Methodenblock automatisch gesetzt
     private PickupScript pickupScript;
 
+
     void Awake()
     {
         input = new CustomInputs(); // Initialisiere das neue Input System
