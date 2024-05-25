@@ -29,6 +29,8 @@ public class PickupScript : MonoBehaviour
         obj.transform.SetParent(frontHandPosition);
         obj.transform.localPosition = Vector3.zero;
         obj.transform.localRotation = Quaternion.identity;
+
+        carriedObject = obj; // Setze das getragene Objekt
     }
 
     public void DropObject()

@@ -21,6 +21,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private AudioSource walkSoundSource; // AudioSource für den Walksound
     [SerializeField] private AudioClip walkSound; // Walksound AudioClip
 
+    [SerializeField] private BeibootTrigger beibootTrigger; // Referenz zum Beiboot
+
     // Diese Referenz wird im Start-Methodenblock automatisch gesetzt
     private PickupScript pickupScript;
 
@@ -56,12 +58,16 @@ public class PlayerMovement : MonoBehaviour
             Debug.LogError("Kein Animator-Komponente im GameObject 'ParentPitti' oder seinen Kindern gefunden.");
         }
 
-        // Automatische Zuweisung des PickupScript
         pickupScript = GetComponent<PickupScript>();
 
         if (pickupScript == null)
         {
             Debug.LogError("Kein PickupScript-Komponente im GameObject gefunden.");
+        }
+
+        if (beibootTrigger == null)
+        {
+            Debug.LogError("Kein BeibootTrigger-Komponente im GameObject gefunden.");
         }
     }
 
@@ -85,7 +91,7 @@ public class PlayerMovement : MonoBehaviour
     {
         animator.SetTrigger("HandleGoDown");
 
-        if (!switchMovement)
+        if (!switchMovement) // __________________________ AUFHEBEN
         {
             // Setze den Zustand auf Aufheben und überprüfe, ob sich ein Objekt in der Nähe befindet
             GameObject nearestObject = GetNearestObject();
@@ -96,7 +102,7 @@ public class PlayerMovement : MonoBehaviour
                 Debug.LogError("Try to Grab");
             }
         }
-        else
+        else // __________________________________________ ABLEGEN
         {
             // Setze den Zustand auf Ablegen
             isPickingUp = false;
@@ -104,7 +110,21 @@ public class PlayerMovement : MonoBehaviour
             // Objekt ablegen
             if (pickupScript.carriedObject != null)
             {
+                Rigidbody2D rb = pickupScript.carriedObject.GetComponent<Rigidbody2D>();
+                Collider2D col = pickupScript.carriedObject.GetComponent<Collider2D>();
+
                 Debug.LogError("Drop OK");
+
+                if (rb != null)
+                {
+                    rb.isKinematic = false; // Physik wieder aktivieren
+                    rb.simulated = true; // Simulation aktivieren
+                }
+                if (col != null)
+                {
+                    col.enabled = true; // Collider aktivieren
+                }
+
                 pickupScript.DropObject();
 
                 switchMovement = false;
@@ -112,6 +132,9 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
+
+
+
 
     // Methode zur Überprüfung, ob sich ein aufhebbares Objekt in der Nähe befindet
     private GameObject GetNearestObject()

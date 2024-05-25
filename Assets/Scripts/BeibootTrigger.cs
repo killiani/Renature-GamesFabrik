@@ -2,21 +2,17 @@ using UnityEngine;
 
 public class BeibootTrigger : MonoBehaviour
 {
-    public bool characterInZone;
-
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.gameObject.layer == LayerMask.NameToLayer("Objects"))
         {
-            characterInZone = true;
-        }
-    }
-
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            characterInZone = false;
+            Rigidbody2D rb = other.GetComponent<Rigidbody2D>();
+            if (rb != null)
+            {
+                rb.isKinematic = false;
+                rb.simulated = true;
+                other.gameObject.layer = LayerMask.NameToLayer("Beiboot");
+            }
         }
     }
 }
