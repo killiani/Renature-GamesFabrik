@@ -25,6 +25,8 @@ public class PlayerMovement : MonoBehaviour
 
     // Diese Referenz wird im Start-Methodenblock automatisch gesetzt
     private PickupScript pickupScript;
+    private Backpack backpack;
+    private GameObject nearestObject;
 
 
     void Awake()
@@ -69,6 +71,15 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.LogError("Kein BeibootTrigger-Komponente im GameObject gefunden.");
         }
+
+        backpack = GetComponent<Backpack>();
+
+        if (backpack == null)
+        {
+            Debug.LogError("Kein Backpack-Komponente im GameObject gefunden. Stelle sicher, dass das Backpack-Skript hinzugefügt ist.");
+            // Optional: Automatisch hinzufügen, falls es fehlt
+            backpack = gameObject.AddComponent<Backpack>();
+        }
     }
 
     void Update()
@@ -91,23 +102,27 @@ public class PlayerMovement : MonoBehaviour
     {
         animator.SetTrigger("HandleGoDown");
 
-        if (!switchMovement) // __________________________ AUFHEBEN
+        if (switchMovement == false) // __________________________ AUFHEBEN
         {
             // Setze den Zustand auf Aufheben und überprüfe, ob sich ein Objekt in der Nähe befindet
-            GameObject nearestObject = GetNearestObject();
+            nearestObject = GetNearestObject();
+            Debug.LogError("nearest: ", nearestObject);
+
             if (nearestObject != null)
             {
-                isPickingUp = true;
-                pickupScript.carriedObject = nearestObject; // Setze das zu tragende Objekt
-                Debug.LogError("Try to Grab");
+                if (nearestObject.layer == LayerMask.NameToLayer("Seeds"))
+                {
+                    Debug.LogError("Try to grab Seed");
+                } 
+                else if (nearestObject.layer == LayerMask.NameToLayer("Objects"))
+                {
+                    Debug.LogError("Try to grab Object");
+                }
+                isPickingUp = true; // Animation auslösen
             }
         }
         else // __________________________________________ ABLEGEN
         {
-            // Setze den Zustand auf Ablegen
-            isPickingUp = false;
-
-            // Objekt ablegen
             if (pickupScript.carriedObject != null)
             {
                 Rigidbody2D rb = pickupScript.carriedObject.GetComponent<Rigidbody2D>();
@@ -128,19 +143,52 @@ public class PlayerMovement : MonoBehaviour
                 pickupScript.DropObject();
 
                 switchMovement = false;
-                animator.SetBool("HasObject", switchMovement);
+                animator.SetBool("HasObject", false);
             }
         }
     }
 
 
+    // Diese Methode wird vom Animationsevent in der Mitte aufgerufen
+    public void OnPickupAnimationEnd()
+    {
+        Debug.Log("Zustand: " + switchMovement);
+        if (isPickingUp && !switchMovement && nearestObject != null)
+        {
+            if (nearestObject.layer == LayerMask.NameToLayer("Objects"))
+            {
+                pickupScript.carriedObject = nearestObject; // Setze das zu tragende Objekt
+                pickupScript.PickupObject(pickupScript.carriedObject);
 
+                switchMovement = true;
+                animator.SetBool("HasObject", true);
+                Debug.LogError("Object Pickup OK");
+            }
+
+            else if (nearestObject.layer == LayerMask.NameToLayer("Seeds"))
+            {
+                if (backpack != null)
+                {
+                    backpack.AddSeed(nearestObject);
+                    Debug.LogError("Seed Pickup OK");
+                }
+                else
+                {
+                    Debug.LogError("Backpack is null");
+                }
+                nearestObject = null;
+            }
+        }
+        // Setze den Zustand nach dem Aufheben oder Ablegen zurück
+        isPickingUp = false;
+    }
 
     // Methode zur Überprüfung, ob sich ein aufhebbares Objekt in der Nähe befindet
+
     private GameObject GetNearestObject()
     {
-        // Erstelle einen Kreis-Collider, um nach Objekten zu suchen
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 1f, LayerMask.GetMask("Objects"));
+        // Erstelle einen Kreis-Collider, um nach Objekten und Samen zu suchen
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 1f, LayerMask.GetMask("Objects", "Seeds"));
         GameObject nearestObject = null;
         float nearestDistance = float.MaxValue;
 
@@ -157,22 +205,6 @@ public class PlayerMovement : MonoBehaviour
             }
         }
         return nearestObject;
-    }
-
-    // Diese Methode wird vom Animationsevent aufgerufen
-    public void OnPickupAnimationEnd()
-    {
-        Debug.Log("Zustand: " + switchMovement);
-        if (isPickingUp && !switchMovement && pickupScript.carriedObject != null)
-        {
-            Debug.LogError("Pickup OK");
-            pickupScript.PickupObject(pickupScript.carriedObject);
-
-            switchMovement = true;
-            animator.SetBool("HasObject", switchMovement);
-        }
-        // Setze den Zustand nach dem Aufheben oder Ablegen zurück
-        isPickingUp = false;
     }
 
     private void FixedUpdate()

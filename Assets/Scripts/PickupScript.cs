@@ -8,6 +8,7 @@ public class PickupScript : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        // Nur Objekte aufheben, die im Layer "Objects" sind und nicht im Layer "Seeds"
         if (other.gameObject.layer == LayerMask.NameToLayer("Objects") && carriedObject == null)
         {
             Debug.Log("Object detected: " + other.gameObject.name);
