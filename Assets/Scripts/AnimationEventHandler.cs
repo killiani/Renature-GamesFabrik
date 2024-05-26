@@ -15,12 +15,20 @@ public class AnimationEventHandler : MonoBehaviour
         }
     }
 
-    // Diese Methode wird vom Animationsevent aufgerufen
+    // Diese Methoden werden vom Animationsevent aufgerufen
     public void OnPickupAnimationEnd()
     {
         if (playerMovement != null)
         {
             playerMovement.OnPickupAnimationEnd();
+        }
+    }
+
+    public void OnPlantingAnimation()
+    {
+        if (playerMovement != null)
+        {
+            playerMovement.OnPlantingAnimation();
         }
     }
 }

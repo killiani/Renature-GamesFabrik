@@ -23,4 +23,16 @@ public class Backpack : MonoBehaviour
     {
         return seeds;
     }
+
+    // Samen wählen und aus rucksack entfernen
+    public Seed GetAndRemoveLastSeed()
+    {
+        if (seeds.Count > 0)
+        {
+            Seed lastSeed = seeds[seeds.Count - 1];
+            seeds.RemoveAt(seeds.Count - 1);
+            return lastSeed;
+        }
+        return null;
+    }
 }

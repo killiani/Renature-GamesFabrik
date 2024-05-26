@@ -20,6 +20,10 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private AudioSource walkSoundSource; // AudioSource für den Walksound
     [SerializeField] private AudioClip walkSound; // Walksound AudioClip
+    [SerializeField] private GameObject plantPrefab; // Prefab für die Erde wo die plants hinkommen
+    [SerializeField] private GameObject mangrovePrefab; // Prefab für Mangrove
+    [SerializeField] private GameObject farnPrefab; // Prefab für Farn
+
 
     [SerializeField] private BeibootTrigger beibootTrigger; // Referenz zum Beiboot
 
@@ -39,6 +43,8 @@ public class PlayerMovement : MonoBehaviour
 
         // Binde die Primäraktion an die HandlePickupDrop-Methode
         input.Player.PrimaryAction.performed += ctx => HandlePickupDrop();
+
+        input.Player.PlantAction.performed += ctx => HandlePlanting();
     }
 
     void OnEnable()
@@ -97,6 +103,47 @@ public class PlayerMovement : MonoBehaviour
     {
         horizontal = 0f;
     }
+
+    private void HandlePlanting()
+    {
+        if (backpack.GetSeedCount() > 0)
+        {
+            animator.SetTrigger("HandleGoPlant");
+        }
+    }
+    public void OnPlantingAnimation()
+    {
+
+        Seed seedToPlant = backpack.GetAndRemoveLastSeed();
+        if (seedToPlant != null)
+        {
+            Plant newPlant = new Plant((Plant.PlantType)seedToPlant.Type, seedToPlant.GrowthTime);
+
+            float offsetY = 0.5f; // versatz nach unten
+            float offsetX = 0.0f; // versatz L oder R
+
+            if (isFacingRight)
+            {
+                offsetX = 0.5f;
+            } else
+            {
+                offsetX = -0.5f;
+            }
+
+            Vector3 plantPosition = new Vector3(transform.position.x + offsetX, groundCheck.position.y + offsetY, transform.position.z); // Position von Pittis Füßen
+            GameObject plantInstance = Instantiate(plantPrefab, plantPosition, Quaternion.identity);
+
+            // Starte die Wachstumsroutine
+            StartCoroutine(GrowPlant(plantInstance, newPlant.Type, newPlant.GrowthTime));
+
+            //Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
+            //Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
+            //Debug.Log($"Plant position: {plantPosition}");
+            //Debug.Log($"Pitti position: {transform.position}");
+            //Debug.Log($"GroundCheck position: {groundCheck.position}");
+        }
+    }
+
 
     private void HandlePickupDrop()
     {
@@ -209,6 +256,36 @@ public class PlayerMovement : MonoBehaviour
         }
         return nearestObject;
     }
+
+    private IEnumerator GrowPlant(GameObject plantInstance, Plant.PlantType plantType, float growTime)
+    {
+        yield return new WaitForSeconds(growTime); // Warte für die Dauer der Wachstumszeit
+
+        // Bestimme das richtige Prefab basierend auf dem Pflanzentyp
+        GameObject newPlantPrefab = null;
+        switch (plantType)
+        {
+            case Plant.PlantType.Mangrove:
+                newPlantPrefab = mangrovePrefab;
+                break;
+            case Plant.PlantType.Farn:
+                newPlantPrefab = farnPrefab;
+                break;
+        }
+
+        if (newPlantPrefab != null)
+        {
+            // Speichere die Position der aktuellen Pflanze
+            Vector3 plantPosition = plantInstance.transform.position;
+
+            // Zerstöre die alte Pflanze
+            Destroy(plantInstance);
+
+            // Erstelle die neue Pflanze an derselben Position
+            Instantiate(newPlantPrefab, plantPosition, Quaternion.identity);
+        }
+    }
+
 
     private void FixedUpdate()
     {

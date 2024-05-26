@@ -44,6 +44,15 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Plant Action"",
+                    ""type"": ""Button"",
+                    ""id"": ""c0abd091-ed0a-4fb7-b068-7ca425b5ee1c"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -233,6 +242,28 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
                     ""action"": ""Primary Action"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2479a308-6f82-4a43-abf6-2f00c2f2a8aa"",
+                    ""path"": ""<Keyboard>/p"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Plant Action"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c0200572-87d6-46cd-98d0-545fec8a4901"",
+                    ""path"": ""<XInputController>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Plant Action"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -243,6 +274,7 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_PrimaryAction = m_Player.FindAction("Primary Action", throwIfNotFound: true);
+        m_Player_PlantAction = m_Player.FindAction("Plant Action", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -306,12 +338,14 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_PrimaryAction;
+    private readonly InputAction m_Player_PlantAction;
     public struct PlayerActions
     {
         private @CustomInputs m_Wrapper;
         public PlayerActions(@CustomInputs wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Player_Move;
         public InputAction @PrimaryAction => m_Wrapper.m_Player_PrimaryAction;
+        public InputAction @PlantAction => m_Wrapper.m_Player_PlantAction;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -327,6 +361,9 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
             @PrimaryAction.started += instance.OnPrimaryAction;
             @PrimaryAction.performed += instance.OnPrimaryAction;
             @PrimaryAction.canceled += instance.OnPrimaryAction;
+            @PlantAction.started += instance.OnPlantAction;
+            @PlantAction.performed += instance.OnPlantAction;
+            @PlantAction.canceled += instance.OnPlantAction;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -337,6 +374,9 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
             @PrimaryAction.started -= instance.OnPrimaryAction;
             @PrimaryAction.performed -= instance.OnPrimaryAction;
             @PrimaryAction.canceled -= instance.OnPrimaryAction;
+            @PlantAction.started -= instance.OnPlantAction;
+            @PlantAction.performed -= instance.OnPlantAction;
+            @PlantAction.canceled -= instance.OnPlantAction;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -358,5 +398,6 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnPrimaryAction(InputAction.CallbackContext context);
+        void OnPlantAction(InputAction.CallbackContext context);
     }
 }

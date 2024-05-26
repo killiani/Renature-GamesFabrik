@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 411553206832350309}
   - component: {fileID: 6538023661960258991}
   m_Layer: 0
-  m_Name: ParentPitte_v2
+  m_Name: ParentPitte_v3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
