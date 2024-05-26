@@ -3,19 +3,24 @@ using UnityEngine;
 
 public class Backpack : MonoBehaviour
 {
-    private List<GameObject> seeds = new List<GameObject>();
+    //private List<GameObject> seeds = new List<GameObject>();
+    private List<Seed> seeds = new List<Seed>();
 
     // Methode zum Hinzufügen eines Samens
-    public void AddSeed(GameObject seed)
+    public void AddSeed(Seed seed)
     {
         seeds.Add(seed);
-        seed.SetActive(false); // Samen deaktivieren, nachdem er aufgesammelt wurde
-        Debug.Log("Seed added to backpack. Total seeds: " + seeds.Count);
+        //seed.SetActive(false); // Samen deaktivieren, nachdem er aufgesammelt wurde
+        Debug.Log($"Seed added to backpack: {seed.Type} with a grow Time of {seed.GrowthTime}. Total seeds: {seeds.Count}");
     }
 
-    // Methode, um die Anzahl der Samen zu erhalten
     public int GetSeedCount()
     {
         return seeds.Count;
+    }
+
+    public List<Seed> GetAllSeeds()
+    {
+        return seeds;
     }
 }

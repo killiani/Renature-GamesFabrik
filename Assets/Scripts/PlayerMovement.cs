@@ -106,17 +106,17 @@ public class PlayerMovement : MonoBehaviour
         {
             // Setze den Zustand auf Aufheben und überprüfe, ob sich ein Objekt in der Nähe befindet
             nearestObject = GetNearestObject();
-            Debug.LogError("nearest: ", nearestObject);
+            Debug.Log("nearest: ", nearestObject);
 
             if (nearestObject != null)
             {
                 if (nearestObject.layer == LayerMask.NameToLayer("Seeds"))
                 {
-                    Debug.LogError("Try to grab Seed");
+                    Debug.Log("Try to grab Seed");
                 } 
                 else if (nearestObject.layer == LayerMask.NameToLayer("Objects"))
                 {
-                    Debug.LogError("Try to grab Object");
+                    Debug.Log("Try to grab Object");
                 }
                 isPickingUp = true; // Animation auslösen
             }
@@ -128,7 +128,7 @@ public class PlayerMovement : MonoBehaviour
                 Rigidbody2D rb = pickupScript.carriedObject.GetComponent<Rigidbody2D>();
                 Collider2D col = pickupScript.carriedObject.GetComponent<Collider2D>();
 
-                Debug.LogError("Drop OK");
+                Debug.Log("Drop OK");
 
                 if (rb != null)
                 {
@@ -162,19 +162,22 @@ public class PlayerMovement : MonoBehaviour
 
                 switchMovement = true;
                 animator.SetBool("HasObject", true);
-                Debug.LogError("Object Pickup OK");
+                Debug.Log("Object Pickup OK");
             }
 
             else if (nearestObject.layer == LayerMask.NameToLayer("Seeds"))
             {
                 if (backpack != null)
                 {
-                    backpack.AddSeed(nearestObject);
-                    Debug.LogError("Seed Pickup OK");
+                    //backpack.AddSeed(nearestObject);
+                    Seed randomSeed = Seed.GenerateRandomSeed();
+                    backpack.AddSeed(randomSeed);
+                    Debug.Log("Seed Pickup OK");
+                    nearestObject.SetActive(false); // Samen deaktivieren, nachdem er aufgesamme
                 }
                 else
                 {
-                    Debug.LogError("Backpack is null");
+                    Debug.Log("Backpack is null");
                 }
                 nearestObject = null;
             }
