@@ -31,4 +31,12 @@ public class AnimationEventHandler : MonoBehaviour
             playerMovement.OnPlantingAnimation();
         }
     }
+
+    public void OnPlantingAnimationSeed()
+    {
+        if (playerMovement != null)
+        {
+            playerMovement.OnPlantingAnimationSeed();
+        }
+    }
 }

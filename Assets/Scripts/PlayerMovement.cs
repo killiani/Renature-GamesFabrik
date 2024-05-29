@@ -23,14 +23,15 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GameObject plantPrefab; // Prefab für die Erde wo die plants hinkommen
     [SerializeField] private GameObject mangrovePrefab; // Prefab für Mangrove
     [SerializeField] private GameObject farnPrefab; // Prefab für Farn
-
-
+    [SerializeField] private Transform frontHandPosition;
+    [SerializeField] private GameObject seedPrefab; // Generisches Samen-Prefab
     [SerializeField] private BeibootTrigger beibootTrigger; // Referenz zum Beiboot
 
     // Diese Referenz wird im Start-Methodenblock automatisch gesetzt
     private PickupScript pickupScript;
     private Backpack backpack;
     private GameObject nearestObject;
+    private GameObject seedInHand; // Referenz auf den Samen in Pittis Hand
 
 
     void Awake()
@@ -104,13 +105,34 @@ public class PlayerMovement : MonoBehaviour
         horizontal = 0f;
     }
 
+
+
     private void HandlePlanting()
     {
         if (backpack.GetSeedCount() > 0)
         {
             animator.SetTrigger("HandleGoPlant");
+
+            // Zeige den Samen in Pittis Hand während der Animation
+            //seedInHand = Instantiate(seedPrefab, frontHandPosition.position, Quaternion.identity);
+            //seedInHand.transform.SetParent(frontHandPosition);
+            //seedInHand.SetActive(true);
+        }
+        else
+        {
+            Debug.Log("No seeds available to plant.");
         }
     }
+
+
+    public void OnPlantingAnimationSeed()
+    {
+        if (seedInHand != null)
+        {
+            Destroy(seedInHand); // Entferne den Samen aus Pittis Hand
+        }
+    }
+
     public void OnPlantingAnimation()
     {
 
