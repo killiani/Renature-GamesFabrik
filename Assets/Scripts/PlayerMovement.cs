@@ -22,7 +22,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private AudioClip walkSound; // Walksound AudioClip
     [SerializeField] private GameObject plantPrefab; // Prefab für die Erde wo die plants hinkommen
     [SerializeField] private GameObject mangrovePrefab; // Prefab für Mangrove
-    [SerializeField] private GameObject farnPrefab; // Prefab für Farn
+    [SerializeField] private GameObject farnPrefab;
+    [SerializeField] private GameObject alocasiaPrefab;
+    [SerializeField] private GameObject crotonPrefab;
     [SerializeField] private Transform frontHandPosition;
     [SerializeField] private GameObject seedPrefab; // Generisches Samen-Prefab
     [SerializeField] private BeibootTrigger beibootTrigger; // Referenz zum Beiboot
@@ -292,6 +294,12 @@ public class PlayerMovement : MonoBehaviour
                 break;
             case Plant.PlantType.Farn:
                 newPlantPrefab = farnPrefab;
+                break;
+            case Plant.PlantType.Alocasia:
+                newPlantPrefab = alocasiaPrefab;
+                break;
+            case Plant.PlantType.Croton:
+                newPlantPrefab = crotonPrefab;
                 break;
         }
 

@@ -2,7 +2,7 @@
 
 public class Plant
 {
-    public enum PlantType { Farn, Mangrove }
+    public enum PlantType { Farn, Mangrove, Croton, Alocasia }
     public PlantType Type { get; private set; }
     public float GrowthTime { get; private set; }
 
