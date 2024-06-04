@@ -224,7 +224,7 @@
                 {
                     "name": "",
                     "id": "2479a308-6f82-4a43-abf6-2f00c2f2a8aa",
-                    "path": "<Keyboard>/p",
+                    "path": "<Keyboard>/2",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -240,6 +240,45 @@
                     "processors": "",
                     "groups": "",
                     "action": "Plant Action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "HUD",
+            "id": "dc87181a-1c25-4613-a49a-0c7331bfcc03",
+            "actions": [
+                {
+                    "name": "Hide Button",
+                    "type": "Button",
+                    "id": "f4ad58ea-65e1-4b75-958c-c26c039a9362",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "426f473d-f20b-40b8-878f-7e01ae585c6f",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Hide Button",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "30f9af8f-4b89-4f3e-a093-6147e9a827f7",
+                    "path": "<XInputController>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Hide Button",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

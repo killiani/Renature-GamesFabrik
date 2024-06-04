@@ -246,7 +246,7 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""2479a308-6f82-4a43-abf6-2f00c2f2a8aa"",
-                    ""path"": ""<Keyboard>/p"",
+                    ""path"": ""<Keyboard>/2"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -266,6 +266,45 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""HUD"",
+            ""id"": ""dc87181a-1c25-4613-a49a-0c7331bfcc03"",
+            ""actions"": [
+                {
+                    ""name"": ""Hide Button"",
+                    ""type"": ""Button"",
+                    ""id"": ""f4ad58ea-65e1-4b75-958c-c26c039a9362"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""426f473d-f20b-40b8-878f-7e01ae585c6f"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hide Button"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""30f9af8f-4b89-4f3e-a093-6147e9a827f7"",
+                    ""path"": ""<XInputController>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Hide Button"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -275,6 +314,9 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_PrimaryAction = m_Player.FindAction("Primary Action", throwIfNotFound: true);
         m_Player_PlantAction = m_Player.FindAction("Plant Action", throwIfNotFound: true);
+        // HUD
+        m_HUD = asset.FindActionMap("HUD", throwIfNotFound: true);
+        m_HUD_HideButton = m_HUD.FindAction("Hide Button", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -394,10 +436,60 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
         }
     }
     public PlayerActions @Player => new PlayerActions(this);
+
+    // HUD
+    private readonly InputActionMap m_HUD;
+    private List<IHUDActions> m_HUDActionsCallbackInterfaces = new List<IHUDActions>();
+    private readonly InputAction m_HUD_HideButton;
+    public struct HUDActions
+    {
+        private @CustomInputs m_Wrapper;
+        public HUDActions(@CustomInputs wrapper) { m_Wrapper = wrapper; }
+        public InputAction @HideButton => m_Wrapper.m_HUD_HideButton;
+        public InputActionMap Get() { return m_Wrapper.m_HUD; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(HUDActions set) { return set.Get(); }
+        public void AddCallbacks(IHUDActions instance)
+        {
+            if (instance == null || m_Wrapper.m_HUDActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_HUDActionsCallbackInterfaces.Add(instance);
+            @HideButton.started += instance.OnHideButton;
+            @HideButton.performed += instance.OnHideButton;
+            @HideButton.canceled += instance.OnHideButton;
+        }
+
+        private void UnregisterCallbacks(IHUDActions instance)
+        {
+            @HideButton.started -= instance.OnHideButton;
+            @HideButton.performed -= instance.OnHideButton;
+            @HideButton.canceled -= instance.OnHideButton;
+        }
+
+        public void RemoveCallbacks(IHUDActions instance)
+        {
+            if (m_Wrapper.m_HUDActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IHUDActions instance)
+        {
+            foreach (var item in m_Wrapper.m_HUDActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_HUDActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public HUDActions @HUD => new HUDActions(this);
     public interface IPlayerActions
     {
         void OnMove(InputAction.CallbackContext context);
         void OnPrimaryAction(InputAction.CallbackContext context);
         void OnPlantAction(InputAction.CallbackContext context);
+    }
+    public interface IHUDActions
+    {
+        void OnHideButton(InputAction.CallbackContext context);
     }
 }
