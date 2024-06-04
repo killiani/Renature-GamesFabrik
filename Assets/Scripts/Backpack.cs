@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class Backpack : MonoBehaviour
 {
-    //private List<GameObject> seeds = new List<GameObject>();
     private List<Seed> seeds = new List<Seed>();
 
     // Methode zum Hinzufügen eines Samens

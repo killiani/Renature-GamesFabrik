@@ -279,6 +279,15 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Backpack Button"",
+                    ""type"": ""Button"",
+                    ""id"": ""f14bb106-8b2c-4732-b2ce-b343cb60d845"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -303,6 +312,28 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
                     ""action"": ""Hide Button"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a87efa67-e75f-4a86-8e47-c85e95452590"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Backpack Button"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f327b824-d9cd-4ca5-856d-9a902ab7df6a"",
+                    ""path"": ""<XInputController>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Backpack Button"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -317,6 +348,7 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
         // HUD
         m_HUD = asset.FindActionMap("HUD", throwIfNotFound: true);
         m_HUD_HideButton = m_HUD.FindAction("Hide Button", throwIfNotFound: true);
+        m_HUD_BackpackButton = m_HUD.FindAction("Backpack Button", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -441,11 +473,13 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_HUD;
     private List<IHUDActions> m_HUDActionsCallbackInterfaces = new List<IHUDActions>();
     private readonly InputAction m_HUD_HideButton;
+    private readonly InputAction m_HUD_BackpackButton;
     public struct HUDActions
     {
         private @CustomInputs m_Wrapper;
         public HUDActions(@CustomInputs wrapper) { m_Wrapper = wrapper; }
         public InputAction @HideButton => m_Wrapper.m_HUD_HideButton;
+        public InputAction @BackpackButton => m_Wrapper.m_HUD_BackpackButton;
         public InputActionMap Get() { return m_Wrapper.m_HUD; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -458,6 +492,9 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
             @HideButton.started += instance.OnHideButton;
             @HideButton.performed += instance.OnHideButton;
             @HideButton.canceled += instance.OnHideButton;
+            @BackpackButton.started += instance.OnBackpackButton;
+            @BackpackButton.performed += instance.OnBackpackButton;
+            @BackpackButton.canceled += instance.OnBackpackButton;
         }
 
         private void UnregisterCallbacks(IHUDActions instance)
@@ -465,6 +502,9 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
             @HideButton.started -= instance.OnHideButton;
             @HideButton.performed -= instance.OnHideButton;
             @HideButton.canceled -= instance.OnHideButton;
+            @BackpackButton.started -= instance.OnBackpackButton;
+            @BackpackButton.performed -= instance.OnBackpackButton;
+            @BackpackButton.canceled -= instance.OnBackpackButton;
         }
 
         public void RemoveCallbacks(IHUDActions instance)
@@ -491,5 +531,6 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
     public interface IHUDActions
     {
         void OnHideButton(InputAction.CallbackContext context);
+        void OnBackpackButton(InputAction.CallbackContext context);
     }
 }
