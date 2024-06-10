@@ -8,11 +8,13 @@ public class SeedInventory : MonoBehaviour
     public Image mangroveCard;
     public Image crotonCard;
     public Image alocasiaCard;
+    public Image teaktreeCard;
 
     public Image farnCount;
     public Image mangroveCount;
     public Image crotonCount;
     public Image alocasiaCount;
+    public Image teaktreeCount;
 
     public Sprite[] numberSprites; // Array der Zahlensprites
 
@@ -23,6 +25,7 @@ public class SeedInventory : MonoBehaviour
     private int prevMangroveSeeds = 0;
     private int prevCrotonSeeds = 0;
     private int prevAlocasiaSeeds = 0;
+    private int prevTeaktreeSeeds = 0;
 
     void Start()
     {
@@ -45,6 +48,7 @@ public class SeedInventory : MonoBehaviour
         int mangroveSeeds = 0;
         int crotonSeeds = 0;
         int alocasiaSeeds = 0;
+        int teaktreeSeeds = 0;
 
         // Samenanzahl basierend auf dem Rucksack aktualisieren
         foreach (Seed seed in backpack.GetAllSeeds())
@@ -63,34 +67,37 @@ public class SeedInventory : MonoBehaviour
                 case Seed.SeedType.Alocasia:
                     alocasiaSeeds++;
                     break;
+                case Seed.SeedType.Teaktree:
+                    teaktreeSeeds++;
+                    break;
             }
         }
 
         // Überprüfen, ob sich die Samenanzahl geändert hat
-        if (farnSeeds != prevFarnSeeds || mangroveSeeds != prevMangroveSeeds || crotonSeeds != prevCrotonSeeds || alocasiaSeeds != prevAlocasiaSeeds)
+        if (farnSeeds != prevFarnSeeds || 
+            mangroveSeeds != prevMangroveSeeds ||
+            crotonSeeds != prevCrotonSeeds || 
+            alocasiaSeeds != prevAlocasiaSeeds || 
+            teaktreeSeeds != prevTeaktreeSeeds)
         {
             prevFarnSeeds = farnSeeds;
             prevMangroveSeeds = mangroveSeeds;
             prevCrotonSeeds = crotonSeeds;
             prevAlocasiaSeeds = alocasiaSeeds;
+            prevTeaktreeSeeds = teaktreeSeeds;
             return true;
         }
         return false;
     }
 
+    // Update visibility and count for the plants
     private void UpdateSeedDisplay()
     {
-        // Update visibility and count for Farn
         UpdateCard(farnCard, farnCount, prevFarnSeeds);
-
-        // Update visibility and count for Mangrove
         UpdateCard(mangroveCard, mangroveCount, prevMangroveSeeds);
-
-        // Update visibility and count for Croton
         UpdateCard(crotonCard, crotonCount, prevCrotonSeeds);
-
-        // Update visibility and count for Alocasia
         UpdateCard(alocasiaCard, alocasiaCount, prevAlocasiaSeeds);
+        UpdateCard(teaktreeCard, teaktreeCount, prevTeaktreeSeeds);
     }
 
     private void UpdateCard(Image card, Image countImage, int count)

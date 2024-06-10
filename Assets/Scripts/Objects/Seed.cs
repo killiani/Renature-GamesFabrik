@@ -2,7 +2,7 @@
 
 public class Seed
 {
-    public enum SeedType { Farn, Mangrove, Croton, Alocasia }
+    public enum SeedType { Farn, Mangrove, Croton, Alocasia, Teaktree }
     public SeedType Type { get; private set; }
     public float GrowthTime { get; private set; }
 

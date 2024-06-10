@@ -25,6 +25,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GameObject farnPrefab;
     [SerializeField] private GameObject alocasiaPrefab;
     [SerializeField] private GameObject crotonPrefab;
+    [SerializeField] private GameObject teaktreePrefab;
     [SerializeField] private Transform frontHandPosition;
     [SerializeField] private GameObject seedPrefab; // Generisches Samen-Prefab
     [SerializeField] private BeibootTrigger beibootTrigger; // Referenz zum Beiboot
@@ -300,6 +301,9 @@ public class PlayerMovement : MonoBehaviour
                 break;
             case Plant.PlantType.Croton:
                 newPlantPrefab = crotonPrefab;
+                break;
+            case Plant.PlantType.Teaktree:
+                newPlantPrefab = teaktreePrefab;
                 break;
         }
 
