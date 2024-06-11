@@ -35,10 +35,10 @@ public class HUDController : MonoBehaviour
 
     void Start()
     {
-        // Stelle sicher, dass die Key-Bilder am Anfang ausgeblendet sind
+        // Key Bilder zum Start Ein oder Ausgeschaltet
         foreach (Image img in keyImages)
         {
-            img.gameObject.SetActive(false);
+            img.gameObject.SetActive(true);
         }
     }
 

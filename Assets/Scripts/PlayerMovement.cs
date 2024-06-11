@@ -52,7 +52,20 @@ public class PlayerMovement : MonoBehaviour
 
         // Binde die Primäraktion an die HandlePickupDrop-Methode
         input.Player.PrimaryAction.performed += ctx => HandlePickupDrop();
-        input.Player.PlantAction.performed += ctx => HandlePlanting();
+        //input.Player.PlantAction.performed += ctx => HandlePlanting();
+    }
+
+    public void DisableMovement() // BackpackController steuert dies
+    {
+        input.Player.Move.performed -= OnMove;
+        input.Player.Move.canceled -= OnMoveCanceled;
+        input.Player.PrimaryAction.performed -= ctx => HandlePickupDrop();
+    }
+    public void EnableMovement()
+    {
+        input.Player.Move.performed += OnMove;
+        input.Player.Move.canceled += OnMoveCanceled;
+        input.Player.PrimaryAction.performed += ctx => HandlePickupDrop();
     }
 
     void OnEnable()
@@ -103,8 +116,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnMove(InputAction.CallbackContext context)
     {
-        Vector2 inputVector = context.ReadValue<Vector2>();
-        horizontal = inputVector.x;
+        if (input.Player.enabled) // Überprüfen Sie, ob die Player-Eingaben aktiviert sind
+        {
+            Vector2 inputVector = context.ReadValue<Vector2>();
+            horizontal = inputVector.x;
+        }
     }
 
     private void OnMoveCanceled(InputAction.CallbackContext context)
@@ -123,26 +139,6 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-
-
-    private void HandlePlanting()
-    {
-        if (backpack.GetSeedCount() > 0)
-        {
-            animator.SetTrigger("HandleGoPlant");
-
-            // Zeige den Samen in Pittis Hand während der Animation
-            //seedInHand = Instantiate(seedPrefab, frontHandPosition.position, Quaternion.identity);
-            //seedInHand.transform.SetParent(frontHandPosition);
-            //seedInHand.SetActive(true);
-        }
-        else
-        {
-            Debug.Log("No seeds available to plant.");
-        }
-    }
-
-
     public void OnPlantingAnimationSeed()
     {
         if (seedInHand != null)
@@ -151,36 +147,55 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+
+    /* Einpflanz Animation mit Samen aus Rucksack
+     * 
+     * - Neue Variable zum Speichern des aktuellen Samenindex
+     * - Neue Methode zum Setzen des Samenindex, asu BackpackController
+     * 
+     */
+    private int currentSeedIndex = -1;
+
+    public void SetCurrentSeedIndex(int index)
+    {
+        currentSeedIndex = index;
+    }
+
     public void OnPlantingAnimation()
     {
-
-        Seed seedToPlant = backpack.GetAndRemoveLastSeed();
-        if (seedToPlant != null)
+        if (currentSeedIndex >= 0)
         {
-            Plant newPlant = new Plant((Plant.PlantType)seedToPlant.Type, seedToPlant.GrowthTime);
 
-            float offsetY = 0.5f; // versatz nach unten
-            float offsetX = 0.0f; // versatz L oder R
+            Seed seedToPlant = backpack.GetAndRemoveSeedAt(currentSeedIndex);
+            if (seedToPlant != null)
+            {
+                Plant newPlant = new Plant((Plant.PlantType)seedToPlant.Type, seedToPlant.GrowthTime);
 
-            if (isFacingRight)
-            {
-                offsetX = 0.5f;
-            } else
-            {
-                offsetX = -0.5f;
+                float offsetY = 0.5f; // versatz nach unten
+                float offsetX = 0.0f; // versatz L oder R
+
+                if (isFacingRight)
+                {
+                    offsetX = 0.5f;
+                }
+                else
+                {
+                    offsetX = -0.5f;
+                }
+
+                Vector3 plantPosition = new Vector3(transform.position.x + offsetX, groundCheck.position.y + offsetY, transform.position.z); // Position von Pittis Füßen
+                GameObject plantInstance = Instantiate(plantPrefab, plantPosition, Quaternion.identity);
+
+                // Starte die Wachstumsroutine
+                StartCoroutine(GrowPlant(plantInstance, newPlant.Type, newPlant.GrowthTime));
+
+                //Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
+                //Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
+                //Debug.Log($"Plant position: {plantPosition}");
+                //Debug.Log($"Pitti position: {transform.position}");
+                //Debug.Log($"GroundCheck position: {groundCheck.position}");
             }
-
-            Vector3 plantPosition = new Vector3(transform.position.x + offsetX, groundCheck.position.y + offsetY, transform.position.z); // Position von Pittis Füßen
-            GameObject plantInstance = Instantiate(plantPrefab, plantPosition, Quaternion.identity);
-
-            // Starte die Wachstumsroutine
-            StartCoroutine(GrowPlant(plantInstance, newPlant.Type, newPlant.GrowthTime));
-
-            //Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
-            //Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
-            //Debug.Log($"Plant position: {plantPosition}");
-            //Debug.Log($"Pitti position: {transform.position}");
-            //Debug.Log($"GroundCheck position: {groundCheck.position}");
+            currentSeedIndex = -1; // Zurücksetzen des Index nach dem Pflanzen
         }
     }
 
