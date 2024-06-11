@@ -83,7 +83,6 @@ public class BackpackController : MonoBehaviour
 
         if (isCanvasVisible)
         {
-            Debug.Log("Backpack opened, setting up input actions.");
             input.Backpack.Move.performed += OnMove;
             input.Backpack.Select.performed += OnSelect;
             input.Backpack.Cancel.performed += OnCancel;
@@ -91,17 +90,14 @@ public class BackpackController : MonoBehaviour
         }
         else
         {
-            Debug.Log("Backpack closed, tearing down input actions.");
             input.Backpack.Move.performed -= OnMove;
             input.Backpack.Select.performed -= OnSelect;
             input.Backpack.Cancel.performed -= OnCancel;
             playerMovement.EnableMovement();
         }
-
-        Debug.Log("ToggleCanvasVisibility: Canvas visibility toggled.");
     }
 
-    private void OnMove(InputAction.CallbackContext context)
+    private void OnMove(InputAction.CallbackContext context) // Navigieren durch Samenkarten
     {
         Vector2 inputVector = context.ReadValue<Vector2>();
         if (inputVector.x > 0)
@@ -130,6 +126,7 @@ public class BackpackController : MonoBehaviour
     private void OnSelect(InputAction.CallbackContext context)
     {
         Debug.Log("Selected seed card: " + currentSelectionIndex);
+
         HandlePlanting();
         ToggleCanvasVisibility(context); // Schlieﬂen Sie den Rucksack nach der Auswahl
     }

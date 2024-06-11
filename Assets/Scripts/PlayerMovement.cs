@@ -49,23 +49,25 @@ public class PlayerMovement : MonoBehaviour
         input.Player.RunningFaster.performed += ctx => OnRun(ctx);
         input.Player.RunningFaster.canceled += ctx => OnRunCanceled(ctx);
 
-
         // Binde die Primäraktion an die HandlePickupDrop-Methode
-        input.Player.PrimaryAction.performed += ctx => HandlePickupDrop();
-        //input.Player.PlantAction.performed += ctx => HandlePlanting();
+        //input.Player.PrimaryAction.performed += ctx => HandlePickupDrop();
+        input.Player.PrimaryAction.performed += HandlePrimaryAction;
     }
 
-    public void DisableMovement() // BackpackController steuert dies
+    public void DisableMovement() // BackpackController steuert dies um die Tasten der Auwahl zuzuordnen
     {
+        Debug.Log("Ausgeschaltet: ");
         input.Player.Move.performed -= OnMove;
         input.Player.Move.canceled -= OnMoveCanceled;
-        input.Player.PrimaryAction.performed -= ctx => HandlePickupDrop();
+        input.Player.PrimaryAction.performed -= HandlePrimaryAction;
+
     }
     public void EnableMovement()
     {
         input.Player.Move.performed += OnMove;
         input.Player.Move.canceled += OnMoveCanceled;
-        input.Player.PrimaryAction.performed += ctx => HandlePickupDrop();
+        input.Player.PrimaryAction.performed += HandlePrimaryAction;
+        Debug.Log("Eingeschaltet: ");
     }
 
     void OnEnable()
@@ -159,6 +161,9 @@ public class PlayerMovement : MonoBehaviour
     public void SetCurrentSeedIndex(int index)
     {
         currentSeedIndex = index;
+        Debug.Log("New Index: "+ currentSeedIndex);
+        Debug.Log("All Seeds List: " + backpack.GetAllSeeds());
+        Debug.Log("Target Seed: "+ backpack.GetAllSeeds()[currentSeedIndex]);
     }
 
     public void OnPlantingAnimation()
@@ -189,7 +194,7 @@ public class PlayerMovement : MonoBehaviour
                 // Starte die Wachstumsroutine
                 StartCoroutine(GrowPlant(plantInstance, newPlant.Type, newPlant.GrowthTime));
 
-                //Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
+                Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
                 //Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
                 //Debug.Log($"Plant position: {plantPosition}");
                 //Debug.Log($"Pitti position: {transform.position}");
@@ -199,6 +204,12 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    // Hack um es aus dem Backback heraus zu umgehen
+    private void HandlePrimaryAction(InputAction.CallbackContext context)
+    {
+        Debug.Log("HandlePickupDrop ausgeführt: ");
+        HandlePickupDrop();
+    }
 
     private void HandlePickupDrop()
     {
