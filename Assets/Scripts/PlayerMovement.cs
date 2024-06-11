@@ -6,7 +6,9 @@ using UnityEngine.InputSystem; // Importiere das neue Input System
 public class PlayerMovement : MonoBehaviour
 {
     private float horizontal;
-    private float speed = 1.5f;
+    private float speed = 1.5f; // walk
+    private float speedFaster = 2.3f; // running
+    private bool isRunning = false;
     private bool isFacingRight = true;
     private bool switchMovement = false; // Gibt an, ob der Charakter ein Objekt trägt
     private bool isPickingUp = false; // Zustand des Aufhebens/Ablegens
@@ -44,10 +46,12 @@ public class PlayerMovement : MonoBehaviour
         // Binde die Bewegungsaktion an die Move-Methode
         input.Player.Move.performed += OnMove;
         input.Player.Move.canceled += OnMoveCanceled;
+        input.Player.RunningFaster.performed += ctx => OnRun(ctx);
+        input.Player.RunningFaster.canceled += ctx => OnRunCanceled(ctx);
+
 
         // Binde die Primäraktion an die HandlePickupDrop-Methode
         input.Player.PrimaryAction.performed += ctx => HandlePickupDrop();
-
         input.Player.PlantAction.performed += ctx => HandlePlanting();
     }
 
@@ -107,6 +111,17 @@ public class PlayerMovement : MonoBehaviour
     {
         horizontal = 0f;
     }
+
+    private void OnRun(InputAction.CallbackContext context)
+    {
+        isRunning = true;
+    }
+
+    private void OnRunCanceled(InputAction.CallbackContext context)
+    {
+        isRunning = false;
+    }
+
 
 
 
@@ -323,13 +338,17 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.velocity = new Vector2(horizontal * speed, rb.velocity.y);
+        float currentSpeed = isRunning ? speedFaster : speed;
+        rb.velocity = new Vector2(horizontal * currentSpeed, rb.velocity.y);
     }
 
     private void Moving()
     {
         bool isMoving = Mathf.Abs(horizontal) > 0;
         animator.SetBool("IsRunning", isMoving);
+
+        // Setze die Condition für die Running Fast Animation
+        animator.SetBool("IsRunningFast", isRunning && isMoving);
 
         WalkSound(isMoving);
         Flip();

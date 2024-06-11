@@ -53,6 +53,15 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Running Faster"",
+                    ""type"": ""Button"",
+                    ""id"": ""9f08fced-4295-4180-b1d8-d9d629306897"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -264,6 +273,28 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
                     ""action"": ""Plant Action"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1a4fc2e9-8c6e-40f5-bd92-4e706698e4f0"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Running Faster"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eb62fae1-551d-4c5b-9d02-ee9a92ff1fb7"",
+                    ""path"": ""<XInputController>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Running Faster"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -305,7 +336,7 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""30f9af8f-4b89-4f3e-a093-6147e9a827f7"",
-                    ""path"": ""<XInputController>/rightTrigger"",
+                    ""path"": ""<XInputController>/rightShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -345,6 +376,7 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_PrimaryAction = m_Player.FindAction("Primary Action", throwIfNotFound: true);
         m_Player_PlantAction = m_Player.FindAction("Plant Action", throwIfNotFound: true);
+        m_Player_RunningFaster = m_Player.FindAction("Running Faster", throwIfNotFound: true);
         // HUD
         m_HUD = asset.FindActionMap("HUD", throwIfNotFound: true);
         m_HUD_HideButton = m_HUD.FindAction("Hide Button", throwIfNotFound: true);
@@ -413,6 +445,7 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_PrimaryAction;
     private readonly InputAction m_Player_PlantAction;
+    private readonly InputAction m_Player_RunningFaster;
     public struct PlayerActions
     {
         private @CustomInputs m_Wrapper;
@@ -420,6 +453,7 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_Player_Move;
         public InputAction @PrimaryAction => m_Wrapper.m_Player_PrimaryAction;
         public InputAction @PlantAction => m_Wrapper.m_Player_PlantAction;
+        public InputAction @RunningFaster => m_Wrapper.m_Player_RunningFaster;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -438,6 +472,9 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
             @PlantAction.started += instance.OnPlantAction;
             @PlantAction.performed += instance.OnPlantAction;
             @PlantAction.canceled += instance.OnPlantAction;
+            @RunningFaster.started += instance.OnRunningFaster;
+            @RunningFaster.performed += instance.OnRunningFaster;
+            @RunningFaster.canceled += instance.OnRunningFaster;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -451,6 +488,9 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
             @PlantAction.started -= instance.OnPlantAction;
             @PlantAction.performed -= instance.OnPlantAction;
             @PlantAction.canceled -= instance.OnPlantAction;
+            @RunningFaster.started -= instance.OnRunningFaster;
+            @RunningFaster.performed -= instance.OnRunningFaster;
+            @RunningFaster.canceled -= instance.OnRunningFaster;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -527,6 +567,7 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnPrimaryAction(InputAction.CallbackContext context);
         void OnPlantAction(InputAction.CallbackContext context);
+        void OnRunningFaster(InputAction.CallbackContext context);
     }
     public interface IHUDActions
     {
