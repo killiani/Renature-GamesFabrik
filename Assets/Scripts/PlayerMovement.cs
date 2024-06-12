@@ -161,10 +161,18 @@ public class PlayerMovement : MonoBehaviour
     public void SetCurrentSeedIndex(int index)
     {
         currentSeedIndex = index;
-        Debug.Log("New Index: "+ currentSeedIndex);
+        Debug.Log("New Index: " + currentSeedIndex);
         Debug.Log("All Seeds List: " + backpack.GetAllSeeds());
-        Debug.Log("Target Seed: "+ backpack.GetAllSeeds()[currentSeedIndex]);
+        if (currentSeedIndex >= 0 && currentSeedIndex < backpack.GetAllSeeds().Count)
+        {
+            Debug.Log("Target Seed: " + backpack.GetAllSeeds()[currentSeedIndex]);
+        }
+        else
+        {
+            Debug.LogError("Invalid seed index: " + currentSeedIndex);
+        }
     }
+
 
     public void OnPlantingAnimation()
     {

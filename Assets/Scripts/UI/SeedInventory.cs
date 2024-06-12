@@ -4,32 +4,21 @@ using UnityEngine.UI;
 
 public class SeedInventory : MonoBehaviour
 {
-    public Image farnCard;
-    public Image mangroveCard;
-    public Image crotonCard;
-    public Image alocasiaCard;
-    public Image teaktreeCard;
-
-    public Image farnCount;
-    public Image mangroveCount;
-    public Image crotonCount;
-    public Image alocasiaCount;
-    public Image teaktreeCount;
-
+    public List<SeedCard> seedCards = new List<SeedCard>();
     public Sprite[] numberSprites; // Array der Zahlensprites
 
-    private Backpack backpack;
+    public GameObject farnCardPrefab;
+    public GameObject mangroveCardPrefab;
+    public GameObject crotonCardPrefab;
+    public GameObject alocasiaCardPrefab;
+    public GameObject teaktreeCardPrefab;
 
-    // Variablen zum Speichern des vorherigen Zustands
-    private int prevFarnSeeds = 0;
-    private int prevMangroveSeeds = 0;
-    private int prevCrotonSeeds = 0;
-    private int prevAlocasiaSeeds = 0;
-    private int prevTeaktreeSeeds = 0;
+    private Backpack backpack;
 
     void Start()
     {
         backpack = FindObjectOfType<Backpack>();
+        InitializeSeedCards();
         UpdateSeedDisplay(); // Initiales Update
     }
 
@@ -42,76 +31,57 @@ public class SeedInventory : MonoBehaviour
         }
     }
 
+    private void InitializeSeedCards()
+    {
+        seedCards.Add(new SeedCard { SeedType = Seed.SeedType.Farn, CardPrefab = farnCardPrefab });
+        seedCards.Add(new SeedCard { SeedType = Seed.SeedType.Mangrove, CardPrefab = mangroveCardPrefab });
+        seedCards.Add(new SeedCard { SeedType = Seed.SeedType.Croton, CardPrefab = crotonCardPrefab });
+        seedCards.Add(new SeedCard { SeedType = Seed.SeedType.Alocasia, CardPrefab = alocasiaCardPrefab });
+        seedCards.Add(new SeedCard { SeedType = Seed.SeedType.Teaktree, CardPrefab = teaktreeCardPrefab });
+
+        // Instantiate the prefabs and get their UI components
+        foreach (var seedCard in seedCards)
+        {
+            GameObject cardInstance = Instantiate(seedCard.CardPrefab, transform);
+            seedCard.CardImage = cardInstance.GetComponent<Image>();
+            seedCard.CountImage = cardInstance.transform.GetChild(0).GetComponent<Image>(); // Assuming the CountImage is the first child
+        }
+    }
+
     private bool HasSeedsChanged()
     {
-        int farnSeeds = 0;
-        int mangroveSeeds = 0;
-        int crotonSeeds = 0;
-        int alocasiaSeeds = 0;
-        int teaktreeSeeds = 0;
-
-        // Samenanzahl basierend auf dem Rucksack aktualisieren
-        foreach (Seed seed in backpack.GetAllSeeds())
+        bool hasChanged = false;
+        foreach (var seedCard in seedCards)
         {
-            switch (seed.Type)
+            int currentCount = backpack.GetSeedCount(seedCard.SeedType);
+            if (seedCard.Amount != currentCount)
             {
-                case Seed.SeedType.Farn:
-                    farnSeeds++;
-                    break;
-                case Seed.SeedType.Mangrove:
-                    mangroveSeeds++;
-                    break;
-                case Seed.SeedType.Croton:
-                    crotonSeeds++;
-                    break;
-                case Seed.SeedType.Alocasia:
-                    alocasiaSeeds++;
-                    break;
-                case Seed.SeedType.Teaktree:
-                    teaktreeSeeds++;
-                    break;
+                seedCard.Amount = currentCount;
+                hasChanged = true;
             }
         }
-
-        // Überprüfen, ob sich die Samenanzahl geändert hat
-        if (farnSeeds != prevFarnSeeds || 
-            mangroveSeeds != prevMangroveSeeds ||
-            crotonSeeds != prevCrotonSeeds || 
-            alocasiaSeeds != prevAlocasiaSeeds || 
-            teaktreeSeeds != prevTeaktreeSeeds)
-        {
-            prevFarnSeeds = farnSeeds;
-            prevMangroveSeeds = mangroveSeeds;
-            prevCrotonSeeds = crotonSeeds;
-            prevAlocasiaSeeds = alocasiaSeeds;
-            prevTeaktreeSeeds = teaktreeSeeds;
-            return true;
-        }
-        return false;
+        return hasChanged;
     }
 
-    // Update visibility and count for the plants
     private void UpdateSeedDisplay()
     {
-        UpdateCard(farnCard, farnCount, prevFarnSeeds);
-        UpdateCard(mangroveCard, mangroveCount, prevMangroveSeeds);
-        UpdateCard(crotonCard, crotonCount, prevCrotonSeeds);
-        UpdateCard(alocasiaCard, alocasiaCount, prevAlocasiaSeeds);
-        UpdateCard(teaktreeCard, teaktreeCount, prevTeaktreeSeeds);
-    }
-
-    private void UpdateCard(Image card, Image countImage, int count)
-    {
-        if (count > 0)
+        int position = 0;
+        foreach (var seedCard in seedCards)
         {
-            card.gameObject.SetActive(true);
-            countImage.sprite = GetNumberSprite(count);
-            countImage.gameObject.SetActive(true);
-        }
-        else
-        {
-            card.gameObject.SetActive(false);
-            countImage.gameObject.SetActive(false);
+            if (seedCard.Amount > 0)
+            {
+                seedCard.CardImage.gameObject.SetActive(true);
+                seedCard.CountImage.sprite = GetNumberSprite(seedCard.Amount);
+                seedCard.CountImage.gameObject.SetActive(true);
+                // Set position based on the index
+                seedCard.CardImage.rectTransform.anchoredPosition = new Vector2(position * 120, 0);
+                position++;
+            }
+            else
+            {
+                seedCard.CardImage.gameObject.SetActive(false);
+                seedCard.CountImage.gameObject.SetActive(false);
+            }
         }
     }
 

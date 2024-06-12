@@ -9,12 +9,11 @@ public class BackpackController : MonoBehaviour
     private CustomInputs input; // Referenz zum neuen Input System
     private bool isCanvasVisible = false; // Zustand des Canvas
     private int currentSelectionIndex = 0; // Index der aktuell ausgew‰hlten Samenkarte
-    private List<Image> seedCards = new List<Image>(); // Liste der Samenkarte
+    private List<SeedCard> seedCards; // Liste der Samenkarte
 
     private Backpack backpack;
     private PlayerMovement playerMovement;
     private Animator animator;
-
     private SeedInventory seedInventory;
 
     void Awake()
@@ -49,21 +48,13 @@ public class BackpackController : MonoBehaviour
             return;
         }
 
-        // Initialisiere die Samenkarte-Liste aus dem SeedInventory
-        seedCards.Add(seedInventory.farnCard);
-        seedCards.Add(seedInventory.mangroveCard);
-        seedCards.Add(seedInventory.crotonCard);
-        seedCards.Add(seedInventory.alocasiaCard);
-        seedCards.Add(seedInventory.teaktreeCard);
+        seedCards = new List<SeedCard>(seedInventory.seedCards);
 
-        // Stelle sicher, dass das Canvas standardm‰ﬂig deaktiviert ist
         seedInventoryCanvas.SetActive(isCanvasVisible);
         Debug.Log("Start: Seed inventory canvas set to inactive.");
 
-        // Initiales Update der Sichtbarkeit
         UpdateCardVisibility();
 
-        // Initialisiere den Animator vom Kindobjekt
         if (playerMovement != null)
         {
             animator = playerMovement.GetComponentInChildren<Animator>();
@@ -73,8 +64,6 @@ public class BackpackController : MonoBehaviour
             }
         }
     }
-
-
 
     void ToggleCanvasVisibility(InputAction.CallbackContext context)
     {
@@ -87,6 +76,8 @@ public class BackpackController : MonoBehaviour
             input.Backpack.Select.performed += OnSelect;
             input.Backpack.Cancel.performed += OnCancel;
             playerMovement.DisableMovement();
+            FilterActiveSeedCards(); // Filtere die Karten beim ÷ffnen des Canvas
+            UpdateCardVisibility();
         }
         else
         {
@@ -116,19 +107,21 @@ public class BackpackController : MonoBehaviour
     {
         for (int i = 0; i < seedCards.Count; i++)
         {
-            Color color = seedCards[i].color;
+            Color color = seedCards[i].CardImage.color;
             color.a = (i == currentSelectionIndex) ? 1f : 0.5f;
-            seedCards[i].color = color;
+            seedCards[i].CardImage.color = color;
         }
     }
 
-    // Logik zum Einpflanzen des ausgew‰hlten Samens
     private void OnSelect(InputAction.CallbackContext context)
     {
-        Debug.Log("Selected seed card: " + currentSelectionIndex);
+        if (currentSelectionIndex >= 0 && currentSelectionIndex < seedCards.Count)
+        {
+            Debug.Log("Selected seed card: " + currentSelectionIndex);
 
-        HandlePlanting();
-        ToggleCanvasVisibility(context); // Schlieﬂen Sie den Rucksack nach der Auswahl
+            HandlePlanting();
+            ToggleCanvasVisibility(context); // Schlieﬂen Sie den Rucksack nach der Auswahl
+        }
     }
 
     private void OnCancel(InputAction.CallbackContext context)
@@ -138,18 +131,13 @@ public class BackpackController : MonoBehaviour
 
     private void HandlePlanting()
     {
-        if (backpack != null && backpack.GetSeedCount() > 0) // ‹berpr¸fen Sie, ob Samen verf¸gbar sind
+        if (backpack != null && backpack.GetSeedCount(seedCards[currentSelectionIndex].SeedType) > 0) // ‹berpr¸fen Sie, ob Samen verf¸gbar sind
         {
             if (playerMovement != null && animator != null)
             {
-                playerMovement.SetCurrentSeedIndex(currentSelectionIndex); // Setzen des aktuellen Samenindex im PlayerMovement
+                playerMovement.SetCurrentSeedIndex(currentSelectionIndex);
                 animator.SetTrigger("HandleGoPlant"); // Starten der Pflanzanimation
             }
-
-            // Zeige den Samen in Pittis Hand w‰hrend der Animation
-            // seedInHand = Instantiate(seedPrefab, frontHandPosition.position, Quaternion.identity);
-            // seedInHand.transform.SetParent(frontHandPosition);
-            // seedInHand.SetActive(true);
         }
         else
         {
@@ -157,4 +145,8 @@ public class BackpackController : MonoBehaviour
         }
     }
 
+    private void FilterActiveSeedCards()
+    {
+        seedCards = seedInventory.seedCards.FindAll(card => card.Amount > 0);
+    }
 }
