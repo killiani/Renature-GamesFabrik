@@ -47,21 +47,30 @@ public class BackpackController : MonoBehaviour
             Debug.LogError("No SeedInventory found in the scene.");
             return;
         }
+        if (backpack == null)
+        {
+            Debug.LogError("No Backpack found in the scene.");
+            return;
+        }
 
+        seedInventory.InitializeSeedCards();
+        seedInventory.UpdateSeedDisplay();
         seedCards = new List<SeedCard>(seedInventory.seedCards);
+        if (seedCards.Count == 0)
+        {
+            Debug.LogError("Seed cards are not initialized correctly.");
+        }
 
         seedInventoryCanvas.SetActive(isCanvasVisible);
         Debug.Log("Start: Seed inventory canvas set to inactive.");
 
+        currentSelectionIndex = 0;
+        seedInventory.UpdateSeedDisplay();
         UpdateCardVisibility();
 
         if (playerMovement != null)
         {
             animator = playerMovement.GetComponentInChildren<Animator>();
-            if (animator == null)
-            {
-                Debug.LogError("No Animator component found in children of PlayerMovement.");
-            }
         }
     }
 
@@ -72,11 +81,17 @@ public class BackpackController : MonoBehaviour
 
         if (isCanvasVisible)
         {
+            Debug.Log($"Current selection index: {currentSelectionIndex}");
             input.Backpack.Move.performed += OnMove;
             input.Backpack.Select.performed += OnSelect;
             input.Backpack.Cancel.performed += OnCancel;
             playerMovement.DisableMovement();
+
+            seedInventory.InitializeSeedCards(); // Karten neu initialisieren
+            seedInventory.UpdateSeedDisplay();
             FilterActiveSeedCards(); // Filtere die Karten beim Öffnen des Canvas
+            seedInventory.UpdateSeedDisplay();
+            currentSelectionIndex = 0; // Ensure selection index is reset
             UpdateCardVisibility();
         }
         else
@@ -90,6 +105,13 @@ public class BackpackController : MonoBehaviour
 
     private void OnMove(InputAction.CallbackContext context) // Navigieren durch Samenkarten
     {
+        if (seedCards == null || seedCards.Count == 0)
+        {
+            Debug.LogError("No seed cards available.");
+            return;
+        }
+
+        Debug.Log($"Current selection index before move: {currentSelectionIndex}");
         Vector2 inputVector = context.ReadValue<Vector2>();
         if (inputVector.x > 0)
         {
@@ -99,17 +121,21 @@ public class BackpackController : MonoBehaviour
         {
             currentSelectionIndex = (currentSelectionIndex - 1 + seedCards.Count) % seedCards.Count;
         }
+        Debug.Log($"Current selection index after move: {currentSelectionIndex}");
 
         UpdateCardVisibility();
     }
 
+
     private void UpdateCardVisibility()
     {
+        Debug.Log("UpdateCardVisibility called");
         for (int i = 0; i < seedCards.Count; i++)
         {
             Color color = seedCards[i].CardImage.color;
             color.a = (i == currentSelectionIndex) ? 1f : 0.5f;
             seedCards[i].CardImage.color = color;
+            Debug.Log($"Card {i} visibility updated, alpha: {color.a}");
         }
     }
 
@@ -148,5 +174,15 @@ public class BackpackController : MonoBehaviour
     private void FilterActiveSeedCards()
     {
         seedCards = seedInventory.seedCards.FindAll(card => card.Amount > 0);
+        Debug.Log($"Active seed cards count: {seedCards.Count}");
+        foreach (var card in seedCards)
+        {
+            Debug.Log($"Active card: {card.SeedType}, Amount: {card.Amount}");
+        }
+        if (seedCards.Count == 0)
+        {
+            Debug.LogError("No active seed cards available.");
+        }
     }
+
 }

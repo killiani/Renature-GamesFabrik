@@ -18,6 +18,11 @@ public class SeedInventory : MonoBehaviour
     void Start()
     {
         backpack = FindObjectOfType<Backpack>();
+        if (backpack == null)
+        {
+            Debug.LogError("No Backpack found in the scene.");
+            return;
+        }
         InitializeSeedCards();
         UpdateSeedDisplay(); // Initiales Update
     }
@@ -31,22 +36,41 @@ public class SeedInventory : MonoBehaviour
         }
     }
 
-    private void InitializeSeedCards()
+    public void InitializeSeedCards()
     {
-        seedCards.Add(new SeedCard { SeedType = Seed.SeedType.Farn, CardPrefab = farnCardPrefab });
-        seedCards.Add(new SeedCard { SeedType = Seed.SeedType.Mangrove, CardPrefab = mangroveCardPrefab });
-        seedCards.Add(new SeedCard { SeedType = Seed.SeedType.Croton, CardPrefab = crotonCardPrefab });
-        seedCards.Add(new SeedCard { SeedType = Seed.SeedType.Alocasia, CardPrefab = alocasiaCardPrefab });
-        seedCards.Add(new SeedCard { SeedType = Seed.SeedType.Teaktree, CardPrefab = teaktreeCardPrefab });
 
-        // Instantiate the prefabs and get their UI components
-        foreach (var seedCard in seedCards)
+        if (backpack == null)
         {
-            GameObject cardInstance = Instantiate(seedCard.CardPrefab, transform);
-            seedCard.CardImage = cardInstance.GetComponent<Image>();
-            seedCard.CountImage = cardInstance.transform.GetChild(0).GetComponent<Image>(); // Assuming the CountImage is the first child
+            Debug.LogError("Backpack reference is null.");
+            return;
+        }
+
+        seedCards.Clear(); // Leere die Liste, um doppelte Einträge zu vermeiden
+
+        var seedTypes = new Dictionary<Seed.SeedType, GameObject>
+    {
+        { Seed.SeedType.Farn, farnCardPrefab },
+        { Seed.SeedType.Mangrove, mangroveCardPrefab },
+        { Seed.SeedType.Croton, crotonCardPrefab },
+        { Seed.SeedType.Alocasia, alocasiaCardPrefab },
+        { Seed.SeedType.Teaktree, teaktreeCardPrefab }
+    };
+
+        foreach (var seedType in seedTypes)
+        {
+            int amount = backpack.GetSeedCount(seedType.Key);
+            if (amount > 0)
+            {
+                var seedCard = new SeedCard { SeedType = seedType.Key, CardPrefab = seedType.Value, Amount = amount };
+                GameObject cardInstance = Instantiate(seedCard.CardPrefab, transform);
+                seedCard.CardImage = cardInstance.GetComponent<Image>();
+                seedCard.CountImage = cardInstance.transform.GetChild(0).GetComponent<Image>(); // Assuming the CountImage is the first child
+                seedCard.CardImage.gameObject.SetActive(false); // Ensure it's initially inactive
+                seedCards.Add(seedCard);
+            }
         }
     }
+
 
     private bool HasSeedsChanged()
     {
@@ -63,33 +87,9 @@ public class SeedInventory : MonoBehaviour
         return hasChanged;
     }
 
-    //private void UpdateSeedDisplay()
-    //{
-    //    int position = 0;
-    //    foreach (var seedCard in seedCards)
-    //    {
-    //        // Reset the position before setting it
-    //        seedCard.CardImage.rectTransform.anchoredPosition = Vector2.zero;
-
-    //        if (seedCard.Amount > 0)
-    //        {
-    //            seedCard.CardImage.gameObject.SetActive(true);
-    //            seedCard.CountImage.sprite = GetNumberSprite(seedCard.Amount);
-    //            seedCard.CountImage.gameObject.SetActive(true);
-    //            // Set position based on the index
-    //            seedCard.CardImage.rectTransform.anchoredPosition = new Vector2(position * 240, 0);
-    //            position++;
-    //        }
-    //        else
-    //        {
-    //            seedCard.CardImage.gameObject.SetActive(false);
-    //            seedCard.CountImage.gameObject.SetActive(false);
-    //        }
-    //    }
-    //}
-
-    private void UpdateSeedDisplay()
+    public void UpdateSeedDisplay()
     {
+        Debug.Log("UpdateSeedDisplay called");
         int activeCardCount = 0;
         foreach (var seedCard in seedCards)
         {
@@ -109,6 +109,7 @@ public class SeedInventory : MonoBehaviour
         {
             if (seedCard.Amount > 0)
             {
+                Debug.Log($"Setting position for {seedCard.SeedType}");
                 seedCard.CardImage.gameObject.SetActive(true);
                 seedCard.CountImage.sprite = GetNumberSprite(seedCard.Amount);
                 seedCard.CountImage.gameObject.SetActive(true);
