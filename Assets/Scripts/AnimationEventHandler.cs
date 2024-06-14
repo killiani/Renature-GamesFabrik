@@ -24,6 +24,15 @@ public class AnimationEventHandler : MonoBehaviour
         }
     }
 
+    public void OnPlantingAnimationStart()
+    {
+        if (playerMovement != null)
+        {
+            playerMovement.OnPlantingAnimationSeedStart();
+        }
+    }
+
+    // Erdhügel setzen
     public void OnPlantingAnimation()
     {
         if (playerMovement != null)
@@ -32,6 +41,7 @@ public class AnimationEventHandler : MonoBehaviour
         }
     }
 
+    // Samen aus Pittis Rechter Hand entfernen
     public void OnPlantingAnimationSeed()
     {
         if (playerMovement != null)

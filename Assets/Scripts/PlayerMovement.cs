@@ -140,6 +140,19 @@ public class PlayerMovement : MonoBehaviour
         isRunning = false;
     }
 
+    public void OnPlantingAnimationSeedStart()
+    {
+        // Samen in die Hand positionieren
+        seedInHand = Instantiate(seedPrefab, frontHandPosition.position, Quaternion.identity, frontHandPosition);
+        seedInHand.transform.localScale *= 3; // Vergrößern 
+
+        // Sicherstellen, dass der Samen kein Rigidbody hat oder kinematisch ist
+        Rigidbody2D seedRigidbody = seedInHand.GetComponent<Rigidbody2D>();
+        if (seedRigidbody != null)
+        {
+            seedRigidbody.isKinematic = true;
+        }
+    }
 
     public void OnPlantingAnimationSeed()
     {
