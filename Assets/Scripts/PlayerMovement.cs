@@ -156,6 +156,21 @@ public class PlayerMovement : MonoBehaviour
      * - Neue Methode zum Setzen des Samenindex, asu BackpackController
      * 
      */
+
+    private float GetGroundAngle(Vector3 position)
+    {
+        // Führen Sie einen Raycast nach unten durch, um den Boden zu treffen
+        RaycastHit2D hit = Physics2D.Raycast(position, Vector2.down, 1f, groundLayer);
+        if (hit.collider != null)
+        {
+            // Berechnen Sie den Winkel des Bodens an der Trefferstelle
+            Vector2 normal = hit.normal;
+            float angle = Mathf.Atan2(normal.y, normal.x) * Mathf.Rad2Deg;
+            return angle - 90f; // Anpassen, damit 0 Grad horizontal ist
+        }
+        return 0f; // Standardwinkel, wenn kein Boden gefunden wurde
+    }
+
     private int currentSeedIndex = -1;
 
     public void SetCurrentSeedIndex(int index)
@@ -189,7 +204,12 @@ public class PlayerMovement : MonoBehaviour
                 }
 
                 Vector3 plantPosition = new Vector3(transform.position.x + offsetX, groundCheck.position.y + offsetY, transform.position.z); // Position von Pittis Füßen
-                GameObject plantInstance = Instantiate(plantPrefab, plantPosition, Quaternion.identity);
+
+                // Bestimmen Sie die Neigung des Bodens an der Pflanzposition
+                float groundAngle = GetGroundAngle(plantPosition);
+
+                // Erstellen Sie den Erdhügel und richten Sie ihn an der Neigung des Bodens aus
+                GameObject plantInstance = Instantiate(plantPrefab, plantPosition, Quaternion.Euler(0, 0, groundAngle));
 
                 // Starte die Wachstumsroutine
                 StartCoroutine(GrowPlant(plantInstance, newPlant.Type, newPlant.GrowthTime));
