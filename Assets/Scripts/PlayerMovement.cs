@@ -22,6 +22,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask groundLayer;
     [SerializeField] private AudioSource walkSoundSource; // AudioSource für den Walksound
     [SerializeField] private AudioClip walkSound; // Walksound AudioClip
+    [SerializeField] private AudioSource runningSoundSource;
+    [SerializeField] private AudioClip runningSound;
     [SerializeField] private GameObject plantPrefab; // Prefab für die Erde wo die plants hinkommen
     [SerializeField] private GameObject mangrovePrefab; // Prefab für Mangrove
     [SerializeField] private GameObject farnPrefab;
@@ -48,11 +50,7 @@ public class PlayerMovement : MonoBehaviour
         input.Player.Move.canceled += OnMoveCanceled;
         input.Player.RunningFaster.performed += ctx => OnRun(ctx);
         input.Player.RunningFaster.canceled += ctx => OnRunCanceled(ctx);
-
-        // Binde die Primäraktion an die HandlePickupDrop-Methode
-        //input.Player.PrimaryAction.performed += ctx => HandlePickupDrop();
         input.Player.PrimaryAction.performed += HandlePrimaryAction;
-
     }
 
     public void DisableMovement() // BackpackController steuert dies um die Tasten der Auwahl zuzuordnen
@@ -60,7 +58,6 @@ public class PlayerMovement : MonoBehaviour
         input.Player.Move.performed -= OnMove;
         input.Player.Move.canceled -= OnMoveCanceled;
         input.Player.PrimaryAction.performed -= HandlePrimaryAction;
-
     }
     public void EnableMovement()
     {
@@ -421,14 +418,28 @@ public class PlayerMovement : MonoBehaviour
 
     private void WalkSound(bool isMoving)
     {
-        // Spiele Walksound ab, wenn der Charakter sich bewegt
+        // Überprüfe, ob sich der Charakter bewegt und ob er rennt
         if (isMoving)
         {
-            if (!walkSoundSource.isPlaying)
+            if (isRunning)
             {
-                walkSoundSource.clip = walkSound;
-                walkSoundSource.loop = true;
-                walkSoundSource.Play();
+                if (!runningSoundSource.isPlaying)
+                {
+                    walkSoundSource.Stop(); // Stelle sicher, dass der Walksound gestoppt ist
+                    runningSoundSource.clip = runningSound;
+                    runningSoundSource.loop = true;
+                    runningSoundSource.Play();
+                }
+            }
+            else
+            {
+                if (!walkSoundSource.isPlaying)
+                {
+                    runningSoundSource.Stop(); // Stelle sicher, dass der Runningsound gestoppt ist
+                    walkSoundSource.clip = walkSound;
+                    walkSoundSource.loop = true;
+                    walkSoundSource.Play();
+                }
             }
         }
         else
@@ -436,10 +447,14 @@ public class PlayerMovement : MonoBehaviour
             if (walkSoundSource.isPlaying)
             {
                 walkSoundSource.Stop();
-                walkSoundSource.clip = walkSound; // Setze den Clip zurück, um Verzögerungen zu minimieren
+            }
+            if (runningSoundSource.isPlaying)
+            {
+                runningSoundSource.Stop();
             }
         }
     }
+
 
     private void Flip()
     {
