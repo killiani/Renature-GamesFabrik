@@ -20,7 +20,6 @@ public class BackpackController : MonoBehaviour
     void Awake()
     {
         input = new CustomInputs();
-        Debug.Log("Awake: CustomInputs initialized.");
     }
 
     void OnEnable()
