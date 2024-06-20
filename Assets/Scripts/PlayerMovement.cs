@@ -52,6 +52,7 @@ public class PlayerMovement : MonoBehaviour
         // Binde die Primäraktion an die HandlePickupDrop-Methode
         //input.Player.PrimaryAction.performed += ctx => HandlePickupDrop();
         input.Player.PrimaryAction.performed += HandlePrimaryAction;
+
     }
 
     public void DisableMovement() // BackpackController steuert dies um die Tasten der Auwahl zuzuordnen
