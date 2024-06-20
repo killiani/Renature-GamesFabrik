@@ -26,14 +26,14 @@ public class BackpackController : MonoBehaviour
     {
         input.Enable();
         input.HUD.BackpackButton.performed += ToggleCanvasVisibility; // Registriere die Eingabeaktion
-        Debug.Log("OnEnable: Input actions enabled.");
+        Debug.Log("Rucksack Input aktiviert");
     }
 
     void OnDisable()
     {
         input.HUD.BackpackButton.performed -= ToggleCanvasVisibility; // Deregistriere die Eingabeaktion
         input.Disable();
-        Debug.Log("OnDisable: Input actions disabled.");
+        Debug.Log("Rucksack Input deaktiviert");
     }
 
     void Start()
@@ -49,11 +49,11 @@ public class BackpackController : MonoBehaviour
         }
 
         // Initialisiere die Samenkarte-Liste aus dem SeedInventory
-        seedCards.Add(seedInventory.farnCard);
-        seedCards.Add(seedInventory.mangroveCard);
-        seedCards.Add(seedInventory.crotonCard);
-        seedCards.Add(seedInventory.alocasiaCard);
-        seedCards.Add(seedInventory.teaktreeCard);
+        AddCardIfNotEmpty(seedInventory.farnCard, Seed.SeedType.Farn);
+        AddCardIfNotEmpty(seedInventory.mangroveCard, Seed.SeedType.Mangrove);
+        AddCardIfNotEmpty(seedInventory.crotonCard, Seed.SeedType.Croton);
+        AddCardIfNotEmpty(seedInventory.alocasiaCard, Seed.SeedType.Alocasia);
+        AddCardIfNotEmpty(seedInventory.teaktreeCard, Seed.SeedType.Teaktree);
 
         // Stelle sicher, dass das Canvas standardmäßig deaktiviert ist
         seedInventoryCanvas.SetActive(isCanvasVisible);
@@ -73,7 +73,25 @@ public class BackpackController : MonoBehaviour
         }
     }
 
+    public void RefreshSeedCards()
+    {
+        seedCards.Clear();
+        AddCardIfNotEmpty(seedInventory.farnCard, Seed.SeedType.Farn);
+        AddCardIfNotEmpty(seedInventory.mangroveCard, Seed.SeedType.Mangrove);
+        AddCardIfNotEmpty(seedInventory.crotonCard, Seed.SeedType.Croton);
+        AddCardIfNotEmpty(seedInventory.alocasiaCard, Seed.SeedType.Alocasia);
+        AddCardIfNotEmpty(seedInventory.teaktreeCard, Seed.SeedType.Teaktree);
 
+        UpdateCardVisibility();
+    }
+
+    private void AddCardIfNotEmpty(Image card, Seed.SeedType type)
+    {
+        if (backpack.GetSeedCountByType(type) > 0)
+        {
+            seedCards.Add(card);
+        }
+    }
 
     void ToggleCanvasVisibility(InputAction.CallbackContext context)
     {
@@ -98,28 +116,45 @@ public class BackpackController : MonoBehaviour
 
     private void OnMove(InputAction.CallbackContext context) // Navigieren durch Samenkarten
     {
-        Vector2 inputVector = context.ReadValue<Vector2>();
-        if (inputVector.x > 0)
-        {
-            currentSelectionIndex = (currentSelectionIndex + 1) % seedCards.Count;
-        }
-        else if (inputVector.x < 0)
-        {
-            currentSelectionIndex = (currentSelectionIndex - 1 + seedCards.Count) % seedCards.Count;
-        }
+        Debug.Log("OnMove");
+        Debug.Log($"Anzahl der Samenkarten: {seedCards.Count}");
 
-        UpdateCardVisibility();
+        if (seedCards.Count > 0)
+        {
+            Vector2 inputVector = context.ReadValue<Vector2>();
+            if (inputVector.x > 0)
+            {
+                currentSelectionIndex = (currentSelectionIndex + 1) % seedCards.Count;
+            }
+            else if (inputVector.x < 0)
+            {
+                currentSelectionIndex = (currentSelectionIndex - 1 + seedCards.Count) % seedCards.Count;
+            }
+            Debug.Log("OnMove > doing update");
+
+            UpdateCardVisibility();
+        }
     }
+
 
     private void UpdateCardVisibility()
     {
-        for (int i = 0; i < seedCards.Count; i++)
+        if (seedCards.Count > 0)
         {
-            Color color = seedCards[i].color;
-            color.a = (i == currentSelectionIndex) ? 1f : 0.5f;
-            seedCards[i].color = color;
+            for (int i = 0; i < seedCards.Count; i++)
+            {
+                Color color = seedCards[i].color;
+                color.a = (i == currentSelectionIndex) ? 1f : 0.5f;
+                seedCards[i].color = color;
+                Debug.Log($"seedCard color: {seedCards[i]} - {color}");
+            }
+        }
+        else
+        {
+            Debug.Log("Keine Samenkarten vorhanden");
         }
     }
+
 
     // Logik zum Einpflanzen des ausgewählten Samens
     private void OnSelect(InputAction.CallbackContext context)
