@@ -71,8 +71,6 @@ public class GameMenu : MonoBehaviour
     private void NavigateMenu(InputAction.CallbackContext context)
     {
         Vector2 moveInput = context.ReadValue<Vector2>();
-
-        Debug.Log("Move Input: " + moveInput);
         GameObject currentSelected = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject;
         Selectable currentSelectable = currentSelected?.GetComponent<Selectable>();
         if (currentSelectable == null) return;
