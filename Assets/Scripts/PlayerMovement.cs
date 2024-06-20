@@ -57,7 +57,6 @@ public class PlayerMovement : MonoBehaviour
 
     public void DisableMovement() // BackpackController steuert dies um die Tasten der Auwahl zuzuordnen
     {
-        Debug.Log("Ausgeschaltet: ");
         input.Player.Move.performed -= OnMove;
         input.Player.Move.canceled -= OnMoveCanceled;
         input.Player.PrimaryAction.performed -= HandlePrimaryAction;
@@ -65,10 +64,16 @@ public class PlayerMovement : MonoBehaviour
     }
     public void EnableMovement()
     {
+        StartCoroutine(EnableMovementAfterDelay());
+    }
+
+    private IEnumerator EnableMovementAfterDelay()
+    {
+        yield return new WaitForSeconds(0.1f);  // Verzögerung von 100 Millisekunden
         input.Player.Move.performed += OnMove;
         input.Player.Move.canceled += OnMoveCanceled;
         input.Player.PrimaryAction.performed += HandlePrimaryAction;
-        Debug.Log("Eingeschaltet: ");
+        Debug.Log("Movement Enabled");
     }
 
     void OnEnable()
