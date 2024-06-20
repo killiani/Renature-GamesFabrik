@@ -307,6 +307,38 @@ PrefabInstance:
       propertyPath: m_RenderMode
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3251229828285441814, guid: d0dc524f0d1bc49cabb86dcb71433a8e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3251229828285441814, guid: d0dc524f0d1bc49cabb86dcb71433a8e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3251229828285441814, guid: d0dc524f0d1bc49cabb86dcb71433a8e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 538105152}
+    - target: {fileID: 3251229828285441814, guid: d0dc524f0d1bc49cabb86dcb71433a8e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3251229828285441814, guid: d0dc524f0d1bc49cabb86dcb71433a8e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LoadScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 3251229828285441814, guid: d0dc524f0d1bc49cabb86dcb71433a8e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: SceneLoader, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 3251229828285441814, guid: d0dc524f0d1bc49cabb86dcb71433a8e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_StringArgument
+      value: BigLake
+      objectReference: {fileID: 0}
+    - target: {fileID: 3251229828285441814, guid: d0dc524f0d1bc49cabb86dcb71433a8e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 3797758907323188980, guid: d0dc524f0d1bc49cabb86dcb71433a8e, type: 3}
       propertyPath: m_Layer
       value: 5
@@ -377,7 +409,7 @@ PrefabInstance:
       addedObject: {fileID: 1634187197}
     - targetCorrespondingSourceObject: {fileID: 595282406900735767, guid: d0dc524f0d1bc49cabb86dcb71433a8e, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 1128299812}
+      addedObject: {fileID: 929022525}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 562363537946270248, guid: d0dc524f0d1bc49cabb86dcb71433a8e, type: 3}
       insertIndex: -1
@@ -394,6 +426,54 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 595282406900735767, guid: d0dc524f0d1bc49cabb86dcb71433a8e, type: 3}
   m_PrefabInstance: {fileID: 126344792}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &538105150
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 538105151}
+  - component: {fileID: 538105152}
+  m_Layer: 5
+  m_Name: Scene Loader
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &538105151
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 538105150}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 929022525}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &538105152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 538105150}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94f3acfce0743c643ba4dfbf90821b33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &634151567 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4418837474661824286, guid: d0dc524f0d1bc49cabb86dcb71433a8e, type: 3}
@@ -420,7 +500,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!1 &1128299811
+--- !u!1 &929022524
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -428,27 +508,28 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1128299812}
-  - component: {fileID: 1128299813}
+  - component: {fileID: 929022525}
   m_Layer: 5
-  m_Name: BootController
+  m_Name: __Scripts________
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &1128299812
+--- !u!224 &929022525
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1128299811}
+  m_GameObject: {fileID: 929022524}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1377301808}
+  - {fileID: 538105151}
   m_Father: {fileID: 346311709}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -456,20 +537,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1128299813
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1128299811}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a4116f87a5e7284a8d99ffde2e4b547, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rightBoat: {fileID: 634151567}
-  leftBoat: {fileID: 1620946659}
 --- !u!1 &1152529039 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 562363537946270248, guid: d0dc524f0d1bc49cabb86dcb71433a8e, type: 3}
@@ -527,6 +594,56 @@ SpriteRenderer:
   m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1377301807
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1377301808}
+  - component: {fileID: 1377301809}
+  m_Layer: 5
+  m_Name: Boat Animation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1377301808
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377301807}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 929022525}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1377301809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377301807}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a4116f87a5e7284a8d99ffde2e4b547, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rightBoat: {fileID: 634151567}
+  leftBoat: {fileID: 1620946659}
 --- !u!1 &1620946659 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 245443769438672114, guid: d0dc524f0d1bc49cabb86dcb71433a8e, type: 3}
