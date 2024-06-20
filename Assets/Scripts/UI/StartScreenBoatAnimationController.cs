@@ -1,30 +1,31 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class BoatAnimationController : MonoBehaviour
 {
-    public Animator animator;
+    public GameObject rightBoat;
+    public GameObject leftBoat;
+    private Animator rightBoatAnimator;
+    private Animator leftBoatAnimator;
 
     void Start()
     {
-        // Start the first animation
-        animator.SetBool("StartBoot1", true);
+        rightBoatAnimator = rightBoat.GetComponent<Animator>();
+        leftBoatAnimator = leftBoat.GetComponent<Animator>();
+        StartCoroutine(BoatSequence());
     }
 
-    void Update()
+    private IEnumerator BoatSequence()
     {
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
+        while (true)
+        {
+            rightBoatAnimator.SetTrigger("rightBoat");
+            yield return new WaitUntil(() => rightBoatAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle"));
+            yield return new WaitForSeconds(17);
 
-        if (stateInfo.IsName("Boot1Animation") && stateInfo.normalizedTime >= 1.0f)
-        {
-            // Boot 1 Animation finished, start Boot 2 Animation
-            animator.SetBool("StartBoot1", false);
-            animator.SetBool("StartBoot2", true);
-        }
-        else if (stateInfo.IsName("Boot2Animation") && stateInfo.normalizedTime >= 1.0f)
-        {
-            // Boot 2 Animation finished, start Boot 1 Animation
-            animator.SetBool("StartBoot2", false);
-            animator.SetBool("StartBoot1", true);
+            leftBoatAnimator.SetTrigger("leftBoat");
+            yield return new WaitUntil(() => leftBoatAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle"));
+            yield return new WaitForSeconds(30);
         }
     }
 }
