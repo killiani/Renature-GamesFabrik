@@ -51,6 +51,7 @@ public class PlayerMovement : MonoBehaviour
         input.Player.RunningFaster.performed += ctx => OnRun(ctx);
         input.Player.RunningFaster.canceled += ctx => OnRunCanceled(ctx);
         input.Player.PrimaryAction.performed += HandlePrimaryAction;
+        input.Player.WateringAction.performed += HandleWateringAction;
     }
 
     public void DisableMovement() // BackpackController steuert dies um die Tasten der Auwahl zuzuordnen
@@ -58,6 +59,7 @@ public class PlayerMovement : MonoBehaviour
         input.Player.Move.performed -= OnMove;
         input.Player.Move.canceled -= OnMoveCanceled;
         input.Player.PrimaryAction.performed -= HandlePrimaryAction;
+        input.Player.WateringAction.performed -= HandleWateringAction;
     }
     public void EnableMovement()
     {
@@ -70,6 +72,7 @@ public class PlayerMovement : MonoBehaviour
         input.Player.Move.performed += OnMove;
         input.Player.Move.canceled += OnMoveCanceled;
         input.Player.PrimaryAction.performed += HandlePrimaryAction;
+        input.Player.WateringAction.performed += HandleWateringAction;
         Debug.Log("Movement Enabled");
     }
 
@@ -238,6 +241,12 @@ public class PlayerMovement : MonoBehaviour
             }
             currentSeedIndex = -1; // Zurücksetzen des Index nach dem Pflanzen
         }
+    }
+
+    private void HandleWateringAction(InputAction.CallbackContext context)
+    {
+        Debug.Log("Watering: ");
+        animator.SetTrigger("HandleGoWatering");
     }
 
     // Hack um es aus dem Backback heraus zu umgehen
