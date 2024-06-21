@@ -25,6 +25,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private AudioSource runningSoundSource;
     [SerializeField] private AudioClip runningSound;
     [SerializeField] private GameObject plantPrefab; // Prefab für die Erde wo die plants hinkommen
+    [SerializeField] private GameObject wateringCanPrefab;
     [SerializeField] private GameObject mangrovePrefab; // Prefab für Mangrove
     [SerializeField] private GameObject farnPrefab;
     [SerializeField] private GameObject alocasiaPrefab;
@@ -39,6 +40,7 @@ public class PlayerMovement : MonoBehaviour
     private Backpack backpack;
     private GameObject nearestObject;
     private GameObject seedInHand; // Referenz auf den Samen in Pittis Hand
+    private GameObject wateringCanInHand;
 
 
     void Awake()
@@ -245,8 +247,33 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleWateringAction(InputAction.CallbackContext context)
     {
-        Debug.Log("Watering: ");
         animator.SetTrigger("HandleGoWatering");
+
+        // gießkannen prefab laden und animation abspielen
+        wateringCanInHand = Instantiate(wateringCanPrefab, frontHandPosition.position, Quaternion.identity, frontHandPosition);
+
+        // Rigidbody der Gießkanne finden und Schwerkraft deaktivieren
+        Rigidbody2D wateringCanRigidbody = wateringCanInHand.GetComponent<Rigidbody2D>();
+        if (wateringCanRigidbody != null)
+        {
+            wateringCanRigidbody.gravityScale = 0f; // Deaktiviere die Schwerkraft
+            wateringCanRigidbody.velocity = Vector2.zero; // Setze die Geschwindigkeit auf Null
+            wateringCanRigidbody.angularVelocity = 0f; // Setze die Drehgeschwindigkeit auf Null
+        }
+
+        // Setze die Gießkanne als Kind-Objekt der Handposition, um der Hand zu folgen
+        wateringCanInHand.transform.parent = frontHandPosition;
+
+        // Manuelle Eingabe der Position relativ zur Handposition
+        wateringCanInHand.transform.localPosition = new Vector3(-0.8f, 0, 0);
+    }
+
+    public void OnWateringAnimationEnd()
+    {
+        if (wateringCanInHand != null)
+        {
+            Destroy(wateringCanInHand); // Entferne die Gießkanne aus Pittis Hand
+        }
     }
 
     // Hack um es aus dem Backback heraus zu umgehen

@@ -49,4 +49,12 @@ public class AnimationEventHandler : MonoBehaviour
             playerMovement.OnPlantingAnimationSeed();
         }
     }
+
+    public void OnWateringAnimationEnd()
+    {
+        if (playerMovement != null)
+        {
+            playerMovement.OnWateringAnimationEnd();
+        } 
+    }
 }
