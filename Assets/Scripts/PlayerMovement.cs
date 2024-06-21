@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem; // Importiere das neue Input System
+using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -25,6 +25,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private AudioSource runningSoundSource;
     [SerializeField] private AudioClip runningSound;
     [SerializeField] private GameObject plantPrefab; // Prefab für die Erde wo die plants hinkommen
+    [SerializeField] private GameObject wateringCanPrefab;
+    [SerializeField] private GameObject waterRunningOutOfCanPrefab;
     [SerializeField] private GameObject mangrovePrefab; // Prefab für Mangrove
     [SerializeField] private GameObject farnPrefab;
     [SerializeField] private GameObject alocasiaPrefab;
@@ -32,14 +34,20 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GameObject teaktreePrefab;
     [SerializeField] private Transform frontHandPosition;
     [SerializeField] private GameObject seedPrefab; // Generisches Samen-Prefab
-    [SerializeField] private BeibootTrigger beibootTrigger; // Referenz zum Beiboot
+    [SerializeField] private BeibootTrigger beibootTrigger; // Referenz zur SoundZone
+    [SerializeField] private AudioSource pickupSoundSource; // AudioSource für das Aufheben
+    [SerializeField] private AudioClip pickupSound; // Aufhebgeräusch
+    [SerializeField] private AudioSource dropSoundSource; // AudioSource für das Ablegen
+    [SerializeField] private AudioClip dropSound; // Standard Ableggeräusch
+    [SerializeField] private List<AudioClip> beibootDropSounds; // Liste der Geräusche für die Beiboot-Zone
 
     // Diese Referenz wird im Start-Methodenblock automatisch gesetzt
     private PickupScript pickupScript;
     private Backpack backpack;
     private GameObject nearestObject;
     private GameObject seedInHand; // Referenz auf den Samen in Pittis Hand
-
+    private GameObject wateringCanInHand;
+    private GameObject waterRunningOutOfCan;
 
     void Awake()
     {
@@ -51,14 +59,22 @@ public class PlayerMovement : MonoBehaviour
         input.Player.RunningFaster.performed += ctx => OnRun(ctx);
         input.Player.RunningFaster.canceled += ctx => OnRunCanceled(ctx);
         input.Player.PrimaryAction.performed += HandlePrimaryAction;
+        input.Player.WateringAction.performed += HandleWateringAction;
     }
 
-    public void DisableMovement() // BackpackController steuert dies um die Tasten der Auwahl zuzuordnen
+    public void DisableMovement()
     {
         input.Player.Move.performed -= OnMove;
         input.Player.Move.canceled -= OnMoveCanceled;
         input.Player.PrimaryAction.performed -= HandlePrimaryAction;
+        input.Player.WateringAction.performed -= HandleWateringAction;
+
+        horizontal = 0f; // Setze die horizontale Bewegung auf Null
+        rb.velocity = Vector2.zero; // Setze die Geschwindigkeit auf Null
+        input.Player.Move.Disable(); // Deaktiviere die Bewegungseingaben
+        input.Player.RunningFaster.Disable(); // Deaktiviere die Lauf-Eingaben
     }
+
     public void EnableMovement()
     {
         StartCoroutine(EnableMovementAfterDelay());
@@ -66,11 +82,14 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator EnableMovementAfterDelay()
     {
-        yield return new WaitForSeconds(0.1f);  // Verzögerung von 100 Millisekunden
+        yield return new WaitForSeconds(0.2f);
         input.Player.Move.performed += OnMove;
         input.Player.Move.canceled += OnMoveCanceled;
         input.Player.PrimaryAction.performed += HandlePrimaryAction;
-        Debug.Log("Movement Enabled");
+        input.Player.WateringAction.performed += HandleWateringAction;
+
+        input.Player.Move.Enable(); // Aktiviere die Bewegungseingaben
+        input.Player.RunningFaster.Enable(); // Aktiviere die Lauf-Eingaben
     }
 
     void OnEnable()
@@ -146,6 +165,7 @@ public class PlayerMovement : MonoBehaviour
     public void OnPlantingAnimationSeedStart()
     {
         // Samen in die Hand positionieren
+        DisableMovement();
         seedInHand = Instantiate(seedPrefab, frontHandPosition.position, Quaternion.identity, frontHandPosition);
         seedInHand.transform.localScale *= 3; // Vergrößern 
 
@@ -163,6 +183,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Destroy(seedInHand); // Entferne den Samen aus Pittis Hand
         }
+        EnableMovement();
     }
 
 
@@ -192,16 +213,15 @@ public class PlayerMovement : MonoBehaviour
     public void SetCurrentSeedIndex(int index)
     {
         currentSeedIndex = index;
-        Debug.Log("New Index: "+ currentSeedIndex);
+        Debug.Log("New Index: " + currentSeedIndex);
         Debug.Log("All Seeds List: " + backpack.GetAllSeeds());
-        Debug.Log("Target Seed: "+ backpack.GetAllSeeds()[currentSeedIndex]);
+        Debug.Log("Target Seed: " + backpack.GetAllSeeds()[currentSeedIndex]);
     }
 
     public void OnPlantingAnimation()
     {
         if (currentSeedIndex >= 0)
         {
-
             Seed seedToPlant = backpack.GetAndRemoveSeedAt(currentSeedIndex);
             if (seedToPlant != null)
             {
@@ -231,25 +251,94 @@ public class PlayerMovement : MonoBehaviour
                 StartCoroutine(GrowPlant(plantInstance, newPlant.Type, newPlant.GrowthTime));
 
                 Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
-                //Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
-                //Debug.Log($"Plant position: {plantPosition}");
-                //Debug.Log($"Pitti position: {transform.position}");
-                //Debug.Log($"GroundCheck position: {groundCheck.position}");
             }
             currentSeedIndex = -1; // Zurücksetzen des Index nach dem Pflanzen
         }
     }
 
+    private void HandleWateringAction(InputAction.CallbackContext context)
+    {
+        DisableMovement();
+        animator.SetTrigger("HandleGoWatering");
+
+        // _________ Giesskanne
+        // gießkannen prefab laden und animation abspielen
+        wateringCanInHand = Instantiate(wateringCanPrefab, frontHandPosition.position, Quaternion.identity, frontHandPosition);
+
+        // Rigidbody der Gießkanne finden und Schwerkraft deaktivieren
+        Rigidbody2D wateringCanRigidbody = wateringCanInHand.GetComponent<Rigidbody2D>();
+        if (wateringCanRigidbody != null)
+        {
+            wateringCanRigidbody.gravityScale = 0f; // Deaktiviere die Schwerkraft
+            wateringCanRigidbody.velocity = Vector2.zero; // Setze die Geschwindigkeit auf Null
+            wateringCanRigidbody.angularVelocity = 0f; // Setze die Drehgeschwindigkeit auf Null
+        }
+
+        // Setze die Gießkanne als Kind-Objekt der Handposition, um der Hand zu folgen
+        wateringCanInHand.transform.parent = frontHandPosition;
+
+        // Manuelle Eingabe der Position relativ zur Handposition
+        wateringCanInHand.transform.localPosition = new Vector3(-0.8f, 0, 0);
+
+        Invoke("SpawnWater", 0.1f);
+    }
+
+
+    private void SpawnWater()
+    {
+        // _________ Wasser
+        waterRunningOutOfCan = Instantiate(waterRunningOutOfCanPrefab, wateringCanInHand.transform.position, Quaternion.identity);
+
+        Rigidbody2D waterRigidbody = waterRunningOutOfCan.GetComponent<Rigidbody2D>();
+        if (waterRigidbody != null)
+        {
+            waterRigidbody.gravityScale = 0f;
+            waterRigidbody.velocity = Vector2.zero;
+            waterRigidbody.angularVelocity = 0f;
+        }
+
+        waterRunningOutOfCan.transform.parent = wateringCanInHand.transform;
+        waterRunningOutOfCan.transform.localScale *= 0.5f; // verkleinern
+        waterRunningOutOfCan.transform.localPosition = new Vector3(-2.4f, 1.2f, 0);
+
+        if (!isFacingRight) // Wasser horizontal spiegeln
+        {
+            Vector3 localScale = waterRunningOutOfCan.transform.localScale;
+            localScale.x *= -1f;
+            waterRunningOutOfCan.transform.localScale = localScale;
+        }
+    }
+
+    public void OnWateringAnimationEnd()
+    {
+        if (wateringCanInHand != null)
+        {
+            Destroy(wateringCanInHand); // Entferne die Gießkanne aus Pittis Hand
+        }
+        if (waterRunningOutOfCan != null)
+        {
+            Destroy(waterRunningOutOfCan);
+        }
+        EnableMovement();
+    }
+
     // Hack um es aus dem Backback heraus zu umgehen
     private void HandlePrimaryAction(InputAction.CallbackContext context)
     {
-        Debug.Log("HandlePickupDrop ausgeführt: ");
         HandlePickupDrop();
+    }
+
+    private void UpdateMovement()
+    {
+        // Aktualisiert die Geschwindigkeit des Rigidbody, um sofortiges Anhalten zu erzwingen
+        rb.velocity = new Vector2(horizontal * (isRunning ? speedFaster : speed), rb.velocity.y);
     }
 
     private void HandlePickupDrop()
     {
+        // LAUFEn muss dekativert werden
         animator.SetTrigger("HandleGoDown");
+        DisableMovement();
 
         if (switchMovement == false) // __________________________ AUFHEBEN
         {
@@ -262,10 +351,11 @@ public class PlayerMovement : MonoBehaviour
                 if (nearestObject.layer == LayerMask.NameToLayer("Seeds"))
                 {
                     Debug.Log("Try to grab Seed");
-                } 
+                }
                 else if (nearestObject.layer == LayerMask.NameToLayer("Objects"))
                 {
                     Debug.Log("Try to grab Object");
+                    PlayPickupSound();
                 }
                 isPickingUp = true; // Animation auslösen
             }
@@ -291,12 +381,49 @@ public class PlayerMovement : MonoBehaviour
 
                 pickupScript.DropObject();
 
+                if (beibootTrigger.IsPlayerInZone())
+                {
+                    PlayRandomBeibootDropSound(); // Spiele ein zufälliges Geräusch aus der Beiboot-Zone ab
+                }
+                else
+                {
+                    PlayDropSound(); // Spiele das Standard-Ableggeräusch ab
+                }
+
                 switchMovement = false;
                 animator.SetBool("HasObject", false);
             }
         }
     }
 
+    private void PlayPickupSound()
+    {
+        StartCoroutine(PlaySoundWithDelay(pickupSoundSource, pickupSound, 0.3f));
+    }
+
+    private void PlayDropSound()
+    {
+        StartCoroutine(PlaySoundWithDelay(dropSoundSource, dropSound, 0.1f));
+    }
+
+    private void PlayRandomBeibootDropSound()
+    {
+        if (beibootDropSounds.Count > 0)
+        {
+            int randomIndex = Random.Range(0, beibootDropSounds.Count);
+            AudioClip randomClip = beibootDropSounds[randomIndex];
+            StartCoroutine(PlaySoundWithDelay(dropSoundSource, randomClip, 0.5f));
+        }
+    }
+
+    private IEnumerator PlaySoundWithDelay(AudioSource audioSource, AudioClip audioClip, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (audioSource != null && audioClip != null)
+        {
+            audioSource.PlayOneShot(audioClip);
+        }
+    }
 
     // Diese Methode wird vom Animationsevent in der Mitte aufgerufen
     public void OnPickupAnimationEnd()
@@ -322,7 +449,7 @@ public class PlayerMovement : MonoBehaviour
                     Seed randomSeed = Seed.GenerateRandomSeed();
                     backpack.AddSeed(randomSeed);
                     Debug.Log("Seed Pickup OK");
-                    nearestObject.SetActive(false); // Samen deaktivieren, nachdem er aufgesamme
+                    nearestObject.SetActive(false); // Samen deaktivieren, nachdem er aufgesammelt wurde
                 }
                 else
                 {
@@ -333,10 +460,10 @@ public class PlayerMovement : MonoBehaviour
         }
         // Setze den Zustand nach dem Aufheben oder Ablegen zurück
         isPickingUp = false;
+        EnableMovement();
     }
 
     // Methode zur Überprüfung, ob sich ein aufhebbares Objekt in der Nähe befindet
-
     private GameObject GetNearestObject()
     {
         // Erstelle einen Kreis-Collider, um nach Objekten und Samen zu suchen
@@ -397,7 +524,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-
     private void FixedUpdate()
     {
         float currentSpeed = isRunning ? speedFaster : speed;
@@ -454,7 +580,6 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
-
 
     private void Flip()
     {
