@@ -26,6 +26,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private AudioClip runningSound;
     [SerializeField] private GameObject plantPrefab; // Prefab für die Erde wo die plants hinkommen
     [SerializeField] private GameObject wateringCanPrefab;
+    [SerializeField] private GameObject waterRunningOutOfCanPrefab;
     [SerializeField] private GameObject mangrovePrefab; // Prefab für Mangrove
     [SerializeField] private GameObject farnPrefab;
     [SerializeField] private GameObject alocasiaPrefab;
@@ -41,6 +42,7 @@ public class PlayerMovement : MonoBehaviour
     private GameObject nearestObject;
     private GameObject seedInHand; // Referenz auf den Samen in Pittis Hand
     private GameObject wateringCanInHand;
+    private GameObject waterRunningOutOfCan;
 
 
     void Awake()
@@ -56,7 +58,7 @@ public class PlayerMovement : MonoBehaviour
         input.Player.WateringAction.performed += HandleWateringAction;
     }
 
-    public void DisableMovement() // BackpackController steuert dies um die Tasten der Auwahl zuzuordnen
+    public void DisableMovement()
     {
         input.Player.Move.performed -= OnMove;
         input.Player.Move.canceled -= OnMoveCanceled;
@@ -247,8 +249,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleWateringAction(InputAction.CallbackContext context)
     {
+        DisableMovement();
         animator.SetTrigger("HandleGoWatering");
 
+        // _________ Giesskanne
         // gießkannen prefab laden und animation abspielen
         wateringCanInHand = Instantiate(wateringCanPrefab, frontHandPosition.position, Quaternion.identity, frontHandPosition);
 
@@ -266,6 +270,34 @@ public class PlayerMovement : MonoBehaviour
 
         // Manuelle Eingabe der Position relativ zur Handposition
         wateringCanInHand.transform.localPosition = new Vector3(-0.8f, 0, 0);
+
+        Invoke("SpawnWater", 0.1f);
+    }
+
+
+    private void SpawnWater()
+    {
+        // _________ Wasser
+        waterRunningOutOfCan = Instantiate(waterRunningOutOfCanPrefab, wateringCanInHand.transform.position, Quaternion.identity);
+
+        Rigidbody2D waterRigidbody = waterRunningOutOfCan.GetComponent<Rigidbody2D>();
+        if (waterRigidbody != null)
+        {
+            waterRigidbody.gravityScale = 0f;
+            waterRigidbody.velocity = Vector2.zero;
+            waterRigidbody.angularVelocity = 0f;
+        }
+
+        waterRunningOutOfCan.transform.parent = wateringCanInHand.transform;
+        waterRunningOutOfCan.transform.localScale *= 0.5f; // verkleinern
+        waterRunningOutOfCan.transform.localPosition = new Vector3(-2.4f, 1.2f, 0);
+
+        if (!isFacingRight) // Wasser horizontal spiegeln
+        {
+            Vector3 localScale = waterRunningOutOfCan.transform.localScale;
+            localScale.x *= -1f;
+            waterRunningOutOfCan.transform.localScale = localScale;
+        }
     }
 
     public void OnWateringAnimationEnd()
@@ -274,6 +306,11 @@ public class PlayerMovement : MonoBehaviour
         {
             Destroy(wateringCanInHand); // Entferne die Gießkanne aus Pittis Hand
         }
+        if (waterRunningOutOfCan != null)
+        {  
+            Destroy(waterRunningOutOfCan);
+        }
+        EnableMovement();
     }
 
     // Hack um es aus dem Backback heraus zu umgehen

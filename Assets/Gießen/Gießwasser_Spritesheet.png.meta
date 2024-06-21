@@ -1,0 +1,664 @@
+fileFormatVersion: 2
+guid: 0241284f5a1d145109b3361d1a6c4162
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_0"
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 946.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ad78b6cf05fb8477984b1933f28d836c
+      internalID: -1453718760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_1"
+      rect:
+        serializedVersion: 2
+        x: 313
+        y: 946.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ebde462dc4edc46eb8fb2fdfe14a8313
+      internalID: 1098874571
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_2"
+      rect:
+        serializedVersion: 2
+        x: 626
+        y: 946.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d145c00fcf0674c6491217952674a853
+      internalID: 2037401267
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_3"
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 946.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 84a905fc01330413fa49e710b5851e95
+      internalID: 1533316688
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_4"
+      rect:
+        serializedVersion: 2
+        x: 1252
+        y: 946.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fdba35eaa136b4b58bfe94ec86ef4769
+      internalID: -1037322431
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_5"
+      rect:
+        serializedVersion: 2
+        x: 1565
+        y: 946.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a29cc8b0aed6e4989b31fc91917d41ea
+      internalID: -1876592188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_6"
+      rect:
+        serializedVersion: 2
+        x: 1878
+        y: 946.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 33f2913f62113420e91c912f73ce6e5d
+      internalID: -1733706576
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_7"
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 631.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f47c88485eca04160b4c2ae2412b970b
+      internalID: 475570706
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_8"
+      rect:
+        serializedVersion: 2
+        x: 313
+        y: 631.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3d9bebadedef34760b032533d6aa7e07
+      internalID: -1330773940
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_9"
+      rect:
+        serializedVersion: 2
+        x: 626
+        y: 631.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5104f89c872d042a786610b17e3aa015
+      internalID: -1871612595
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_10"
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 631.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3a09f4dd0765a4d8cbe1d41243a82a14
+      internalID: 2066253247
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_11"
+      rect:
+        serializedVersion: 2
+        x: 1252
+        y: 631.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e580aedeb77fb467baa21593e57f4291
+      internalID: -1094703532
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_12"
+      rect:
+        serializedVersion: 2
+        x: 1565
+        y: 631.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 28c864441ae504cba979531a06daea70
+      internalID: 2003427649
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_13"
+      rect:
+        serializedVersion: 2
+        x: 1878
+        y: 631.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5982958d6ce7340518105d55c74e077e
+      internalID: 805305758
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_14"
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 316.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 995b742d80d564bda9fb7575b5705f37
+      internalID: 1209000588
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_15"
+      rect:
+        serializedVersion: 2
+        x: 313
+        y: 316.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: abcebda8c22c449ed939b29b817b62c9
+      internalID: -1891518969
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_16"
+      rect:
+        serializedVersion: 2
+        x: 626
+        y: 316.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ecd4158ffaba3446e8c9a46df5187fa2
+      internalID: -1345552048
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_17"
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 316.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 301f4b1b17d614d12a0518394cf4d712
+      internalID: -592059256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_18"
+      rect:
+        serializedVersion: 2
+        x: 1252
+        y: 316.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4d949016c91ca474299d0bce4ce13a81
+      internalID: 802901286
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_19"
+      rect:
+        serializedVersion: 2
+        x: 1565
+        y: 316.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c9ec4617c3b084a1f936cd0f256125fe
+      internalID: 1361888785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_20"
+      rect:
+        serializedVersion: 2
+        x: 1878
+        y: 316.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f11048d067dcf4afc85f6b1a3565d82e
+      internalID: -1737458534
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_21"
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 1.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b4de6569df1074e1f83ab653a9515e77
+      internalID: 1560781019
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_22"
+      rect:
+        serializedVersion: 2
+        x: 313
+        y: 1.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: be4d82555aa2c4f819581113161cd228
+      internalID: -728679338
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_23"
+      rect:
+        serializedVersion: 2
+        x: 624
+        y: 1
+        width: 313
+        height: 316
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 31048f6fca76845faa3f3197492263f2
+      internalID: -1204702555
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "Gie\xDFwasser_Spritesheet_24"
+      rect:
+        serializedVersion: 2
+        x: 939
+        y: 1.5
+        width: 313.14285
+        height: 315.5
+      alignment: 1
+      pivot: {x: 0, y: 1}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2b24c1387e3e64364b3ab9e494e2105a
+      internalID: -14584880
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      "Gie\xDFwasser_Spritesheet_0": -1453718760
+      "Gie\xDFwasser_Spritesheet_1": 1098874571
+      "Gie\xDFwasser_Spritesheet_10": 2066253247
+      "Gie\xDFwasser_Spritesheet_11": -1094703532
+      "Gie\xDFwasser_Spritesheet_12": 2003427649
+      "Gie\xDFwasser_Spritesheet_13": 805305758
+      "Gie\xDFwasser_Spritesheet_14": 1209000588
+      "Gie\xDFwasser_Spritesheet_15": -1891518969
+      "Gie\xDFwasser_Spritesheet_16": -1345552048
+      "Gie\xDFwasser_Spritesheet_17": -592059256
+      "Gie\xDFwasser_Spritesheet_18": 802901286
+      "Gie\xDFwasser_Spritesheet_19": 1361888785
+      "Gie\xDFwasser_Spritesheet_2": 2037401267
+      "Gie\xDFwasser_Spritesheet_20": -1737458534
+      "Gie\xDFwasser_Spritesheet_21": 1560781019
+      "Gie\xDFwasser_Spritesheet_22": -728679338
+      "Gie\xDFwasser_Spritesheet_23": -1204702555
+      "Gie\xDFwasser_Spritesheet_24": -14584880
+      "Gie\xDFwasser_Spritesheet_3": 1533316688
+      "Gie\xDFwasser_Spritesheet_4": -1037322431
+      "Gie\xDFwasser_Spritesheet_5": -1876592188
+      "Gie\xDFwasser_Spritesheet_6": -1733706576
+      "Gie\xDFwasser_Spritesheet_7": 475570706
+      "Gie\xDFwasser_Spritesheet_8": -1330773940
+      "Gie\xDFwasser_Spritesheet_9": -1871612595
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

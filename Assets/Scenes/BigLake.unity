@@ -4138,7 +4138,7 @@ Transform:
   m_GameObject: {fileID: 1205789456}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.0337, y: 0.10620022, z: -11.07}
+  m_LocalPosition: {x: -1.1268551, y: 0.106419995, z: -11.07}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -7245,6 +7245,10 @@ PrefabInstance:
       propertyPath: runningSoundSource
       value: 
       objectReference: {fileID: 799835198}
+    - target: {fileID: 1409047262736464372, guid: 2da44b754591f604c96ae44391bcf4ef, type: 3}
+      propertyPath: waterRunningOutOfCanPrefab
+      value: 
+      objectReference: {fileID: 8800783609190224648, guid: c626818ce4ba6434f8cd98e53360645f, type: 3}
     - target: {fileID: 1563748770747306644, guid: 2da44b754591f604c96ae44391bcf4ef, type: 3}
       propertyPath: m_Name
       value: ParentPitte_v4
