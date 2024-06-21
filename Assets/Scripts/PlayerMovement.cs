@@ -64,6 +64,11 @@ public class PlayerMovement : MonoBehaviour
         input.Player.Move.canceled -= OnMoveCanceled;
         input.Player.PrimaryAction.performed -= HandlePrimaryAction;
         input.Player.WateringAction.performed -= HandleWateringAction;
+
+        horizontal = 0f; // Setze die horizontale Bewegung auf Null
+        rb.velocity = Vector2.zero; // Setze die Geschwindigkeit auf Null
+        input.Player.Move.Disable(); // Deaktiviere die Bewegungseingaben
+        input.Player.RunningFaster.Disable(); // Deaktiviere die Lauf-Eingaben
     }
     public void EnableMovement()
     {
@@ -72,12 +77,14 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator EnableMovementAfterDelay()
     {
-        yield return new WaitForSeconds(0.1f);  // Verzögerung von 100 Millisekunden
+        yield return new WaitForSeconds(0.2f);
         input.Player.Move.performed += OnMove;
         input.Player.Move.canceled += OnMoveCanceled;
         input.Player.PrimaryAction.performed += HandlePrimaryAction;
         input.Player.WateringAction.performed += HandleWateringAction;
-        Debug.Log("Movement Enabled");
+
+        input.Player.Move.Enable(); // Aktiviere die Bewegungseingaben
+        input.Player.RunningFaster.Enable(); // Aktiviere die Lauf-Eingaben
     }
 
     void OnEnable()
@@ -153,6 +160,7 @@ public class PlayerMovement : MonoBehaviour
     public void OnPlantingAnimationSeedStart()
     {
         // Samen in die Hand positionieren
+        DisableMovement();
         seedInHand = Instantiate(seedPrefab, frontHandPosition.position, Quaternion.identity, frontHandPosition);
         seedInHand.transform.localScale *= 3; // Vergrößern 
 
@@ -170,6 +178,7 @@ public class PlayerMovement : MonoBehaviour
         {
             Destroy(seedInHand); // Entferne den Samen aus Pittis Hand
         }
+        EnableMovement();
     }
 
 
@@ -208,7 +217,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (currentSeedIndex >= 0)
         {
-
             Seed seedToPlant = backpack.GetAndRemoveSeedAt(currentSeedIndex);
             if (seedToPlant != null)
             {
@@ -316,13 +324,20 @@ public class PlayerMovement : MonoBehaviour
     // Hack um es aus dem Backback heraus zu umgehen
     private void HandlePrimaryAction(InputAction.CallbackContext context)
     {
-        Debug.Log("HandlePickupDrop ausgeführt: ");
         HandlePickupDrop();
+    }
+
+    private void UpdateMovement()
+    {
+        // Aktualisiert die Geschwindigkeit des Rigidbody, um sofortiges Anhalten zu erzwingen
+        rb.velocity = new Vector2(horizontal * (isRunning ? speedFaster : speed), rb.velocity.y);
     }
 
     private void HandlePickupDrop()
     {
+        // LAUFEn muss dekativert werden
         animator.SetTrigger("HandleGoDown");
+        DisableMovement();
 
         if (switchMovement == false) // __________________________ AUFHEBEN
         {
@@ -406,6 +421,7 @@ public class PlayerMovement : MonoBehaviour
         }
         // Setze den Zustand nach dem Aufheben oder Ablegen zurück
         isPickingUp = false;
+        EnableMovement();
     }
 
     // Methode zur Überprüfung, ob sich ein aufhebbares Objekt in der Nähe befindet
