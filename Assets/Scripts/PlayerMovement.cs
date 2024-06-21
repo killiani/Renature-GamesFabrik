@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem; // Importiere das neue Input System
+using UnityEngine.InputSystem;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -34,7 +34,12 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private GameObject teaktreePrefab;
     [SerializeField] private Transform frontHandPosition;
     [SerializeField] private GameObject seedPrefab; // Generisches Samen-Prefab
-    [SerializeField] private BeibootTrigger beibootTrigger; // Referenz zum Beiboot
+    [SerializeField] private BeibootTrigger beibootTrigger; // Referenz zur SoundZone
+    [SerializeField] private AudioSource pickupSoundSource; // AudioSource für das Aufheben
+    [SerializeField] private AudioClip pickupSound; // Aufhebgeräusch
+    [SerializeField] private AudioSource dropSoundSource; // AudioSource für das Ablegen
+    [SerializeField] private AudioClip dropSound; // Standard Ableggeräusch
+    [SerializeField] private List<AudioClip> beibootDropSounds; // Liste der Geräusche für die Beiboot-Zone
 
     // Diese Referenz wird im Start-Methodenblock automatisch gesetzt
     private PickupScript pickupScript;
@@ -43,7 +48,6 @@ public class PlayerMovement : MonoBehaviour
     private GameObject seedInHand; // Referenz auf den Samen in Pittis Hand
     private GameObject wateringCanInHand;
     private GameObject waterRunningOutOfCan;
-
 
     void Awake()
     {
@@ -70,6 +74,7 @@ public class PlayerMovement : MonoBehaviour
         input.Player.Move.Disable(); // Deaktiviere die Bewegungseingaben
         input.Player.RunningFaster.Disable(); // Deaktiviere die Lauf-Eingaben
     }
+
     public void EnableMovement()
     {
         StartCoroutine(EnableMovementAfterDelay());
@@ -208,9 +213,9 @@ public class PlayerMovement : MonoBehaviour
     public void SetCurrentSeedIndex(int index)
     {
         currentSeedIndex = index;
-        Debug.Log("New Index: "+ currentSeedIndex);
+        Debug.Log("New Index: " + currentSeedIndex);
         Debug.Log("All Seeds List: " + backpack.GetAllSeeds());
-        Debug.Log("Target Seed: "+ backpack.GetAllSeeds()[currentSeedIndex]);
+        Debug.Log("Target Seed: " + backpack.GetAllSeeds()[currentSeedIndex]);
     }
 
     public void OnPlantingAnimation()
@@ -246,10 +251,6 @@ public class PlayerMovement : MonoBehaviour
                 StartCoroutine(GrowPlant(plantInstance, newPlant.Type, newPlant.GrowthTime));
 
                 Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
-                //Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
-                //Debug.Log($"Plant position: {plantPosition}");
-                //Debug.Log($"Pitti position: {transform.position}");
-                //Debug.Log($"GroundCheck position: {groundCheck.position}");
             }
             currentSeedIndex = -1; // Zurücksetzen des Index nach dem Pflanzen
         }
@@ -315,7 +316,7 @@ public class PlayerMovement : MonoBehaviour
             Destroy(wateringCanInHand); // Entferne die Gießkanne aus Pittis Hand
         }
         if (waterRunningOutOfCan != null)
-        {  
+        {
             Destroy(waterRunningOutOfCan);
         }
         EnableMovement();
@@ -350,10 +351,11 @@ public class PlayerMovement : MonoBehaviour
                 if (nearestObject.layer == LayerMask.NameToLayer("Seeds"))
                 {
                     Debug.Log("Try to grab Seed");
-                } 
+                }
                 else if (nearestObject.layer == LayerMask.NameToLayer("Objects"))
                 {
                     Debug.Log("Try to grab Object");
+                    PlayPickupSound();
                 }
                 isPickingUp = true; // Animation auslösen
             }
@@ -379,12 +381,49 @@ public class PlayerMovement : MonoBehaviour
 
                 pickupScript.DropObject();
 
+                if (beibootTrigger.IsPlayerInZone())
+                {
+                    PlayRandomBeibootDropSound(); // Spiele ein zufälliges Geräusch aus der Beiboot-Zone ab
+                }
+                else
+                {
+                    PlayDropSound(); // Spiele das Standard-Ableggeräusch ab
+                }
+
                 switchMovement = false;
                 animator.SetBool("HasObject", false);
             }
         }
     }
 
+    private void PlayPickupSound()
+    {
+        StartCoroutine(PlaySoundWithDelay(pickupSoundSource, pickupSound, 0.3f));
+    }
+
+    private void PlayDropSound()
+    {
+        StartCoroutine(PlaySoundWithDelay(dropSoundSource, dropSound, 0.1f));
+    }
+
+    private void PlayRandomBeibootDropSound()
+    {
+        if (beibootDropSounds.Count > 0)
+        {
+            int randomIndex = Random.Range(0, beibootDropSounds.Count);
+            AudioClip randomClip = beibootDropSounds[randomIndex];
+            StartCoroutine(PlaySoundWithDelay(dropSoundSource, randomClip, 0.5f));
+        }
+    }
+
+    private IEnumerator PlaySoundWithDelay(AudioSource audioSource, AudioClip audioClip, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (audioSource != null && audioClip != null)
+        {
+            audioSource.PlayOneShot(audioClip);
+        }
+    }
 
     // Diese Methode wird vom Animationsevent in der Mitte aufgerufen
     public void OnPickupAnimationEnd()
@@ -410,7 +449,7 @@ public class PlayerMovement : MonoBehaviour
                     Seed randomSeed = Seed.GenerateRandomSeed();
                     backpack.AddSeed(randomSeed);
                     Debug.Log("Seed Pickup OK");
-                    nearestObject.SetActive(false); // Samen deaktivieren, nachdem er aufgesamme
+                    nearestObject.SetActive(false); // Samen deaktivieren, nachdem er aufgesammelt wurde
                 }
                 else
                 {
@@ -425,7 +464,6 @@ public class PlayerMovement : MonoBehaviour
     }
 
     // Methode zur Überprüfung, ob sich ein aufhebbares Objekt in der Nähe befindet
-
     private GameObject GetNearestObject()
     {
         // Erstelle einen Kreis-Collider, um nach Objekten und Samen zu suchen
@@ -486,7 +524,6 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-
     private void FixedUpdate()
     {
         float currentSpeed = isRunning ? speedFaster : speed;
@@ -543,7 +580,6 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
-
 
     private void Flip()
     {
