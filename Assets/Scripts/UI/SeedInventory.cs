@@ -1,9 +1,10 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class SeedInventory : MonoBehaviour
 {
+    public Transform cardContainer; // Container fï¿½r die Karten
     public Image farnCard;
     public Image mangroveCard;
     public Image crotonCard;
@@ -21,11 +22,7 @@ public class SeedInventory : MonoBehaviour
     private Backpack backpack;
 
     // Variablen zum Speichern des vorherigen Zustands
-    private int prevFarnSeeds = 0;
-    private int prevMangroveSeeds = 0;
-    private int prevCrotonSeeds = 0;
-    private int prevAlocasiaSeeds = 0;
-    private int prevTeaktreeSeeds = 0;
+    private Dictionary<Seed.SeedType, int> prevSeedCounts = new Dictionary<Seed.SeedType, int>();
 
     void Start()
     {
@@ -35,7 +32,7 @@ public class SeedInventory : MonoBehaviour
 
     void Update()
     {
-        // Nur aktualisieren, wenn sich etwas geändert hat
+        // Nur aktualisieren, wenn sich etwas geï¿½ndert hat
         if (HasSeedsChanged())
         {
             UpdateSeedDisplay();
@@ -44,74 +41,95 @@ public class SeedInventory : MonoBehaviour
 
     private bool HasSeedsChanged()
     {
-        int farnSeeds = 0;
-        int mangroveSeeds = 0;
-        int crotonSeeds = 0;
-        int alocasiaSeeds = 0;
-        int teaktreeSeeds = 0;
+        Dictionary<Seed.SeedType, int> currentSeedCounts = new Dictionary<Seed.SeedType, int>();
 
         // Samenanzahl basierend auf dem Rucksack aktualisieren
         foreach (Seed seed in backpack.GetAllSeeds())
         {
-            switch (seed.Type)
+            if (!currentSeedCounts.ContainsKey(seed.Type))
             {
-                case Seed.SeedType.Farn:
-                    farnSeeds++;
-                    break;
-                case Seed.SeedType.Mangrove:
-                    mangroveSeeds++;
-                    break;
-                case Seed.SeedType.Croton:
-                    crotonSeeds++;
-                    break;
-                case Seed.SeedType.Alocasia:
-                    alocasiaSeeds++;
-                    break;
-                case Seed.SeedType.Teaktree:
-                    teaktreeSeeds++;
-                    break;
+                currentSeedCounts[seed.Type] = 0;
+            }
+            currentSeedCounts[seed.Type]++;
+        }
+
+        // ï¿½berprï¿½fen, ob sich die Samenanzahl geï¿½ndert hat
+        bool hasChanged = false;
+        foreach (Seed.SeedType seedType in System.Enum.GetValues(typeof(Seed.SeedType)))
+        {
+            int prevCount = prevSeedCounts.ContainsKey(seedType) ? prevSeedCounts[seedType] : 0;
+            int currentCount = currentSeedCounts.ContainsKey(seedType) ? currentSeedCounts[seedType] : 0;
+
+            if (prevCount != currentCount)
+            {
+                prevSeedCounts[seedType] = currentCount;
+                hasChanged = true;
             }
         }
 
-        // Überprüfen, ob sich die Samenanzahl geändert hat
-        if (farnSeeds != prevFarnSeeds || 
-            mangroveSeeds != prevMangroveSeeds ||
-            crotonSeeds != prevCrotonSeeds || 
-            alocasiaSeeds != prevAlocasiaSeeds || 
-            teaktreeSeeds != prevTeaktreeSeeds)
-        {
-            prevFarnSeeds = farnSeeds;
-            prevMangroveSeeds = mangroveSeeds;
-            prevCrotonSeeds = crotonSeeds;
-            prevAlocasiaSeeds = alocasiaSeeds;
-            prevTeaktreeSeeds = teaktreeSeeds;
-            return true;
-        }
-        return false;
+        return hasChanged;
     }
 
     // Update visibility and count for the plants
     private void UpdateSeedDisplay()
     {
-        UpdateCard(farnCard, farnCount, prevFarnSeeds);
-        UpdateCard(mangroveCard, mangroveCount, prevMangroveSeeds);
-        UpdateCard(crotonCard, crotonCount, prevCrotonSeeds);
-        UpdateCard(alocasiaCard, alocasiaCount, prevAlocasiaSeeds);
-        UpdateCard(teaktreeCard, teaktreeCount, prevTeaktreeSeeds);
+        // Setze alle Karten auf unsichtbar
+        SetCardVisibility(farnCard, farnCount, false);
+        SetCardVisibility(mangroveCard, mangroveCount, false);
+        SetCardVisibility(crotonCard, crotonCount, false);
+        SetCardVisibility(alocasiaCard, alocasiaCount, false);
+        SetCardVisibility(teaktreeCard, teaktreeCount, false);
+
+        // Zeige die Karten basierend auf dem aktuellen Zustand
+        foreach (var seedCount in prevSeedCounts)
+        {
+            if (seedCount.Value > 0)
+            {
+                ShowCard(seedCount.Key, seedCount.Value);
+            }
+        }
     }
 
-    private void UpdateCard(Image card, Image countImage, int count)
+    private void SetCardVisibility(Image card, Image countImage, bool visible)
     {
-        if (count > 0)
+        card.gameObject.SetActive(visible);
+        countImage.gameObject.SetActive(visible);
+    }
+
+    private void ShowCard(Seed.SeedType seedType, int count)
+    {
+        Image card = null;
+        Image countImage = null;
+
+        switch (seedType)
         {
-            card.gameObject.SetActive(true);
-            countImage.sprite = GetNumberSprite(count);
-            countImage.gameObject.SetActive(true);
+            case Seed.SeedType.Farn:
+                card = farnCard;
+                countImage = farnCount;
+                break;
+            case Seed.SeedType.Mangrove:
+                card = mangroveCard;
+                countImage = mangroveCount;
+                break;
+            case Seed.SeedType.Croton:
+                card = crotonCard;
+                countImage = crotonCount;
+                break;
+            case Seed.SeedType.Alocasia:
+                card = alocasiaCard;
+                countImage = alocasiaCount;
+                break;
+            case Seed.SeedType.Teaktree:
+                card = teaktreeCard;
+                countImage = teaktreeCount;
+                break;
         }
-        else
+
+        if (card != null && countImage != null)
         {
-            card.gameObject.SetActive(false);
-            countImage.gameObject.SetActive(false);
+            card.transform.SetParent(cardContainer, false);
+            SetCardVisibility(card, countImage, true);
+            countImage.sprite = GetNumberSprite(count);
         }
     }
 
