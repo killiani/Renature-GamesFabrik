@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using UnityEngine.UI;
@@ -8,7 +8,7 @@ public class BackpackController : MonoBehaviour
     public GameObject seedInventoryCanvas; // Das Canvas, das ein- und ausgeblendet werden soll
     private CustomInputs input; // Referenz zum neuen Input System
     private bool isCanvasVisible = false; // Zustand des Canvas
-    private int currentSelectionIndex = 0; // Index der aktuell ausgew?hlten Samenkarte
+    private int currentSelectionIndex = 0; // Index der aktuell ausgew�hlten Samenkarte
     private List<Image> seedCards = new List<Image>(); // Liste der Samenkarte
 
     private Backpack backpack;
@@ -55,7 +55,7 @@ public class BackpackController : MonoBehaviour
         AddCardIfNotEmpty(seedInventory.alocasiaCard, Seed.SeedType.Alocasia);
         AddCardIfNotEmpty(seedInventory.teaktreeCard, Seed.SeedType.Teaktree);
 
-        // Stelle sicher, dass das Canvas standardm??ig deaktiviert ist
+        // Stelle sicher, dass das Canvas standardm��ig deaktiviert ist
         seedInventoryCanvas.SetActive(isCanvasVisible);
         Debug.Log("Start: Seed inventory canvas set to inactive.");
 
@@ -156,23 +156,23 @@ public class BackpackController : MonoBehaviour
     }
 
 
-    // Logik zum Einpflanzen des ausgew?hlten Samens
+    // Logik zum Einpflanzen des ausgew�hlten Samens
     private void OnSelect(InputAction.CallbackContext context)
     {
         Debug.Log("Selected seed card: " + currentSelectionIndex);
 
         HandlePlanting();
-        ToggleCanvasVisibility(context); // Schlie?en Sie den Rucksack nach der Auswahl
+        ToggleCanvasVisibility(context); // Schlie�en Sie den Rucksack nach der Auswahl
     }
 
     private void OnCancel(InputAction.CallbackContext context)
     {
-        ToggleCanvasVisibility(context); // Schlie?en Sie den Rucksack ohne Aktion
+        ToggleCanvasVisibility(context); // Schlie�en Sie den Rucksack ohne Aktion
     }
 
     private void HandlePlanting()
     {
-        if (backpack != null && backpack.GetSeedCount() > 0) // ?berpr?fen Sie, ob Samen verf?gbar sind
+        if (backpack != null && backpack.GetSeedCount() > 0) // �berpr�fen Sie, ob Samen verf�gbar sind
         {
             if (playerMovement != null && animator != null)
             {
@@ -180,7 +180,7 @@ public class BackpackController : MonoBehaviour
                 animator.SetTrigger("HandleGoPlant"); // Starten der Pflanzanimation
             }
 
-            // Zeige den Samen in Pittis Hand w?hrend der Animation
+            // Zeige den Samen in Pittis Hand w�hrend der Animation
             // seedInHand = Instantiate(seedPrefab, frontHandPosition.position, Quaternion.identity);
             // seedInHand.transform.SetParent(frontHandPosition);
             // seedInHand.SetActive(true);

@@ -7,6 +7,8 @@ public class Backpack : MonoBehaviour
     private List<Seed> seeds = new List<Seed>();
     private BackpackController backpackController;
 
+    [SerializeField] private List<GameObject> seedObjects; // Liste aller Samen-Objekte im Rucksack
+
     void Start()
     {
         backpackController = FindObjectOfType<BackpackController>();
@@ -14,6 +16,8 @@ public class Backpack : MonoBehaviour
         {
             Debug.LogError("BackpackController not found!");
         }
+
+        UpdateSeedDisplay();
     }
 
     public void AddSeed(Seed seed)
@@ -29,6 +33,8 @@ public class Backpack : MonoBehaviour
         {
             Debug.LogError("BackpackController reference is null");
         }
+
+        UpdateSeedDisplay();
     }
 
     public int GetSeedCount()
@@ -54,15 +60,27 @@ public class Backpack : MonoBehaviour
         return seeds;
     }
 
-    // Samen w�hlen und aus Rucksack entfernen
+    // Samen wählen und aus Rucksack entfernen
     public Seed GetAndRemoveSeedAt(int index)
     {
         if (index >= 0 && index < seeds.Count)
         {
             Seed seed = seeds[index];
             seeds.RemoveAt(index);
+
+            UpdateSeedDisplay();
+
             return seed;
         }
         return null;
+    }
+
+    // Methode zum Aktualisieren der Samen-Anzeige basierend auf der Anzahl der Samen im Rucksack
+    private void UpdateSeedDisplay()
+    {
+        for (int i = 0; i < seedObjects.Count; i++)
+        {
+            seedObjects[i].SetActive(i < seeds.Count);
+        }
     }
 }
