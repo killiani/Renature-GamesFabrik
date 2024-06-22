@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
     private float speedFaster = 2.3f; // running
     private bool isRunning = false;
     private bool isFacingRight = true;
-    private bool switchMovement = false; // Gibt an, ob der Charakter ein Objekt trägt
+    private bool switchMovement = false; // Gibt an, ob der Charakter ein Objekt trÃ¤gt
     private bool isPickingUp = false; // Zustand des Aufhebens/Ablegens
 
     private Animator animator;
@@ -20,14 +20,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private Transform groundCheck;
     [SerializeField] private LayerMask groundLayer;
-    [SerializeField] private AudioSource walkSoundSource; // AudioSource für den Walksound
+    [SerializeField] private AudioSource walkSoundSource; // AudioSource fÃ¼r den Walksound
     [SerializeField] private AudioClip walkSound; // Walksound AudioClip
     [SerializeField] private AudioSource runningSoundSource;
     [SerializeField] private AudioClip runningSound;
-    [SerializeField] private GameObject plantPrefab; // Prefab für die Erde wo die plants hinkommen
+    [SerializeField] private GameObject plantPrefab; // Prefab fÃ¼r die Erde wo die plants hinkommen
     [SerializeField] private GameObject wateringCanPrefab;
     [SerializeField] private GameObject waterRunningOutOfCanPrefab;
-    [SerializeField] private GameObject mangrovePrefab; // Prefab für Mangrove
+    [SerializeField] private GameObject mangrovePrefab; // Prefab fÃ¼r Mangrove
     [SerializeField] private GameObject farnPrefab;
     [SerializeField] private GameObject alocasiaPrefab;
     [SerializeField] private GameObject crotonPrefab;
@@ -35,11 +35,22 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform frontHandPosition;
     [SerializeField] private GameObject seedPrefab; // Generisches Samen-Prefab
     [SerializeField] private BeibootTrigger beibootTrigger; // Referenz zur SoundZone
-    [SerializeField] private AudioSource pickupSoundSource; // AudioSource für das Aufheben
-    [SerializeField] private AudioClip pickupSound; // Aufhebgeräusch
-    [SerializeField] private AudioSource dropSoundSource; // AudioSource für das Ablegen
-    [SerializeField] private AudioClip dropSound; // Standard Ableggeräusch
-    [SerializeField] private List<AudioClip> beibootDropSounds; // Liste der Geräusche für die Beiboot-Zone
+    [SerializeField] private AudioSource pickupSoundSource; // AudioSource fÃ¼r das Aufheben
+    [SerializeField] private AudioClip pickupSound; // AufhebgerÃ¤usch
+    [SerializeField] private AudioSource dropSoundSource; // AudioSource fÃ¼r das Ablegen
+    [SerializeField] private AudioClip dropSound; // Standard AbleggerÃ¤usch
+    [SerializeField] private List<AudioClip> beibootDropSounds; // Liste der GerÃ¤usche fÃ¼r die Beiboot-Zone
+
+    // DenkblaÌˆsen-Prefabs
+    [SerializeField] private GameObject nightThinkingBubblePrefab;
+    [SerializeField] private GameObject plantsThinkingBubblePrefab;
+    [SerializeField] private GameObject seedThinkingBubblePrefab;
+    [SerializeField] private GameObject wateringCanThinkingBubblePrefab;
+    [SerializeField] private GameObject trashThinkingBubblePrefab;
+
+    // Die Position, an der die DenkblaÌˆse angezeigt werden soll
+    [SerializeField] private Transform thinkingBubblePosition;
+
 
     // Diese Referenz wird im Start-Methodenblock automatisch gesetzt
     private PickupScript pickupScript;
@@ -127,8 +138,8 @@ public class PlayerMovement : MonoBehaviour
 
         if (backpack == null)
         {
-            Debug.LogError("Kein Backpack-Komponente im GameObject gefunden. Stelle sicher, dass das Backpack-Skript hinzugefügt ist.");
-            // Optional: Automatisch hinzufügen, falls es fehlt
+            Debug.LogError("Kein Backpack-Komponente im GameObject gefunden. Stelle sicher, dass das Backpack-Skript hinzugefÃ¼gt ist.");
+            // Optional: Automatisch hinzufÃ¼gen, falls es fehlt
             backpack = gameObject.AddComponent<Backpack>();
         }
     }
@@ -140,7 +151,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnMove(InputAction.CallbackContext context)
     {
-        if (input.Player.enabled) // Überprüfen Sie, ob die Player-Eingaben aktiviert sind
+        if (input.Player.enabled) // ÃœberprÃ¼fen Sie, ob die Player-Eingaben aktiviert sind
         {
             Vector2 inputVector = context.ReadValue<Vector2>();
             horizontal = inputVector.x;
@@ -167,7 +178,7 @@ public class PlayerMovement : MonoBehaviour
         // Samen in die Hand positionieren
         DisableMovement();
         seedInHand = Instantiate(seedPrefab, frontHandPosition.position, Quaternion.identity, frontHandPosition);
-        seedInHand.transform.localScale *= 3; // Vergrößern 
+        seedInHand.transform.localScale *= 3; // VergrÃ¶ÃŸern 
 
         // Sicherstellen, dass der Samen kein Rigidbody hat oder kinematisch ist
         Rigidbody2D seedRigidbody = seedInHand.GetComponent<Rigidbody2D>();
@@ -196,7 +207,7 @@ public class PlayerMovement : MonoBehaviour
 
     private float GetGroundAngle(Vector3 position)
     {
-        // Führen Sie einen Raycast nach unten durch, um den Boden zu treffen
+        // FÃ¼hren Sie einen Raycast nach unten durch, um den Boden zu treffen
         RaycastHit2D hit = Physics2D.Raycast(position, Vector2.down, 1f, groundLayer);
         if (hit.collider != null)
         {
@@ -239,12 +250,12 @@ public class PlayerMovement : MonoBehaviour
                     offsetX = -0.5f;
                 }
 
-                Vector3 plantPosition = new Vector3(transform.position.x + offsetX, groundCheck.position.y + offsetY, transform.position.z); // Position von Pittis Füßen
+                Vector3 plantPosition = new Vector3(transform.position.x + offsetX, groundCheck.position.y + offsetY, transform.position.z); // Position von Pittis FÃ¼ÃŸen
 
                 // Bestimmen Sie die Neigung des Bodens an der Pflanzposition
                 float groundAngle = GetGroundAngle(plantPosition);
 
-                // Erstellen Sie den Erdhügel und richten Sie ihn an der Neigung des Bodens aus
+                // Erstellen Sie den ErdhÃ¼gel und richten Sie ihn an der Neigung des Bodens aus
                 GameObject plantInstance = Instantiate(plantPrefab, plantPosition, Quaternion.Euler(0, 0, groundAngle));
 
                 // Starte die Wachstumsroutine
@@ -252,7 +263,7 @@ public class PlayerMovement : MonoBehaviour
 
                 Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
             }
-            currentSeedIndex = -1; // Zurücksetzen des Index nach dem Pflanzen
+            currentSeedIndex = -1; // ZurÃ¼cksetzen des Index nach dem Pflanzen
         }
     }
 
@@ -262,10 +273,10 @@ public class PlayerMovement : MonoBehaviour
         animator.SetTrigger("HandleGoWatering");
 
         // _________ Giesskanne
-        // gießkannen prefab laden und animation abspielen
+        // gieÃŸkannen prefab laden und animation abspielen
         wateringCanInHand = Instantiate(wateringCanPrefab, frontHandPosition.position, Quaternion.identity, frontHandPosition);
 
-        // Rigidbody der Gießkanne finden und Schwerkraft deaktivieren
+        // Rigidbody der GieÃŸkanne finden und Schwerkraft deaktivieren
         Rigidbody2D wateringCanRigidbody = wateringCanInHand.GetComponent<Rigidbody2D>();
         if (wateringCanRigidbody != null)
         {
@@ -274,7 +285,7 @@ public class PlayerMovement : MonoBehaviour
             wateringCanRigidbody.angularVelocity = 0f; // Setze die Drehgeschwindigkeit auf Null
         }
 
-        // Setze die Gießkanne als Kind-Objekt der Handposition, um der Hand zu folgen
+        // Setze die GieÃŸkanne als Kind-Objekt der Handposition, um der Hand zu folgen
         wateringCanInHand.transform.parent = frontHandPosition;
 
         // Manuelle Eingabe der Position relativ zur Handposition
@@ -313,7 +324,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (wateringCanInHand != null)
         {
-            Destroy(wateringCanInHand); // Entferne die Gießkanne aus Pittis Hand
+            Destroy(wateringCanInHand); // Entferne die GieÃŸkanne aus Pittis Hand
         }
         if (waterRunningOutOfCan != null)
         {
@@ -342,7 +353,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (switchMovement == false) // __________________________ AUFHEBEN
         {
-            // Setze den Zustand auf Aufheben und überprüfe, ob sich ein Objekt in der Nähe befindet
+            // Setze den Zustand auf Aufheben und Ã¼berprÃ¼fe, ob sich ein Objekt in der NÃ¤he befindet
             nearestObject = GetNearestObject();
             Debug.Log("nearest: ", nearestObject);
 
@@ -357,7 +368,7 @@ public class PlayerMovement : MonoBehaviour
                     Debug.Log("Try to grab Object");
                     PlayPickupSound();
                 }
-                isPickingUp = true; // Animation auslösen
+                isPickingUp = true; // Animation auslÃ¶sen
             }
         }
         else // __________________________________________ ABLEGEN
@@ -383,11 +394,11 @@ public class PlayerMovement : MonoBehaviour
 
                 if (beibootTrigger.IsPlayerInZone())
                 {
-                    PlayRandomBeibootDropSound(); // Spiele ein zufälliges Geräusch aus der Beiboot-Zone ab
+                    PlayRandomBeibootDropSound(); // Spiele ein zufÃ¤lliges GerÃ¤usch aus der Beiboot-Zone ab
                 }
                 else
                 {
-                    PlayDropSound(); // Spiele das Standard-Ableggeräusch ab
+                    PlayDropSound(); // Spiele das Standard-AbleggerÃ¤usch ab
                 }
 
                 switchMovement = false;
@@ -458,12 +469,12 @@ public class PlayerMovement : MonoBehaviour
                 nearestObject = null;
             }
         }
-        // Setze den Zustand nach dem Aufheben oder Ablegen zurück
+        // Setze den Zustand nach dem Aufheben oder Ablegen zurÃ¼ck
         isPickingUp = false;
         EnableMovement();
     }
 
-    // Methode zur Überprüfung, ob sich ein aufhebbares Objekt in der Nähe befindet
+    // Methode zur ÃœberprÃ¼fung, ob sich ein aufhebbares Objekt in der NÃ¤he befindet
     private GameObject GetNearestObject()
     {
         // Erstelle einen Kreis-Collider, um nach Objekten und Samen zu suchen
@@ -488,7 +499,7 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator GrowPlant(GameObject plantInstance, Plant.PlantType plantType, float growTime)
     {
-        yield return new WaitForSeconds(growTime); // Warte für die Dauer der Wachstumszeit
+        yield return new WaitForSeconds(growTime); // Warte fÃ¼r die Dauer der Wachstumszeit
 
         // Bestimme das richtige Prefab basierend auf dem Pflanzentyp
         GameObject newPlantPrefab = null;
@@ -516,13 +527,22 @@ public class PlayerMovement : MonoBehaviour
             // Speichere die Position der aktuellen Pflanze
             Vector3 plantPosition = plantInstance.transform.position;
 
-            // Zerstöre die alte Pflanze
+            // ZerstÃ¶re die alte Pflanze
             Destroy(plantInstance);
 
             // Erstelle die neue Pflanze an derselben Position
             Instantiate(newPlantPrefab, plantPosition, Quaternion.identity);
         }
     }
+
+    public void ShowNightThinkingBubble()
+    {
+        if (nightThinkingBubblePrefab != null && thinkingBubblePosition != null)
+        {
+            Instantiate(nightThinkingBubblePrefab, thinkingBubblePosition.position, Quaternion.identity, thinkingBubblePosition);
+        }
+    }
+
 
     private void FixedUpdate()
     {
@@ -535,7 +555,7 @@ public class PlayerMovement : MonoBehaviour
         bool isMoving = Mathf.Abs(horizontal) > 0;
         animator.SetBool("IsRunning", isMoving);
 
-        // Setze die Condition für die Running Fast Animation
+        // Setze die Condition fÃ¼r die Running Fast Animation
         animator.SetBool("IsRunningFast", isRunning && isMoving);
 
         WalkSound(isMoving);
@@ -544,7 +564,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void WalkSound(bool isMoving)
     {
-        // Überprüfe, ob sich der Charakter bewegt und ob er rennt
+        // ÃœberprÃ¼fe, ob sich der Charakter bewegt und ob er rennt
         if (isMoving)
         {
             if (isRunning)

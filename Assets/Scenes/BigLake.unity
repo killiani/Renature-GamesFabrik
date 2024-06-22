@@ -3982,6 +3982,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6002679136147347934, guid: 7bec6573ab4b13f47b9cda9fda7f75b0, type: 3}
   m_PrefabInstance: {fileID: 562480493}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &679991539
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 679991540}
+  m_Layer: 3
+  m_Name: ThinkinBubblePosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &679991540
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 679991539}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.22, y: 4.45, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1100192303}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &686290959
 GameObject:
   m_ObjectHideFlags: 0
@@ -9882,6 +9913,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 799835198}
     - target: {fileID: 1409047262736464372, guid: 2da44b754591f604c96ae44391bcf4ef, type: 3}
+      propertyPath: thinkingBubblePosition
+      value: 
+      objectReference: {fileID: 679991540}
+    - target: {fileID: 1409047262736464372, guid: 2da44b754591f604c96ae44391bcf4ef, type: 3}
+      propertyPath: nightThinkingBubblePrefab
+      value: 
+      objectReference: {fileID: 6228268741115490095, guid: ac324ce60e03e42019856dfe6900ba97, type: 3}
+    - target: {fileID: 1409047262736464372, guid: 2da44b754591f604c96ae44391bcf4ef, type: 3}
       propertyPath: waterRunningOutOfCanPrefab
       value: 
       objectReference: {fileID: 8800783609190224648, guid: c626818ce4ba6434f8cd98e53360645f, type: 3}
@@ -10111,6 +10150,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3067097479483416955, guid: 2da44b754591f604c96ae44391bcf4ef, type: 3}
       insertIndex: -1
       addedObject: {fileID: 799835197}
+    - targetCorrespondingSourceObject: {fileID: 7870776356959310465, guid: 2da44b754591f604c96ae44391bcf4ef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 679991540}
     - targetCorrespondingSourceObject: {fileID: 6215439140378368925, guid: 2da44b754591f604c96ae44391bcf4ef, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1839631012}
