@@ -210,8 +210,6 @@ public class PlayerMovement : MonoBehaviour
 
     public void StartAutoMove(Vector2 direction, float duration)
     {
-        Debug.Log("StartAutoMove called with direction: " + direction + " and duration: " + duration);
-
         isAutoMoving = true;
         autoMoveDirection = direction;
         isFacingRight = direction.x > 0;
@@ -227,7 +225,6 @@ public class PlayerMovement : MonoBehaviour
         animator.SetBool("IsRunning", false);
         horizontal = 0f; // Sicherstellen, dass Pitti stoppt
         rb.velocity = Vector2.zero; // Setze die Geschwindigkeit auf Null
-        Debug.Log("Auto move stopped after duration: " + duration);
     }
 
 

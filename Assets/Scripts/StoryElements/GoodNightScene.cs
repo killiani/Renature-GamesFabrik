@@ -109,12 +109,27 @@ namespace Assets.Scripts.StoryElements
             // Bild wieder hell werden lassen
             yield return StartCoroutine(FadeToClear());
 
+            // Pitti automatisch ins Haus bewegen
+            yield return StartCoroutine(MovePitti(2f, Vector2.left));
+
+            // Bild dunkel werden lassen
+            yield return StartCoroutine(FadeToBlack());
+
+            // ############## TODO: Sky muss Tag werden
+
+            // Bild wieder hell werden lassen - nächster Morgen
+            yield return StartCoroutine(FadeToClear());
+
+            // Pitti automatisch aus dem Haus bewegen
+            yield return StartCoroutine(MovePitti(3f, Vector2.right));
+
+            // Collider wechseln
+            stegBeiboot.enabled = true;
+            stegHome.enabled = false;
+
             // Kamera zurückzoomen
             yield return StartCoroutine(ZoomCamera(9.96f, defaultScreenY));
 
-            // Pitti automatisch ins Haus bewegen
-            yield return StartCoroutine(MovePittiLeft(2f));
-            Debug.Log("Auto MOve Ende! ");
 
             isSceneActive = false;
         }
@@ -184,10 +199,10 @@ namespace Assets.Scripts.StoryElements
             }
         }
 
-        private IEnumerator MovePittiLeft(float duration)
+        private IEnumerator MovePitti(float duration, Vector2 direction)
         {
             // Start automatic movement
-            playerMovement.StartAutoMove(Vector2.left, duration);
+            playerMovement.StartAutoMove(direction, duration);
 
             yield return new WaitForSeconds(duration);
         }
