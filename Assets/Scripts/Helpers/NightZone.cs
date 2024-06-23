@@ -5,7 +5,7 @@ public class NightZone : MonoBehaviour
     public Animator pittiAnimator; // Referenz zum Animator von Pitti
     private PlayerMovement playerMovement; // Referenz zum PlayerMovement-Skript
     private RotateObject skyDiscRotateObject; // Referenz zum RotateObject-Skript
-    private bool hasTriggeredNightEvent = false; // Variable zum Überprüfen, ob das Ereignis bereits ausgelöst wurde
+    public bool hasTriggeredNightEvent = false; // Variable zum Überprüfen, ob das Ereignis bereits ausgelöst wurde
 
     void Start()
     {
@@ -47,16 +47,13 @@ public class NightZone : MonoBehaviour
 
     void TriggerNightEvent()
     {
-        // Setze die Nacht-Animation von Pitti
-        pittiAnimator.SetTrigger("IsNight");
+        pittiAnimator.SetTrigger("IsNight"); // Pitti schaut nach oben
 
-        // Zeige die Nacht-Denkblase an, falls PlayerMovement gefunden wurde
         if (playerMovement != null)
         {
             playerMovement.ShowNightThinkingBubble();
         }
 
-        // Stoppe die Rotation
         if (skyDiscRotateObject != null)
         {
             skyDiscRotateObject.StopRotation();
@@ -64,5 +61,7 @@ public class NightZone : MonoBehaviour
 
         // Setze die Variable auf true, um zu verhindern, dass das Ereignis erneut ausgelöst wird
         hasTriggeredNightEvent = true;
+
+
     }
 }

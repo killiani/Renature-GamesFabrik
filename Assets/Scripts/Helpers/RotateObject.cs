@@ -4,8 +4,8 @@ public class RotateObject : MonoBehaviour
 {
     // Geschwindigkeit der Rotation in Grad pro Sekunde
     public float rotationSpeed = 0.31f;
-    private bool rotateToNightZone = false;
-    private float targetRotationSpeed = 9f;
+    public bool rotateToNightZone = false;
+    private float targetRotationSpeed = 15f;
 
     void Update()
     {
@@ -21,6 +21,11 @@ public class RotateObject : MonoBehaviour
     public void StopRotation()
     {
         rotateToNightZone = false;
+        rotationSpeed = 0.0f;
+    }
+
+    public void StartRotation()
+    {
         rotationSpeed = 0.31f;
     }
 }

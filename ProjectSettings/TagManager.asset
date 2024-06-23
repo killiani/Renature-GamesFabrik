@@ -9,6 +9,8 @@ TagManager:
   - Back Hand
   - NightMarker
   - SkyDisc
+  - StegBeiboot
+  - StegHome
   layers:
   - Default
   - TransparentFX

@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using Assets.Scripts.StoryElements;
+using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,6 +14,8 @@ public class PlayerMovement : MonoBehaviour
     private bool isFacingRight = true;
     private bool switchMovement = false; // Gibt an, ob der Charakter ein Objekt trägt
     private bool isPickingUp = false; // Zustand des Aufhebens/Ablegens
+    private bool isAutoMoving = false;
+    private Vector2 autoMoveDirection;
 
     private Animator animator;
     private Collider2D platformCollider;
@@ -55,7 +59,9 @@ public class PlayerMovement : MonoBehaviour
     // Diese Referenz wird im Start-Methodenblock automatisch gesetzt
     private PickupScript pickupScript;
     private Backpack backpack;
+    private NightZone nightZone;
     private RotateObject skyDiscRotateObject;
+    private GoodNightScene goodNightScene;
     private GameObject nearestObject;
     private GameObject seedInHand; // Referenz auf den Samen in Pittis Hand
     private GameObject wateringCanInHand;
@@ -141,8 +147,14 @@ public class PlayerMovement : MonoBehaviour
         if (backpack == null)
         {
             Debug.LogError("Kein Backpack-Komponente im GameObject gefunden. Stelle sicher, dass das Backpack-Skript hinzugefügt ist.");
-            // Optional: Automatisch hinzufügen, falls es fehlt
             backpack = gameObject.AddComponent<Backpack>();
+        }
+
+        nightZone = FindObjectOfType<NightZone>();
+
+        if (nightZone == null)
+        {
+            Debug.LogError("Kein NightZone Script gefunden ");
         }
 
         GameObject skyDisc = GameObject.FindWithTag("SkyDisc");
@@ -157,6 +169,12 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             Debug.LogError("SkyDisc GameObject not found.");
+        }
+
+        goodNightScene = FindObjectOfType<GoodNightScene>();
+        if (goodNightScene == null)
+        {
+            Debug.LogError("GoodNightScene script not found in the scene.");
         }
     }
 
@@ -188,6 +206,31 @@ public class PlayerMovement : MonoBehaviour
     {
         isRunning = false;
     }
+
+
+    public void StartAutoMove(Vector2 direction, float duration)
+    {
+        Debug.Log("StartAutoMove called with direction: " + direction + " and duration: " + duration);
+
+        isAutoMoving = true;
+        autoMoveDirection = direction;
+        isFacingRight = direction.x > 0;
+        FlipAutoMove();
+        animator.SetBool("IsRunning", true);
+        StartCoroutine(StopAutoMoveAfterDuration(duration));
+    }
+
+    private IEnumerator StopAutoMoveAfterDuration(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        isAutoMoving = false;
+        animator.SetBool("IsRunning", false);
+        horizontal = 0f; // Sicherstellen, dass Pitti stoppt
+        rb.velocity = Vector2.zero; // Setze die Geschwindigkeit auf Null
+        Debug.Log("Auto move stopped after duration: " + duration);
+    }
+
+
 
     public void OnPlantingAnimationSeedStart()
     {
@@ -353,12 +396,6 @@ public class PlayerMovement : MonoBehaviour
     private void HandlePrimaryAction(InputAction.CallbackContext context)
     {
         HandlePickupDrop();
-    }
-
-    private void UpdateMovement()
-    {
-        // Aktualisiert die Geschwindigkeit des Rigidbody, um sofortiges Anhalten zu erzwingen
-        rb.velocity = new Vector2(horizontal * (isRunning ? speedFaster : speed), rb.velocity.y);
     }
 
     private void HandlePickupDrop()
@@ -553,10 +590,24 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleNightAction()
     {
-        Debug.Log("Rotating to the Night Zone.");
         if (skyDiscRotateObject != null)
         {
-            skyDiscRotateObject.StartRotationToNightZone();
+
+            if(!nightZone.hasTriggeredNightEvent) // Ist es noch nicht dunkel
+            {
+                if (!skyDiscRotateObject.rotateToNightZone) // in rotation
+                {
+                    Debug.Log("Rotating to the Night Zone.");
+                    DisableMovement();
+                    skyDiscRotateObject.StartRotationToNightZone();
+                }
+            }
+            else // Nacht einleiten
+            {
+                // TODO: ENABLEMovement ausführen am ende der Scene
+                Debug.Log("Good Noght Scene");
+                goodNightScene.StartGoodNightSequence();
+            }
         }
     }
 
@@ -573,19 +624,37 @@ public class PlayerMovement : MonoBehaviour
     private void FixedUpdate()
     {
         float currentSpeed = isRunning ? speedFaster : speed;
-        rb.velocity = new Vector2(horizontal * currentSpeed, rb.velocity.y);
+
+        if (isAutoMoving)
+        {
+            rb.velocity = new Vector2(autoMoveDirection.x * currentSpeed, rb.velocity.y);
+        }
+        else
+        {
+            rb.velocity = new Vector2(horizontal * currentSpeed, rb.velocity.y);
+        }
+        Moving();
     }
+
 
     private void Moving()
     {
-        bool isMoving = Mathf.Abs(horizontal) > 0;
+        bool isMoving = isAutoMoving ? true : Mathf.Abs(horizontal) > 0;
         animator.SetBool("IsRunning", isMoving);
 
         // Setze die Condition für die Running Fast Animation
         animator.SetBool("IsRunningFast", isRunning && isMoving);
 
         WalkSound(isMoving);
-        Flip();
+        if (isAutoMoving)
+        {
+            // Stelle sicher, dass Pitti in die richtige Richtung schaut
+            FlipAutoMove();
+        }
+        else
+        {
+            Flip();
+        }
     }
 
     private void WalkSound(bool isMoving)
@@ -637,4 +706,15 @@ public class PlayerMovement : MonoBehaviour
             transform.localScale = localScale;
         }
     }
+
+    private void FlipAutoMove()
+    {
+        if (isFacingRight && transform.localScale.x < 0 || !isFacingRight && transform.localScale.x > 0)
+        {
+            Vector3 localScale = transform.localScale;
+            localScale.x *= -1f;
+            transform.localScale = localScale;
+        }
+    }
+
 }
