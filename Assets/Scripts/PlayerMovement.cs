@@ -55,6 +55,7 @@ public class PlayerMovement : MonoBehaviour
     // Diese Referenz wird im Start-Methodenblock automatisch gesetzt
     private PickupScript pickupScript;
     private Backpack backpack;
+    private RotateObject skyDiscRotateObject;
     private GameObject nearestObject;
     private GameObject seedInHand; // Referenz auf den Samen in Pittis Hand
     private GameObject wateringCanInHand;
@@ -71,6 +72,7 @@ public class PlayerMovement : MonoBehaviour
         input.Player.RunningFaster.canceled += ctx => OnRunCanceled(ctx);
         input.Player.PrimaryAction.performed += HandlePrimaryAction;
         input.Player.WateringAction.performed += HandleWateringAction;
+        input.Player.NightAction.performed += ctx => HandleNightAction();
     }
 
     public void DisableMovement()
@@ -141,6 +143,20 @@ public class PlayerMovement : MonoBehaviour
             Debug.LogError("Kein Backpack-Komponente im GameObject gefunden. Stelle sicher, dass das Backpack-Skript hinzugefügt ist.");
             // Optional: Automatisch hinzufügen, falls es fehlt
             backpack = gameObject.AddComponent<Backpack>();
+        }
+
+        GameObject skyDisc = GameObject.FindWithTag("SkyDisc");
+        if (skyDisc != null)
+        {
+            skyDiscRotateObject = skyDisc.GetComponent<RotateObject>();
+            if (skyDiscRotateObject == null)
+            {
+                Debug.LogError("RotateObject script not found on SkyDisc.");
+            }
+        }
+        else
+        {
+            Debug.LogError("SkyDisc GameObject not found.");
         }
     }
 
@@ -534,6 +550,16 @@ public class PlayerMovement : MonoBehaviour
             Instantiate(newPlantPrefab, plantPosition, Quaternion.identity);
         }
     }
+
+    private void HandleNightAction()
+    {
+        Debug.Log("Rotating to the Night Zone.");
+        if (skyDiscRotateObject != null)
+        {
+            skyDiscRotateObject.StartRotationToNightZone();
+        }
+    }
+
 
     public void ShowNightThinkingBubble()
     {

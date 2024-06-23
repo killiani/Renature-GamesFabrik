@@ -8,6 +8,7 @@ TagManager:
   - Frand Hand
   - Back Hand
   - NightMarker
+  - SkyDisc
   layers:
   - Default
   - TransparentFX

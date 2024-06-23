@@ -71,6 +71,15 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Night Action"",
+                    ""type"": ""Button"",
+                    ""id"": ""b294b5cb-9490-4beb-bfdf-19da5b7090c4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -324,6 +333,28 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Watering Action"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""05b25504-ee4c-4f63-86c9-4f9fe9ee7c51"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Night Action"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""69519508-d690-4ec4-8c0a-fd07859cdbed"",
+                    ""path"": ""<XInputController>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Night Action"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1110,6 +1141,7 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
         m_Player_PlantAction = m_Player.FindAction("Plant Action", throwIfNotFound: true);
         m_Player_RunningFaster = m_Player.FindAction("Running Faster", throwIfNotFound: true);
         m_Player_WateringAction = m_Player.FindAction("Watering Action", throwIfNotFound: true);
+        m_Player_NightAction = m_Player.FindAction("Night Action", throwIfNotFound: true);
         // HUD
         m_HUD = asset.FindActionMap("HUD", throwIfNotFound: true);
         m_HUD_HideButton = m_HUD.FindAction("Hide Button", throwIfNotFound: true);
@@ -1194,6 +1226,7 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_PlantAction;
     private readonly InputAction m_Player_RunningFaster;
     private readonly InputAction m_Player_WateringAction;
+    private readonly InputAction m_Player_NightAction;
     public struct PlayerActions
     {
         private @CustomInputs m_Wrapper;
@@ -1203,6 +1236,7 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
         public InputAction @PlantAction => m_Wrapper.m_Player_PlantAction;
         public InputAction @RunningFaster => m_Wrapper.m_Player_RunningFaster;
         public InputAction @WateringAction => m_Wrapper.m_Player_WateringAction;
+        public InputAction @NightAction => m_Wrapper.m_Player_NightAction;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1227,6 +1261,9 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
             @WateringAction.started += instance.OnWateringAction;
             @WateringAction.performed += instance.OnWateringAction;
             @WateringAction.canceled += instance.OnWateringAction;
+            @NightAction.started += instance.OnNightAction;
+            @NightAction.performed += instance.OnNightAction;
+            @NightAction.canceled += instance.OnNightAction;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1246,6 +1283,9 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
             @WateringAction.started -= instance.OnWateringAction;
             @WateringAction.performed -= instance.OnWateringAction;
             @WateringAction.canceled -= instance.OnWateringAction;
+            @NightAction.started -= instance.OnNightAction;
+            @NightAction.performed -= instance.OnNightAction;
+            @NightAction.canceled -= instance.OnNightAction;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1502,6 +1542,7 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
         void OnPlantAction(InputAction.CallbackContext context);
         void OnRunningFaster(InputAction.CallbackContext context);
         void OnWateringAction(InputAction.CallbackContext context);
+        void OnNightAction(InputAction.CallbackContext context);
     }
     public interface IHUDActions
     {
