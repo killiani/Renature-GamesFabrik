@@ -54,6 +54,7 @@ public class PlayerMovement : MonoBehaviour
 
     // Die Position, an der die Denkbläse angezeigt werden soll
     [SerializeField] private Transform thinkingBubblePosition;
+    [SerializeField] private GameObject thinkingBubble; // wird für das scaling hier verwendet
 
 
     // Diese Referenz wird im Start-Methodenblock automatisch gesetzt
@@ -613,7 +614,8 @@ public class PlayerMovement : MonoBehaviour
     {
         if (nightThinkingBubblePrefab != null && thinkingBubblePosition != null)
         {
-            Instantiate(nightThinkingBubblePrefab, thinkingBubblePosition.position, Quaternion.identity, thinkingBubblePosition);
+            thinkingBubble = Instantiate(nightThinkingBubblePrefab, thinkingBubblePosition.position, Quaternion.identity, thinkingBubblePosition);
+            thinkingBubble.transform.localScale *= 2;
         }
     }
 
