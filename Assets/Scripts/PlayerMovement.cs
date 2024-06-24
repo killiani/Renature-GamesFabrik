@@ -593,7 +593,7 @@ public class PlayerMovement : MonoBehaviour
 
             if(!nightZone.hasTriggeredNightEvent) // Ist es noch nicht dunkel
             {
-                if (!skyDiscRotateObject.rotateToNightZone) // in rotation
+                if (!skyDiscRotateObject.rotate) // in rotation
                 {
                     Debug.Log("Rotating to the Night Zone.");
                     DisableMovement();

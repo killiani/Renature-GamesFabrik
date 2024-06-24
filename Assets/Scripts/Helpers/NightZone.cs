@@ -43,6 +43,15 @@ public class NightZone : MonoBehaviour
         {
             TriggerNightEvent();
         }
+
+        else if (other.CompareTag("DayMarker"))
+        {
+            // Stoppe die Rotation, wenn der DayMarker die NightZone erreicht
+            if (skyDiscRotateObject != null)
+            {
+                skyDiscRotateObject.StopRotation();
+            }
+        }
     }
 
     void TriggerNightEvent()
@@ -61,7 +70,13 @@ public class NightZone : MonoBehaviour
 
         // Setze die Variable auf true, um zu verhindern, dass das Ereignis erneut ausgelöst wird
         hasTriggeredNightEvent = true;
+    }
 
-
+    public void TriggerDayEvent()
+    {
+        if (skyDiscRotateObject != null)
+        {
+            skyDiscRotateObject.StartRotationToDayZone();
+        }
     }
 }

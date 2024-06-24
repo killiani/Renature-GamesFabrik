@@ -18,6 +18,7 @@ namespace Assets.Scripts.StoryElements
         public Collider2D stegBeiboot; // Der Collider für den Steg zum Beiboot
         public Collider2D stegHome; // Der Collider für den Steg zum Haus
         public PlayerMovement playerMovement; // Referenz zum PlayerMovement-Skript
+        private NightZone nightZone;
 
         private bool isSceneActive = false;
         private ColorGrading colorGrading;
@@ -44,6 +45,12 @@ namespace Assets.Scripts.StoryElements
                 {
                     Debug.LogError("Cinemachine Confiner 2D is not assigned.");
                 }
+            }
+
+            nightZone = FindObjectOfType<NightZone>();
+            if (nightZone == null)
+            {
+                Debug.LogError("NightZone script not found in the scene.");
             }
 
             if (postProcessVolume == null)
@@ -112,10 +119,14 @@ namespace Assets.Scripts.StoryElements
             // Pitti automatisch ins Haus bewegen
             yield return StartCoroutine(MovePitti(2f, Vector2.left));
 
+            // Tag rotate
+            if (nightZone != null)
+            {
+                nightZone.TriggerDayEvent();
+            }
+
             // Bild dunkel werden lassen
             yield return StartCoroutine(FadeToBlack());
-
-            // ############## TODO: Sky muss Tag werden
 
             // Bild wieder hell werden lassen - nächster Morgen
             yield return StartCoroutine(FadeToClear());
@@ -130,6 +141,8 @@ namespace Assets.Scripts.StoryElements
             // Kamera zurückzoomen
             yield return StartCoroutine(ZoomCamera(9.96f, defaultScreenY));
 
+            // Beweung aktivieren
+            playerMovement.EnableMovement();
 
             isSceneActive = false;
         }
