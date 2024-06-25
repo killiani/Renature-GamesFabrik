@@ -15,6 +15,7 @@ public class PlayerMovement : MonoBehaviour
     private bool switchMovement = false; // Gibt an, ob der Charakter ein Objekt trägt
     private bool isPickingUp = false; // Zustand des Aufhebens/Ablegens
     private bool isAutoMoving = false;
+    private bool isAutoMovingFast = false;
     private bool isSeedInHand = false;
     private Vector2 autoMoveDirection;
 
@@ -247,26 +248,25 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-    public void StartAutoMove(Vector2 direction, float duration)
+    public void StartAutoMove(Vector2 direction, bool fast)
     {
         isAutoMoving = true;
+        isAutoMovingFast = fast;
         autoMoveDirection = direction;
         isFacingRight = direction.x > 0;
         FlipAutoMove();
-        animator.SetBool("IsRunning", true);
-        StartCoroutine(StopAutoMoveAfterDuration(duration));
     }
 
-    private IEnumerator StopAutoMoveAfterDuration(float duration)
+
+    public void StopAutoMove()
     {
-        yield return new WaitForSeconds(duration);
         isAutoMoving = false;
+        isAutoMovingFast = false;
         animator.SetBool("IsRunning", false);
+        animator.SetBool("IsRunningFast", false);
         horizontal = 0f; // Sicherstellen, dass Pitti stoppt
         rb.velocity = Vector2.zero; // Setze die Geschwindigkeit auf Null
     }
-
-
 
     public void OnPlantingAnimationSeedStart() // Event getriggert im Animator
     {
@@ -720,7 +720,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (isAutoMoving)
         {
-            rb.velocity = new Vector2(autoMoveDirection.x * currentSpeed, rb.velocity.y);
+            rb.velocity = new Vector2(autoMoveDirection.x * (isAutoMovingFast ? speedFaster : speed), rb.velocity.y);
         }
         else
         {
@@ -736,7 +736,18 @@ public class PlayerMovement : MonoBehaviour
         animator.SetBool("IsRunning", isMoving);
 
         // Setze die Condition für die Running Fast Animation
-        animator.SetBool("IsRunningFast", isRunning && isMoving);
+        if (isAutoMoving)
+        {
+            if(isAutoMovingFast)
+            {
+                animator.SetBool("IsRunningFast", true);
+            }
+            animator.SetBool("IsRunning", true);
+        }
+        else
+        {
+            animator.SetBool("IsRunningFast", isRunning && isMoving);
+        }
 
         WalkSound(isMoving);
         if (isAutoMoving)

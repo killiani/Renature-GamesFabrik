@@ -11,6 +11,8 @@ namespace Assets.Scripts.StoryElements
         public Transform pittiTransform;
         public Transform housePosition;
         public GameObject houseLayer;
+        public BoxCollider2D houseTrigger; // Collider der als Trigger fungiert
+        public BoxCollider2D startDayTrigger;
         public float zoomDuration = 2f;
         public float fadeDuration = 2f;
         public PostProcessVolume postProcessVolume; // Referenz zur Post-process Volume
@@ -20,6 +22,8 @@ namespace Assets.Scripts.StoryElements
         public Collider2D stegHome; // Der Collider für den Steg zum Haus
         public PlayerMovement playerMovement; // Referenz zum PlayerMovement-Skript
         private NightZone nightZone;
+        private HouseTrigger houseTriggerScript;
+        private StartDayTrigger startDayTriggerScript;
 
         private bool isSceneActive = false;
         private ColorGrading colorGrading;
@@ -52,6 +56,18 @@ namespace Assets.Scripts.StoryElements
             if (nightZone == null)
             {
                 Debug.LogError("NightZone script not found in the scene.");
+            }
+
+            houseTriggerScript = houseTrigger.GetComponent<HouseTrigger>();
+            if (houseTriggerScript == null)
+            {
+                Debug.LogError("HouseTrigger script not found on houseTrigger object.");
+            }
+
+            startDayTriggerScript = startDayTrigger.GetComponent<StartDayTrigger>();
+            if (startDayTriggerScript == null)
+            {
+                Debug.LogError("StartDayTrigger script not found on startDayTrigger object.");
             }
 
             if (postProcessVolume == null)
@@ -118,55 +134,56 @@ namespace Assets.Scripts.StoryElements
             yield return StartCoroutine(ZoomCamera(5f, zoomedInScreenY));
 
             // Bild dunkel werden lassen
-            yield return StartCoroutine(FadeToBlack());
+            yield return StartCoroutine(FadeTo(0f, -5f, 0f));
 
             // Collider wechseln
             stegBeiboot.enabled = false;
             stegHome.enabled = true;
 
-            // Haus Layer wechsel
+            // Haus Layer wechseln
             ChangeLayer(houseLayer, 9);
 
             // Pitti zum Haus bewegen
-            MovePittiToHouse();
+            yield return StartCoroutine(MovePittiToHouse());
 
             // Bild wieder hell werden lassen
-            yield return StartCoroutine(FadeToClear());
+            //yield return StartCoroutine(FadeToClear());
 
             // Pitti automatisch ins Haus bewegen
-            yield return StartCoroutine(MovePitti(2f, Vector2.left));
+            //yield return StartCoroutine(MovePitti(2f, Vector2.left));
 
-            // Tag rotate
+            // Tag rotieren
             if (nightZone != null)
             {
                 nightZone.TriggerDayEvent();
             }
 
             // Bild dunkel werden lassen
-            yield return StartCoroutine(FadeToBlack());
+            yield return StartCoroutine(FadeTo(-5f, -10f, 0f));
 
             // Bild wieder hell werden lassen - nächster Morgen
-            yield return StartCoroutine(FadeToClear());
+            yield return StartCoroutine(FadeTo(-10f, 0f, 0f));
+            //yield return StartCoroutine(FadeToClear());
 
             // Pitti automatisch aus dem Haus bewegen
-            yield return StartCoroutine(MovePitti(3f, Vector2.right));
+            yield return StartCoroutine(MovePittiToStartDay());
+
 
             // Collider wechseln
             stegBeiboot.enabled = true;
             stegHome.enabled = false;
 
-            // Haus Layer wechsel
+            // Haus Layer wechseln
             ChangeLayer(houseLayer, 1);
 
             // Kamera zurückzoomen
             yield return StartCoroutine(ZoomCamera(9.96f, defaultScreenY));
 
-            // Beweung aktivieren
+            // Bewegung aktivieren
             playerMovement.EnableMovement();
 
             isSceneActive = false;
         }
-
 
         private IEnumerator ZoomCamera(float targetOrthoSize, float targetScreenY)
         {
@@ -193,28 +210,54 @@ namespace Assets.Scripts.StoryElements
             confiner2D.m_BoundingShape2D = originalBounds;
         }
 
-        private IEnumerator FadeToBlack()
+        private IEnumerator MovePittiToHouse()
         {
-            float elapsedTime = 0f;
+            Vector2 direction = (houseTrigger.transform.position - pittiTransform.position).normalized;
+            playerMovement.StartAutoMove(direction, true);
+
+            // Warte, bis Pitti den houseTrigger erreicht hat
+            while (!houseTriggerScript.IsPlayerInZone())
+            {
+                Debug.Log("Moving towards house...");
+                yield return null;
+            }
+
+            Debug.Log("Pitti reached the house!");
+            playerMovement.StopAutoMove();
+        }
+
+        private IEnumerator MovePittiToStartDay()
+        {
+            Vector2 direction = (startDayTrigger.transform.position - pittiTransform.position).normalized;
+            playerMovement.StartAutoMove(direction, false);
+
+            // Warte, bis Pitti den startDayTrigger erreicht hat
+            while (!startDayTriggerScript.IsPlayerInZone())
+            {
+                Debug.Log("Moving towards start day...");
+                yield return null;
+            }
+
+            Debug.Log("Pitti reached the start day position!");
+            playerMovement.StopAutoMove();
+        }
+
+        private IEnumerator FadeTo(float from, float to, float time)
+        {
+            float elapsedTime = time;
 
             if (colorGrading != null)
             {
                 while (elapsedTime < fadeDuration)
                 {
-                    colorGrading.postExposure.value = Mathf.Lerp(0f, -5f, (elapsedTime / fadeDuration)); // Exposition verringern
+                    colorGrading.postExposure.value = Mathf.Lerp(from, to, (elapsedTime / fadeDuration)); // Exposition verringern
                     elapsedTime += Time.deltaTime;
                     yield return null;
                 }
 
-                colorGrading.postExposure.value = -5f;
+                colorGrading.postExposure.value = to;
             }
         }
-
-        private void MovePittiToHouse()
-        {
-            pittiTransform.position = housePosition.position;
-        }
-
         private IEnumerator FadeToClear()
         {
             float elapsedTime = 0f;
@@ -231,14 +274,5 @@ namespace Assets.Scripts.StoryElements
                 colorGrading.postExposure.value = 0f;
             }
         }
-
-        private IEnumerator MovePitti(float duration, Vector2 direction)
-        {
-            // Start automatic movement
-            playerMovement.StartAutoMove(direction, duration);
-
-            yield return new WaitForSeconds(duration);
-        }
-
     }
 }
