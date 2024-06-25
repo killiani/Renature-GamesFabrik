@@ -23,7 +23,7 @@ public class Backpack : MonoBehaviour
     public void AddSeed(Seed seed)
     {
         seeds.Add(seed);
-        Debug.Log($"Seed added to backpack: {seed.Type} with a grow Time of {seed.GrowthTime}. Total seeds: {seeds.Count}");
+        //Debug.Log($"Seed added to backpack: {seed.Type} with a grow Time of {seed.GrowthTime}. Total seeds: {seeds.Count}");
 
         if (backpackController != null)
         {
@@ -59,22 +59,6 @@ public class Backpack : MonoBehaviour
     {
         return seeds;
     }
-
-    // Samen wählen und aus Rucksack entfernen
-    //public Seed GetAndRemoveSeedAt(int index, string seedname)
-    //{
-    //    if (index >= 0 && index < seeds.Count)
-    //    {
-    //        Seed seed = seeds[index];
-    //        seeds.RemoveAt(index);
-
-    //        UpdateSeedDisplay();
-
-    //        return seed;
-    //    }
-    //    return null;
-    //}
-
 
     /* 
      * Hack: 

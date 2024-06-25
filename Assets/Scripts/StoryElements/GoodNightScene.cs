@@ -10,6 +10,7 @@ namespace Assets.Scripts.StoryElements
         public CinemachineVirtualCamera followCamera; // Referenz zur Cinemachine Virtual Camera
         public Transform pittiTransform;
         public Transform housePosition;
+        public GameObject houseLayer;
         public float zoomDuration = 2f;
         public float fadeDuration = 2f;
         public PostProcessVolume postProcessVolume; // Referenz zur Post-process Volume
@@ -96,6 +97,19 @@ namespace Assets.Scripts.StoryElements
             StartCoroutine(GoodNightSequence());
         }
 
+        void ChangeLayer(GameObject obj, int layer)
+        {
+            SpriteRenderer spriteRenderer = obj.GetComponent<SpriteRenderer>();
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.sortingOrder = layer;
+            }
+            else
+            {
+                Debug.LogWarning("The object does not have a SpriteRenderer component.");
+            }
+        }
+
         private IEnumerator GoodNightSequence()
         {
             isSceneActive = true;
@@ -109,6 +123,9 @@ namespace Assets.Scripts.StoryElements
             // Collider wechseln
             stegBeiboot.enabled = false;
             stegHome.enabled = true;
+
+            // Haus Layer wechsel
+            ChangeLayer(houseLayer, 9);
 
             // Pitti zum Haus bewegen
             MovePittiToHouse();
@@ -137,6 +154,9 @@ namespace Assets.Scripts.StoryElements
             // Collider wechseln
             stegBeiboot.enabled = true;
             stegHome.enabled = false;
+
+            // Haus Layer wechsel
+            ChangeLayer(houseLayer, 1);
 
             // Kamera zurückzoomen
             yield return StartCoroutine(ZoomCamera(9.96f, defaultScreenY));

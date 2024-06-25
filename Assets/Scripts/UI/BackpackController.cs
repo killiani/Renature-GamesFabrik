@@ -11,6 +11,8 @@ public class BackpackController : MonoBehaviour
     private int currentSelectionIndex = 0; // Index der aktuell ausgewaehlten Samenkarte
     private string currentSelectedSeed = "";
     private List<Image> seedCards = new List<Image>(); // Liste der Samenkarte
+    private float inputCooldown = 0.2f; // Abkühlzeit zwischen den Eingaben in Sekunden
+    private float lastInputTime = 0f; // Zeitpunkt der letzten Eingabe
 
     private Backpack backpack;
     private PlayerMovement playerMovement;
@@ -117,8 +119,14 @@ public class BackpackController : MonoBehaviour
 
     private void OnMove(InputAction.CallbackContext context) // Navigieren durch Samenkarten
     {
+        if (Time.time - lastInputTime < inputCooldown)
+        {
+            // Eingabe ignorieren, wenn die Abkühlzeit noch nicht abgelaufen ist
+            return;
+        }
+
         Debug.Log("OnMove");
-        Debug.Log($"Anzahl der Samenkarten: {seedCards.Count}");
+        //Debug.Log($"Anzahl der Samenkarten: {seedCards.Count}");
 
         if (seedCards.Count > 0)
         {
@@ -134,6 +142,9 @@ public class BackpackController : MonoBehaviour
             Debug.Log("OnMove > doing update");
 
             UpdateCardVisibility();
+
+            // Aktualisiere den Zeitpunkt der letzten Eingabe
+            lastInputTime = Time.time;
         }
     }
 
@@ -152,10 +163,10 @@ public class BackpackController : MonoBehaviour
                 if (i == currentSelectionIndex)
                 {
                     currentSelectedSeed = seedCards[i].name;
-                    Debug.Log("Selected: "+ seedCards[i].name);
+                    //Debug.Log("Selected: "+ seedCards[i].name);
                 }
 
-                Debug.Log($"seedCard color: {seedCards[i].name} - {color}");
+                //Debug.Log($"seedCard color: {seedCards[i].name} - {color}");
             }
         }
         else
@@ -168,9 +179,7 @@ public class BackpackController : MonoBehaviour
     // Logik zum Einpflanzen des ausgewaehlten Samens
     private void OnSelect(InputAction.CallbackContext context)
     {
-        Debug.Log("Selected seed card Number: " + currentSelectionIndex+ " - Name: " + seedCards[currentSelectionIndex].name);
-        // Hier reihenfolge ausgen
-
+        //Debug.Log("Selected seed card Number: " + currentSelectionIndex+ " - Name: " + seedCards[currentSelectionIndex].name);
         HandlePlanting();
         ToggleCanvasVisibility(context); // Schliesst Rucksack nach auswahl
     }
@@ -189,8 +198,6 @@ public class BackpackController : MonoBehaviour
 
                 playerMovement.HoldSeedAndReadyToPlant(currentSelectionIndex, currentSelectedSeed);
 
-                //playerMovement.SetCurrentSeedIndex(currentSelectionIndex); // Setzen des aktuellen Samenindex im PlayerMovement
-                //animator.SetTrigger("HandleGoPlant"); // Starten der Pflanzanimation
             }
         }
         else
