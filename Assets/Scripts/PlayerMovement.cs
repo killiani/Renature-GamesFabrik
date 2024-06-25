@@ -84,8 +84,11 @@ public class PlayerMovement : MonoBehaviour
 
     public void DisableMovement()
     {
+        Debug.Log("STOP!!!!!!!!!!!");
         input.Player.Move.performed -= OnMove;
         input.Player.Move.canceled -= OnMoveCanceled;
+        input.Player.RunningFaster.performed -= OnRun;
+        input.Player.RunningFaster.canceled -= OnRunCanceled;
         input.Player.PrimaryAction.performed -= HandlePrimaryAction;
         input.Player.WateringAction.performed -= HandleWateringAction;
 
@@ -105,6 +108,8 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         input.Player.Move.performed += OnMove;
         input.Player.Move.canceled += OnMoveCanceled;
+        input.Player.RunningFaster.performed += OnRun;
+        input.Player.RunningFaster.canceled += OnRunCanceled;
         input.Player.PrimaryAction.performed += HandlePrimaryAction;
         input.Player.WateringAction.performed += HandleWateringAction;
 
@@ -398,12 +403,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandlePickupDrop()
     {
-        // LAUFEn muss dekativert werden
-        animator.SetTrigger("HandleGoDown");
-        DisableMovement();
 
         if (switchMovement == false) // __________________________ AUFHEBEN
         {
+            DisableMovement();
+            animator.SetTrigger("HandleGoDown");
             // Setze den Zustand auf Aufheben und überprüfe, ob sich ein Objekt in der Nähe befindet
             nearestObject = GetNearestObject();
             Debug.Log("nearest: ", nearestObject);
@@ -426,36 +430,47 @@ public class PlayerMovement : MonoBehaviour
         {
             if (pickupScript.carriedObject != null)
             {
-                Rigidbody2D rb = pickupScript.carriedObject.GetComponent<Rigidbody2D>();
-                Collider2D col = pickupScript.carriedObject.GetComponent<Collider2D>();
-
-                Debug.Log("Drop OK");
-
-                if (rb != null)
-                {
-                    rb.isKinematic = false; // Physik wieder aktivieren
-                    rb.simulated = true; // Simulation aktivieren
-                }
-                if (col != null)
-                {
-                    col.enabled = true; // Collider aktivieren
-                }
-
-                pickupScript.DropObject();
-
-                if (beibootTrigger.IsPlayerInZone())
-                {
-                    PlayRandomBeibootDropSound(); // Spiele ein zufälliges Geräusch aus der Beiboot-Zone ab
-                }
-                else
-                {
-                    PlayDropSound(); // Spiele das Standard-Ableggeräusch ab
-                }
-
-                switchMovement = false;
-                animator.SetBool("HasObject", false);
+                DisableMovement();
+                animator.SetTrigger("HandleGoDown");
+                Debug.Log("Ablegen versuch");
+                StartCoroutine(DropObjectAfterAnimation());
             }
         }
+    }
+
+    private IEnumerator DropObjectAfterAnimation()
+    {
+        yield return new WaitForSeconds(0.5f); // Warte, bis die Animation teilweise abgeschlossen ist
+
+        Rigidbody2D rb = pickupScript.carriedObject.GetComponent<Rigidbody2D>();
+        Collider2D col = pickupScript.carriedObject.GetComponent<Collider2D>();
+
+        Debug.Log("Drop OK");
+
+        if (rb != null)
+        {
+            rb.isKinematic = false; // Physik wieder aktivieren
+            rb.simulated = true; // Simulation aktivieren
+        }
+        if (col != null)
+        {
+            col.enabled = true; // Collider aktivieren
+        }
+
+        pickupScript.DropObject();
+
+        if (beibootTrigger.IsPlayerInZone())
+        {
+            PlayRandomBeibootDropSound(); // Spiele ein zufälliges Geräusch aus der Beiboot-Zone ab
+        }
+        else
+        {
+            PlayDropSound(); // Spiele das Standard-Ableggeräusch ab
+        }
+
+        switchMovement = false;
+        animator.SetBool("HasObject", false);
+        EnableMovement(); // Bewegung wieder aktivieren
     }
 
     private void PlayPickupSound()

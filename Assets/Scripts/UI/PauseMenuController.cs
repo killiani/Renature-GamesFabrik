@@ -27,6 +27,7 @@ public class GameMenu : MonoBehaviour
         {
             Debug.LogError("PlayerMovement component not found on any game objects in the scene.");
         }
+        DisableInputs();
     }
 
     void OnEnable()
@@ -43,6 +44,17 @@ public class GameMenu : MonoBehaviour
         input.MenuPause.PrimaryAction.performed -= PerformPrimaryAction;
     }
 
+    private void DisableInputs()
+    {
+        input.MenuPause.PrimaryAction.performed -= PerformPrimaryAction;
+    }
+
+    private void EnableInputs()
+    {
+        input.MenuPause.PrimaryAction.performed += PerformPrimaryAction;
+    }
+
+
     // Methode zum Umschalten des Menüs
     private void ToggleMenu(InputAction.CallbackContext context)
     {
@@ -52,6 +64,7 @@ public class GameMenu : MonoBehaviour
 
         if (isActive)
         {
+            EnableInputs();
             playerMovement.DisableMovement();
             EventSystem.current.SetSelectedGameObject(null);  // Zuerst das aktuell gewählte Objekt zurücksetzen
             Button firstButton = menuPanel.GetComponentInChildren<Button>();
@@ -62,6 +75,7 @@ public class GameMenu : MonoBehaviour
         }
         else
         {
+            DisableInputs();
             playerMovement.EnableMovement();
         }
     }
