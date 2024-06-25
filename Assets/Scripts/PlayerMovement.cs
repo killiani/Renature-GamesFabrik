@@ -489,17 +489,17 @@ public class PlayerMovement : MonoBehaviour
             animator.SetTrigger("HandleGoDown");
             // Setze den Zustand auf Aufheben und überprüfe, ob sich ein Objekt in der Nähe befindet
             nearestObject = GetNearestObject();
-            Debug.Log("nearest: ", nearestObject);
+            //Debug.Log("nearest: ", nearestObject);
 
             if (nearestObject != null)
             {
                 if (nearestObject.layer == LayerMask.NameToLayer("Seeds"))
                 {
-                    Debug.Log("Try to grab Seed");
+                    //Debug.Log("Try to grab Seed");
                 }
                 else if (nearestObject.layer == LayerMask.NameToLayer("Objects"))
                 {
-                    Debug.Log("Try to grab Object");
+                    //Debug.Log("Try to grab Object");
                     PlayPickupSound();
                 }
                 isPickingUp = true; // Animation auslösen
@@ -511,7 +511,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 DisableMovement();
                 animator.SetTrigger("HandleGoDown");
-                Debug.Log("Ablegen versuch");
+                //Debug.Log("Ablegen versuch");
                 StartCoroutine(DropObjectAfterAnimation());
             }
         }
@@ -524,7 +524,7 @@ public class PlayerMovement : MonoBehaviour
         Rigidbody2D rb = pickupScript.carriedObject.GetComponent<Rigidbody2D>();
         Collider2D col = pickupScript.carriedObject.GetComponent<Collider2D>();
 
-        Debug.Log("Drop OK");
+        //Debug.Log("Drop OK");
 
         if (rb != null)
         {
