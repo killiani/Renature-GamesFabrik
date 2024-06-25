@@ -61,19 +61,52 @@ public class Backpack : MonoBehaviour
     }
 
     // Samen wählen und aus Rucksack entfernen
-    public Seed GetAndRemoveSeedAt(int index)
+    //public Seed GetAndRemoveSeedAt(int index, string seedname)
+    //{
+    //    if (index >= 0 && index < seeds.Count)
+    //    {
+    //        Seed seed = seeds[index];
+    //        seeds.RemoveAt(index);
+
+    //        UpdateSeedDisplay();
+
+    //        return seed;
+    //    }
+    //    return null;
+    //}
+
+
+    /* 
+     * Hack: 
+     Da das suchen mit dem index zu unsicher war, wurda auf den Namen ausgewichen. 
+     Dem Namen wird dann hier das "Card" entzogen und geschaut welcher Typ dazu passt.
+     */
+    public Seed GetAndRemoveSeedByName(int index, string seedCardName)
     {
-        if (index >= 0 && index < seeds.Count)
+        // Entferne das Suffix "Card" aus dem Namen, um den eigentlichen Seed-Namen zu erhalten
+        string seedName = seedCardName.Replace("Card", "");
+
+        // Versuche, den Seed-Namen in den entsprechenden SeedType-Enum-Wert zu konvertieren
+        if (System.Enum.TryParse(seedName, out Seed.SeedType seedType))
         {
-            Seed seed = seeds[index];
-            seeds.RemoveAt(index);
+            // Suche nach dem Seed mit dem angegebenen Typ
+            Seed seedToRemove = seeds.Find(seed => seed.Type == seedType);
 
-            UpdateSeedDisplay();
+            if (seedToRemove != null)
+            {
+                // Entferne den Seed aus der Liste
+                seeds.Remove(seedToRemove);
 
-            return seed;
+                // Aktualisiere die Anzeige der Samen
+                UpdateSeedDisplay();
+
+                return seedToRemove;
+            }
         }
         return null;
     }
+
+
 
     // Methode zum Aktualisieren der Samen-Anzeige basierend auf der Anzahl der Samen im Rucksack
     private void UpdateSeedDisplay()

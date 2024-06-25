@@ -295,9 +295,9 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    public void HoldSeedAndReadyToPlant(int currentSelectionIndex)
+    public void HoldSeedAndReadyToPlant(int currentSelectionIndex, string seedName)
     {
-        SetCurrentSeedIndex(currentSelectionIndex);
+        SetCurrentSeed(currentSelectionIndex, seedName);
 
         seedInHand = Instantiate(seedPrefab, frontHandPosition.position, Quaternion.identity, frontHandPosition);
         seedInHand.transform.localScale *= 3; // Vergrößern 
@@ -365,20 +365,22 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private int currentSeedIndex = -1;
+    private string currentSeedName = "";
 
-    public void SetCurrentSeedIndex(int index)
+    public void SetCurrentSeed(int index, string name)
     {
         currentSeedIndex = index;
-        Debug.Log("New Index: " + currentSeedIndex);
-        Debug.Log("All Seeds List: " + backpack.GetAllSeeds());
-        Debug.Log("Target Seed: " + backpack.GetAllSeeds()[currentSeedIndex]);
+        currentSeedName = name;
+        //Debug.Log("New Index: " + currentSeedIndex);
+        //Debug.Log("All Seeds List: " + backpack.GetAllSeeds());
+        //Debug.Log("Target Seed: " + backpack.GetAllSeeds()[currentSeedIndex]);
     }
 
     public void OnPlantingAnimation()
     {
         if (currentSeedIndex >= 0)
         {
-            Seed seedToPlant = backpack.GetAndRemoveSeedAt(currentSeedIndex);
+            Seed seedToPlant = backpack.GetAndRemoveSeedByName(currentSeedIndex, currentSeedName);
             if (seedToPlant != null)
             {
                 Plant newPlant = new Plant((Plant.PlantType)seedToPlant.Type, seedToPlant.GrowthTime);

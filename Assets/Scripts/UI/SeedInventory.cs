@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public class SeedInventory : MonoBehaviour
 {
-    public Transform cardContainer; // Container f�r die Karten
+    public Transform cardContainer; // Container fuer die Karten
     public Image farnCard;
     public Image mangroveCard;
     public Image crotonCard;
@@ -32,7 +32,7 @@ public class SeedInventory : MonoBehaviour
 
     void Update()
     {
-        // Nur aktualisieren, wenn sich etwas ge�ndert hat
+        // Nur aktualisieren, wenn sich etwas geaendert hat
         if (HasSeedsChanged())
         {
             UpdateSeedDisplay();
@@ -53,7 +53,7 @@ public class SeedInventory : MonoBehaviour
             currentSeedCounts[seed.Type]++;
         }
 
-        // �berpr�fen, ob sich die Samenanzahl ge�ndert hat
+        // prueffen, ob sich die Samenanzahl geandert hat
         bool hasChanged = false;
         foreach (Seed.SeedType seedType in System.Enum.GetValues(typeof(Seed.SeedType)))
         {

@@ -8,7 +8,8 @@ public class BackpackController : MonoBehaviour
     public GameObject seedInventoryCanvas; // Das Canvas, das ein- und ausgeblendet werden soll
     private CustomInputs input; // Referenz zum neuen Input System
     private bool isCanvasVisible = false; // Zustand des Canvas
-    private int currentSelectionIndex = 0; // Index der aktuell ausgew�hlten Samenkarte
+    private int currentSelectionIndex = 0; // Index der aktuell ausgewaehlten Samenkarte
+    private string currentSelectedSeed = "";
     private List<Image> seedCards = new List<Image>(); // Liste der Samenkarte
 
     private Backpack backpack;
@@ -143,10 +144,18 @@ public class BackpackController : MonoBehaviour
         {
             for (int i = 0; i < seedCards.Count; i++)
             {
+                // Setze die Transparenz der Karte basierend auf der aktuellen Auswahl
                 Color color = seedCards[i].color;
                 color.a = (i == currentSelectionIndex) ? 1f : 0.5f;
                 seedCards[i].color = color;
-                Debug.Log($"seedCard color: {seedCards[i]} - {color}");
+
+                if (i == currentSelectionIndex)
+                {
+                    currentSelectedSeed = seedCards[i].name;
+                    Debug.Log("Selected: "+ seedCards[i].name);
+                }
+
+                Debug.Log($"seedCard color: {seedCards[i].name} - {color}");
             }
         }
         else
@@ -156,10 +165,11 @@ public class BackpackController : MonoBehaviour
     }
 
 
-    // Logik zum Einpflanzen des ausgew�hlten Samens
+    // Logik zum Einpflanzen des ausgewaehlten Samens
     private void OnSelect(InputAction.CallbackContext context)
     {
-        Debug.Log("Selected seed card: " + currentSelectionIndex);
+        Debug.Log("Selected seed card Number: " + currentSelectionIndex+ " - Name: " + seedCards[currentSelectionIndex].name);
+        // Hier reihenfolge ausgen
 
         HandlePlanting();
         ToggleCanvasVisibility(context); // Schliesst Rucksack nach auswahl
@@ -177,7 +187,7 @@ public class BackpackController : MonoBehaviour
             if (playerMovement != null && animator != null) // TODO: vereinfachen
             {
 
-                playerMovement.HoldSeedAndReadyToPlant(currentSelectionIndex);
+                playerMovement.HoldSeedAndReadyToPlant(currentSelectionIndex, currentSelectedSeed);
 
                 //playerMovement.SetCurrentSeedIndex(currentSelectionIndex); // Setzen des aktuellen Samenindex im PlayerMovement
                 //animator.SetTrigger("HandleGoPlant"); // Starten der Pflanzanimation
