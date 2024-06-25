@@ -15,6 +15,7 @@ public class PlayerMovement : MonoBehaviour
     private bool switchMovement = false; // Gibt an, ob der Charakter ein Objekt trägt
     private bool isPickingUp = false; // Zustand des Aufhebens/Ablegens
     private bool isAutoMoving = false;
+    private bool isSeedInHand = false;
     private Vector2 autoMoveDirection;
 
     private Animator animator;
@@ -61,6 +62,7 @@ public class PlayerMovement : MonoBehaviour
     private PickupScript pickupScript;
     private Backpack backpack;
     private NightZone nightZone;
+    private GameMenu pauseMenu;
     private RotateObject skyDiscRotateObject;
     private GoodNightScene goodNightScene;
     private GameObject nearestObject;
@@ -72,19 +74,18 @@ public class PlayerMovement : MonoBehaviour
     {
         input = new CustomInputs(); // Initialisiere das neue Input System
 
-        // Binde die Bewegungsaktion an die Move-Methode
         input.Player.Move.performed += OnMove;
         input.Player.Move.canceled += OnMoveCanceled;
         input.Player.RunningFaster.performed += ctx => OnRun(ctx);
         input.Player.RunningFaster.canceled += ctx => OnRunCanceled(ctx);
         input.Player.PrimaryAction.performed += HandlePrimaryAction;
         input.Player.WateringAction.performed += HandleWateringAction;
-        input.Player.NightAction.performed += ctx => HandleNightAction();
+        input.Player.NightAction.performed += HandleNightAction;
+        input.Player.AbortAction.Disable();
     }
 
     public void DisableMovement()
     {
-        Debug.Log("STOP!!!!!!!!!!!");
         input.Player.Move.performed -= OnMove;
         input.Player.Move.canceled -= OnMoveCanceled;
         input.Player.RunningFaster.performed -= OnRun;
@@ -96,6 +97,30 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = Vector2.zero; // Setze die Geschwindigkeit auf Null
         input.Player.Move.Disable(); // Deaktiviere die Bewegungseingaben
         input.Player.RunningFaster.Disable(); // Deaktiviere die Lauf-Eingaben
+    }
+
+    /*
+    - Pitti hält Samen aus Rucksack bereits
+    - Tasten umschalten zum Abbrechen der Aktion
+    - Aktivieren des ToPlantArea()
+     */
+    private void SeedToPlantMode(bool inputSwitch)
+    {
+        if (inputSwitch)
+        {
+            input.Player.NightAction.performed -= HandleNightAction;
+            input.Player.NightAction.Disable();
+            input.Player.AbortAction.performed += TriggerDontPlant;
+            input.Player.AbortAction.Enable();
+            pauseMenu.DisableShowMenu();
+        } else
+        {
+            input.Player.NightAction.performed += HandleNightAction;
+            input.Player.NightAction.Enable();
+            input.Player.AbortAction.performed -= TriggerDontPlant;
+            input.Player.AbortAction.Disable();
+            pauseMenu.EnableShowMenu();
+        }
     }
 
     public void EnableMovement()
@@ -182,6 +207,14 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.LogError("GoodNightScene script not found in the scene.");
         }
+
+        pauseMenu = FindObjectOfType<GameMenu>();
+        if (pauseMenu == null)
+        {
+            Debug.LogError("GameMenu/ PauseMenu script not found in the scene.");
+        }
+
+
     }
 
     void Update()
@@ -235,28 +268,78 @@ public class PlayerMovement : MonoBehaviour
 
 
 
-    public void OnPlantingAnimationSeedStart()
+    public void OnPlantingAnimationSeedStart() // Event getriggert im Animator
     {
-        // Samen in die Hand positionieren
         DisableMovement();
-        seedInHand = Instantiate(seedPrefab, frontHandPosition.position, Quaternion.identity, frontHandPosition);
-        seedInHand.transform.localScale *= 3; // Vergrößern 
-
-        // Sicherstellen, dass der Samen kein Rigidbody hat oder kinematisch ist
-        Rigidbody2D seedRigidbody = seedInHand.GetComponent<Rigidbody2D>();
-        if (seedRigidbody != null)
-        {
-            seedRigidbody.isKinematic = true;
-        }
     }
 
-    public void OnPlantingAnimationSeed()
+    public void OnPlantingAnimationSeed() // Event getriggert im Animator - End
     {
         if (seedInHand != null)
         {
             Destroy(seedInHand); // Entferne den Samen aus Pittis Hand
         }
         EnableMovement();
+    }
+
+    // Hack um es aus dem Backback heraus zu umgehen
+    private void HandlePrimaryAction(InputAction.CallbackContext context)
+    {
+        if (isSeedInHand)
+        {
+            TriggerPlant();
+        }
+        else
+        {
+            HandlePickupDrop();
+        }
+    }
+
+    public void HoldSeedAndReadyToPlant(int currentSelectionIndex)
+    {
+        SetCurrentSeedIndex(currentSelectionIndex);
+
+        seedInHand = Instantiate(seedPrefab, frontHandPosition.position, Quaternion.identity, frontHandPosition);
+        seedInHand.transform.localScale *= 3; // Vergrößern 
+
+        Rigidbody2D seedRigidbody = seedInHand.GetComponent<Rigidbody2D>();
+        if (seedRigidbody != null)
+        {
+            seedRigidbody.isKinematic = true;
+            seedRigidbody.gravityScale = 0f;
+            seedRigidbody.simulated = false;
+        }
+        Collider2D seedCollider = seedInHand.GetComponent<Collider2D>();
+        if (seedCollider != null)
+        {
+            seedCollider.enabled = false;
+        }
+
+        animator.SetBool("HasObject", true);
+        isSeedInHand = true;
+
+        SeedToPlantMode(true); // Gleiche Tastenbelegung von B dekativieren und auf Abbrechen umlegen
+    }
+
+    private void TriggerPlant() // ausführen
+    { 
+        if (isSeedInHand)
+        {
+            animator.SetTrigger("HandleGoPlant");
+
+            // Zeit versatz?
+            animator.SetBool("HasObject", false);
+            isSeedInHand = false;
+            SeedToPlantMode(false); // Gleiche Tastenbelegung von B dekativieren und auf NightHandling umlegen
+        }
+    }
+
+    private void TriggerDontPlant(InputAction.CallbackContext context) // Abbrechen
+    {
+        isSeedInHand = false;
+        animator.SetBool("HasObject", false);
+        SeedToPlantMode(false); // Gleiche Tastenbelegung von B dekativieren und auf NightHandling umlegen
+        Destroy(seedInHand);
     }
 
 
@@ -393,12 +476,6 @@ public class PlayerMovement : MonoBehaviour
             Destroy(waterRunningOutOfCan);
         }
         EnableMovement();
-    }
-
-    // Hack um es aus dem Backback heraus zu umgehen
-    private void HandlePrimaryAction(InputAction.CallbackContext context)
-    {
-        HandlePickupDrop();
     }
 
     private void HandlePickupDrop()
@@ -601,7 +678,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void HandleNightAction()
+    private void HandleNightAction(InputAction.CallbackContext context)
     {
         if (skyDiscRotateObject != null)
         {

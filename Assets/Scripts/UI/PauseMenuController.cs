@@ -44,12 +44,21 @@ public class GameMenu : MonoBehaviour
         input.MenuPause.PrimaryAction.performed -= PerformPrimaryAction;
     }
 
-    private void DisableInputs()
+    public void DisableShowMenu()
+    {
+        input.HUD.PauseMenu.Disable();
+    }
+    public void EnableShowMenu()
+    {
+        input.HUD.PauseMenu.Enable();
+    }
+
+    public void DisableInputs()
     {
         input.MenuPause.PrimaryAction.performed -= PerformPrimaryAction;
     }
 
-    private void EnableInputs()
+    public void EnableInputs()
     {
         input.MenuPause.PrimaryAction.performed += PerformPrimaryAction;
     }

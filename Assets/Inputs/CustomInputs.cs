@@ -46,7 +46,7 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Plant Action"",
+                    ""name"": ""Abort Action"",
                     ""type"": ""Button"",
                     ""id"": ""c0abd091-ed0a-4fb7-b068-7ca425b5ee1c"",
                     ""expectedControlType"": ""Button"",
@@ -273,11 +273,11 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""2479a308-6f82-4a43-abf6-2f00c2f2a8aa"",
-                    ""path"": ""<Keyboard>/2"",
+                    ""path"": ""<Keyboard>/escape"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Plant Action"",
+                    ""action"": ""Abort Action"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -288,7 +288,7 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Plant Action"",
+                    ""action"": ""Abort Action"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -1138,7 +1138,7 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_PrimaryAction = m_Player.FindAction("Primary Action", throwIfNotFound: true);
-        m_Player_PlantAction = m_Player.FindAction("Plant Action", throwIfNotFound: true);
+        m_Player_AbortAction = m_Player.FindAction("Abort Action", throwIfNotFound: true);
         m_Player_RunningFaster = m_Player.FindAction("Running Faster", throwIfNotFound: true);
         m_Player_WateringAction = m_Player.FindAction("Watering Action", throwIfNotFound: true);
         m_Player_NightAction = m_Player.FindAction("Night Action", throwIfNotFound: true);
@@ -1223,7 +1223,7 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
     private List<IPlayerActions> m_PlayerActionsCallbackInterfaces = new List<IPlayerActions>();
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_PrimaryAction;
-    private readonly InputAction m_Player_PlantAction;
+    private readonly InputAction m_Player_AbortAction;
     private readonly InputAction m_Player_RunningFaster;
     private readonly InputAction m_Player_WateringAction;
     private readonly InputAction m_Player_NightAction;
@@ -1233,7 +1233,7 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
         public PlayerActions(@CustomInputs wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Player_Move;
         public InputAction @PrimaryAction => m_Wrapper.m_Player_PrimaryAction;
-        public InputAction @PlantAction => m_Wrapper.m_Player_PlantAction;
+        public InputAction @AbortAction => m_Wrapper.m_Player_AbortAction;
         public InputAction @RunningFaster => m_Wrapper.m_Player_RunningFaster;
         public InputAction @WateringAction => m_Wrapper.m_Player_WateringAction;
         public InputAction @NightAction => m_Wrapper.m_Player_NightAction;
@@ -1252,9 +1252,9 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
             @PrimaryAction.started += instance.OnPrimaryAction;
             @PrimaryAction.performed += instance.OnPrimaryAction;
             @PrimaryAction.canceled += instance.OnPrimaryAction;
-            @PlantAction.started += instance.OnPlantAction;
-            @PlantAction.performed += instance.OnPlantAction;
-            @PlantAction.canceled += instance.OnPlantAction;
+            @AbortAction.started += instance.OnAbortAction;
+            @AbortAction.performed += instance.OnAbortAction;
+            @AbortAction.canceled += instance.OnAbortAction;
             @RunningFaster.started += instance.OnRunningFaster;
             @RunningFaster.performed += instance.OnRunningFaster;
             @RunningFaster.canceled += instance.OnRunningFaster;
@@ -1274,9 +1274,9 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
             @PrimaryAction.started -= instance.OnPrimaryAction;
             @PrimaryAction.performed -= instance.OnPrimaryAction;
             @PrimaryAction.canceled -= instance.OnPrimaryAction;
-            @PlantAction.started -= instance.OnPlantAction;
-            @PlantAction.performed -= instance.OnPlantAction;
-            @PlantAction.canceled -= instance.OnPlantAction;
+            @AbortAction.started -= instance.OnAbortAction;
+            @AbortAction.performed -= instance.OnAbortAction;
+            @AbortAction.canceled -= instance.OnAbortAction;
             @RunningFaster.started -= instance.OnRunningFaster;
             @RunningFaster.performed -= instance.OnRunningFaster;
             @RunningFaster.canceled -= instance.OnRunningFaster;
@@ -1539,7 +1539,7 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnPrimaryAction(InputAction.CallbackContext context);
-        void OnPlantAction(InputAction.CallbackContext context);
+        void OnAbortAction(InputAction.CallbackContext context);
         void OnRunningFaster(InputAction.CallbackContext context);
         void OnWateringAction(InputAction.CallbackContext context);
         void OnNightAction(InputAction.CallbackContext context);

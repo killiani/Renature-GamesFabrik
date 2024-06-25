@@ -24,7 +24,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Plant Action",
+                    "name": "Abort Action",
                     "type": "Button",
                     "id": "c0abd091-ed0a-4fb7-b068-7ca425b5ee1c",
                     "expectedControlType": "Button",
@@ -251,11 +251,11 @@
                 {
                     "name": "",
                     "id": "2479a308-6f82-4a43-abf6-2f00c2f2a8aa",
-                    "path": "<Keyboard>/2",
+                    "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Plant Action",
+                    "action": "Abort Action",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -266,7 +266,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Plant Action",
+                    "action": "Abort Action",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

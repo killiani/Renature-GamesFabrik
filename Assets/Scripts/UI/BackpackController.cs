@@ -162,28 +162,26 @@ public class BackpackController : MonoBehaviour
         Debug.Log("Selected seed card: " + currentSelectionIndex);
 
         HandlePlanting();
-        ToggleCanvasVisibility(context); // Schlie�en Sie den Rucksack nach der Auswahl
+        ToggleCanvasVisibility(context); // Schliesst Rucksack nach auswahl
     }
 
     private void OnCancel(InputAction.CallbackContext context)
     {
-        ToggleCanvasVisibility(context); // Schlie�en Sie den Rucksack ohne Aktion
+        ToggleCanvasVisibility(context); // Schliesst Rucksack ohne auswahl
     }
 
     private void HandlePlanting()
     {
-        if (backpack != null && backpack.GetSeedCount() > 0) // �berpr�fen Sie, ob Samen verf�gbar sind
+        if (backpack != null && backpack.GetSeedCount() > 0) // Ueberpriuefen ob Samen verfuegbar sind
         {
-            if (playerMovement != null && animator != null)
+            if (playerMovement != null && animator != null) // TODO: vereinfachen
             {
-                playerMovement.SetCurrentSeedIndex(currentSelectionIndex); // Setzen des aktuellen Samenindex im PlayerMovement
-                animator.SetTrigger("HandleGoPlant"); // Starten der Pflanzanimation
-            }
 
-            // Zeige den Samen in Pittis Hand w�hrend der Animation
-            // seedInHand = Instantiate(seedPrefab, frontHandPosition.position, Quaternion.identity);
-            // seedInHand.transform.SetParent(frontHandPosition);
-            // seedInHand.SetActive(true);
+                playerMovement.HoldSeedAndReadyToPlant(currentSelectionIndex);
+
+                //playerMovement.SetCurrentSeedIndex(currentSelectionIndex); // Setzen des aktuellen Samenindex im PlayerMovement
+                //animator.SetTrigger("HandleGoPlant"); // Starten der Pflanzanimation
+            }
         }
         else
         {
