@@ -11,10 +11,4 @@ public class Plant
         Type = type;
         GrowthTime = growthTime;
     }
-
-    public void Grow()
-    {
-        // Logik für das Wachstum der Pflanze
-        Debug.Log($"Growing {Type} plant with growth time of {GrowthTime} seconds.");
-    }
 }

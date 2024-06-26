@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.Collections.LowLevel.Unsafe;
+using UnityEngine;
 
 public class Seed
 {
@@ -6,16 +7,13 @@ public class Seed
     public SeedType Type { get; private set; }
     public float GrowthTime { get; private set; }
 
-    public Seed(SeedType type, float growthTime)
+    public int GrowthStatus { get; private set; }
+
+    public Seed(SeedType type, float growthTime, int growthStatus)
     {
         Type = type;
         GrowthTime = growthTime;
-    }
-
-    public void Plant()
-    {
-        // Logik zum Pflanzen des Samens
-        Debug.Log($"Planting {Type} with growth time of {GrowthTime} seconds.");
+        GrowthStatus = growthStatus;
     }
 
     public static Seed GenerateRandomSeed()
@@ -23,6 +21,6 @@ public class Seed
         System.Array seedTypes = System.Enum.GetValues(typeof(SeedType));
         SeedType randomType = (SeedType)seedTypes.GetValue(Random.Range(0, seedTypes.Length));
         float randomGrowthTime = Random.Range(5f, 8f); // Beispielwerte für Wachstumszeit
-        return new Seed(randomType, randomGrowthTime);
+        return new Seed(randomType, randomGrowthTime, 0);
     }
 }
