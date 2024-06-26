@@ -46,6 +46,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private AudioSource dropSoundSource; // AudioSource für das Ablegen
     [SerializeField] private AudioClip dropSound; // Standard Ableggeräusch
     [SerializeField] private List<AudioClip> beibootDropSounds; // Liste der Geräusche für die Beiboot-Zone
+    [SerializeField] private List<AudioClip> seedGrapSounds;
 
     // Denkbläsen-Prefabs
     [SerializeField] private GameObject nightThinkingBubblePrefab;
@@ -572,6 +573,17 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void PlayRandomSeedGrapSound()
+    {
+        if (seedGrapSounds.Count > 0)
+        {
+            int randomIndex = Random.Range(0, seedGrapSounds.Count);
+            AudioClip randomClip = seedGrapSounds[randomIndex];
+            StartCoroutine(PlaySoundWithDelay(pickupSoundSource, randomClip, 0.3f));
+        }
+    }
+
+
     private IEnumerator PlaySoundWithDelay(AudioSource audioSource, AudioClip audioClip, float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -601,7 +613,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 if (backpack != null)
                 {
-                    //backpack.AddSeed(nearestObject);
+                    PlayRandomSeedGrapSound(); // Spiele zufälligen Samen-Aufheb-Sound ab
                     Seed randomSeed = Seed.GenerateRandomSeed();
                     backpack.AddSeed(randomSeed);
                     Debug.Log("Seed Pickup OK");
