@@ -778,7 +778,7 @@ public class PlayerMovement : MonoBehaviour
         // Überprüfe, ob sich der Charakter bewegt und ob er rennt
         if (isMoving)
         {
-            if (isRunning)
+            if (isRunning || isAutoMovingFast)
             {
                 if (!runningSoundSource.isPlaying)
                 {
