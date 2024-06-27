@@ -131,10 +131,10 @@ namespace Assets.Scripts.StoryElements
             isSceneActive = true;
 
             // Kamera auf Pitti zoomen
-            yield return StartCoroutine(ZoomCamera(5f, zoomedInScreenY));
+            // yield return StartCoroutine(ZoomCamera(5f, zoomedInScreenY));
 
             // Bild dunkel werden lassen
-            yield return StartCoroutine(FadeTo(0f, -5f, 0f));
+            // yield return StartCoroutine(FadeTo(0f, -5f, 0f));
 
             // Collider wechseln
             stegBeiboot.enabled = false;
@@ -159,7 +159,7 @@ namespace Assets.Scripts.StoryElements
             }
 
             // Bild dunkel werden lassen
-            yield return StartCoroutine(FadeTo(-5f, -10f, 0f));
+            yield return StartCoroutine(FadeTo(0f, -10f, 0f));
 
             // Bild wieder hell werden lassen - nächster Morgen
             yield return StartCoroutine(FadeTo(-10f, 0f, 0f));
@@ -177,7 +177,7 @@ namespace Assets.Scripts.StoryElements
             ChangeLayer(houseLayer, 1);
 
             // Kamera zurückzoomen
-            yield return StartCoroutine(ZoomCamera(9.96f, defaultScreenY));
+            // yield return StartCoroutine(ZoomCamera(9.96f, defaultScreenY));
 
             // Bewegung aktivieren
             playerMovement.EnableMovement();
