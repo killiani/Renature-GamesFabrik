@@ -368,7 +368,7 @@ public class PlayerMovement : MonoBehaviour
 
                 if (!isBlocked && !isBetweenBlocked)
                 {
-                    TriggerPlant();
+                    TriggerPlant(block);
                 }
                 else
                 {
@@ -413,7 +413,7 @@ public class PlayerMovement : MonoBehaviour
         SeedToPlantMode(true); // Gleiche Tastenbelegung von B dekativieren und auf Abbrechen umlegen
     }
 
-    private void TriggerPlant() // ausführen
+    private void TriggerPlant(Block block) // ausführen
     { 
         if (isSeedInHand)
         {
@@ -423,6 +423,11 @@ public class PlayerMovement : MonoBehaviour
             animator.SetBool("HasObject", false);
             isSeedInHand = false;
             SeedToPlantMode(false); // Gleiche Tastenbelegung von B dekativieren und auf NightHandling umlegen
+                                    // Block löschen
+            if (block != null)
+            {
+                Destroy(block.gameObject);
+            }
         }
     }
 
