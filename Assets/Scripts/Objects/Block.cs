@@ -10,7 +10,6 @@ public class Block : MonoBehaviour
     private bool hasObjectAbove = false;
     public float checkHeight = 2f; // Height to check above
     public float checkWidth = 1f; // Width of the BoxCast
-    public List<Block> neighboringBlocks; // Liste der benachbarten Blöcke
 
     void Start()
     {
@@ -51,38 +50,9 @@ public class Block : MonoBehaviour
         }
     }
 
-
     public bool CheckPosition()
     {
         return hasObjectAbove;
-    }
-
-    public bool CheckFreeAmountBlocks(int requiredBlocks)
-    {
-        HashSet<Block> visitedBlocks = new HashSet<Block>();
-        int freeBlocks = CountFreeBlocks(this, visitedBlocks);
-
-        Debug.Log($"Anzahl freier zusammenhängender Blöcke: {freeBlocks}. Benötigte Blöcke: {requiredBlocks}.");
-
-        return freeBlocks >= requiredBlocks;
-    }
-
-    private int CountFreeBlocks(Block block, HashSet<Block> visitedBlocks)
-    {
-        if (block == null || block.hasObjectAbove || visitedBlocks.Contains(block))
-        {
-            return 0;
-        }
-
-        visitedBlocks.Add(block);
-        int freeBlocks = 1;
-
-        foreach (Block neighbor in block.neighboringBlocks)
-        {
-            freeBlocks += CountFreeBlocks(neighbor, visitedBlocks);
-        }
-
-        return freeBlocks;
     }
 
     public void ShowBlock()
@@ -120,7 +90,7 @@ public class Block : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Pitti has left the block.");
+            //Debug.Log("Pitti has left the block.");
         }
 
         if (other.gameObject.layer == LayerMask.NameToLayer("Objects"))

@@ -19,6 +19,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isAutoMoving = false;
     private bool isAutoMovingFast = false;
     private bool isSeedInHand = false;
+    private int requiredBlocksToPlant = 0;
     private Vector2 autoMoveDirection;
 
     private Animator animator;
@@ -72,7 +73,7 @@ public class PlayerMovement : MonoBehaviour
     private GoodNightScene goodNightScene;
     private GameObject nearestObject;
     private GameObject seedInHand; // Referenz auf den Samen in Pittis Hand
-    public List<Block> blocks; // Ppflanz-Plaetze
+    public List<Block> blocks; // Pflanzen-Plaetze
     private GameObject wateringCanInHand;
     private GameObject waterRunningOutOfCan;
 
@@ -161,6 +162,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         animator = GetComponentInChildren<Animator>(); // da Pitti in ParentPitti liegt
+        RemoveNullBlocksFromList(); // Pflanzen-Bloecke 
 
         if (blocks == null || blocks.Count == 0)
         {
@@ -327,7 +329,7 @@ public class PlayerMovement : MonoBehaviour
             float distanceX = Mathf.Abs(block.transform.position.x - position.x);
             float distanceY = Mathf.Abs(block.transform.position.y - (position.y - 1.5f)); // Passe den festen vertikalen Abstand an
 
-            Debug.Log($"Block Position: {block.transform.position}, Player Position: {position}, DistanceX: {distanceX}, DistanceY: {distanceY}");
+            //Debug.Log($"Block Position: {block.transform.position}, Player Position: {position}, DistanceX: {distanceX}, DistanceY: {distanceY}");
 
             // Überprüfe, ob die Distanz innerhalb einer bestimmten Toleranz liegt
             if (distanceX < 0.3f && distanceY < 0.5f) // Toleranzwert für X und Y erhöht
@@ -376,28 +378,82 @@ public class PlayerMovement : MonoBehaviour
         blocks.RemoveAll(block => block == null);
     }
 
+
+    public bool CheckForFreeBlocks(Block startBlock, int requiredFreeBlocks)
+    {
+        int startIndex = blocks.IndexOf(startBlock);
+        if (startIndex == -1)
+        {
+            return false;
+        }
+
+        int freeBlocksRight = 0;
+        int freeBlocksLeft = 0;
+
+        // Suche nach rechts
+        for (int i = startIndex; i < blocks.Count; i++)
+        {
+            if (!blocks[i].CheckPosition())
+            {
+                freeBlocksRight++;
+                if (freeBlocksRight + freeBlocksLeft >= requiredFreeBlocks)
+                {
+                    Debug.Log($"Free blocks found: {freeBlocksRight + freeBlocksLeft}");
+                    return true;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        // Suche nach links
+        for (int i = startIndex - 1; i >= 0; i--)
+        {
+            if (!blocks[i].CheckPosition())
+            {
+                freeBlocksLeft++;
+                if (freeBlocksRight + freeBlocksLeft >= requiredFreeBlocks)
+                {
+                    Debug.Log($"Free blocks found: {freeBlocksRight + freeBlocksLeft}");
+                    return true;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        Debug.Log($"Free blocks found: {freeBlocksRight + freeBlocksLeft}");
+        return freeBlocksRight + freeBlocksLeft >= requiredFreeBlocks;
+    }
+
     // Hack um es aus dem Backback heraus zu umgehen
     private void HandlePrimaryAction(InputAction.CallbackContext context)
     {
         if (isSeedInHand)
         {
             Vector2 playerPosition = transform.position; // Verwende die Position des Spielers
-            Block block = GetBlockAtPosition(playerPosition); // Hole den Block an der Spielerposition
+            Block currentBlock = GetBlockAtPosition(playerPosition); // Hole den Block an der Spielerposition
 
-            if (block != null)
+            if (currentBlock != null)
             {
-                bool isBlocked = block.CheckPosition(); // Check ob Müll liegt
-                Debug.Log("Block gefunden. Kann ablegen: " + isBlocked);
+                bool isBlocked = currentBlock.CheckPosition(); // Check ob Müll liegt
+                bool isBetweenBlocked = IsBetweenBlockedBlocks(playerPosition); // liegt nebenan Müll
 
-                bool isBetweenBlocked = IsBetweenBlockedBlocks(playerPosition);
+                bool canPlant = CheckForFreeBlocks(currentBlock, requiredBlocksToPlant);
+                //bool hasEnoughFreeBlocks = block.CheckFreeAmountBlocks(requiredBlocksToPlant);
+                Debug.Log($"Kann gepflanzt werden?: {canPlant}");
 
-                if (!isBlocked && !isBetweenBlocked)
+                if (!isBlocked && !isBetweenBlocked && canPlant)
                 {
-                    TriggerPlant(block);
+                    TriggerPlant(currentBlock);
                 }
                 else
                 {
-                    Debug.Log("Ein benachbarter Block ist gesperrt oder Block ist gesperrt, kann nicht ablegen.");
+                    Debug.Log("Blockiert.");
                 }
             }
             else
@@ -411,50 +467,13 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    //private void HandlePrimaryAction(InputAction.CallbackContext context)
-    //{
-    //    if (isSeedInHand)
-    //    {
-    //        Vector2 playerPosition = transform.position; // Verwende die Position des Spielers
-    //        Block block = GetBlockAtPosition(playerPosition); // Hole den Block an der Spielerposition
-
-    //        if (block != null && seedInHand != null)
-    //        {
-    //            // Hole den aktuellen Samen aus der Hand und bestimme die Anzahl der benötigten Blöcke
-    //            SeedObject seedObjectComponent = seedInHand.GetComponent<SeedObject>();
-    //            if (seedObjectComponent != null)
-    //            {
-    //                Seed seedInHandScript = seedObjectComponent.GetSeed();
-    //                int requiredBlocks = Plant.GetRequiredBlocks((Plant.PlantType)seedInHandScript.Type);
-
-    //                bool canPlant = block.CheckFreeAmountBlocks(requiredBlocks); // Check ob Müll liegt und ob genügend Blöcke frei sind
-
-    //                if (canPlant)
-    //                {
-    //                    Debug.Log("######## JA: Es gibt genügend freie Blöcke zum Pflanzen.");
-    //                    TriggerPlant(block);
-    //                }
-    //                else
-    //                {
-    //                    Debug.Log("######### NEIN: Es gibt nicht genügend freie Blöcke zum Pflanzen.");
-    //                }
-    //            }
-    //        }
-    //        else
-    //        {
-    //            Debug.Log("Kein Block an der Position gefunden.");
-    //        }
-    //    }
-    //    else
-    //    {
-    //        HandlePickupDrop();
-    //    }
-    //}
-
 
     public void HoldSeedAndReadyToPlant(int currentSelectionIndex, string seedName)
     {
         SetCurrentSeed(currentSelectionIndex, seedName);
+
+        // Wieviele Plätze die Pflanze braucht
+        requiredBlocksToPlant = Plant.GetRequiredBlocksByCardName(seedName);
 
         seedInHand = Instantiate(seedPrefab, frontHandPosition.position, Quaternion.identity, frontHandPosition);
         seedInHand.transform.localScale *= 3; // Vergrößern 
@@ -535,9 +554,6 @@ public class PlayerMovement : MonoBehaviour
     {
         currentSeedIndex = index;
         currentSeedName = name;
-        //Debug.Log("New Index: " + currentSeedIndex);
-        //Debug.Log("All Seeds List: " + backpack.GetAllSeeds());
-        //Debug.Log("Target Seed: " + backpack.GetAllSeeds()[currentSeedIndex]);
     }
 
     public void OnPlantingAnimation()
