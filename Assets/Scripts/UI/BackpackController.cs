@@ -28,15 +28,25 @@ public class BackpackController : MonoBehaviour
     void OnEnable()
     {
         input.Enable();
-        input.HUD.BackpackButton.performed += ToggleCanvasVisibility; // Registriere die Eingabeaktion
+        input.HUD.BackpackButton.performed += OnBackpackButtonPressed; // Registriere die Eingabeaktion
         Debug.Log("Rucksack Input aktiviert");
     }
 
     void OnDisable()
     {
-        input.HUD.BackpackButton.performed -= ToggleCanvasVisibility; // Deregistriere die Eingabeaktion
         input.Disable();
+        input.HUD.BackpackButton.performed -= OnBackpackButtonPressed; // Deregistriere die Eingabeaktion
         Debug.Log("Rucksack Input deaktiviert");
+    }
+
+    public void DisableBackpack()
+    {
+        input.HUD.BackpackButton.performed -= OnBackpackButtonPressed;
+    }
+
+    public void EnableBackpack()
+    {
+        input.HUD.BackpackButton.performed += OnBackpackButtonPressed;
     }
 
     void Start()
@@ -58,7 +68,7 @@ public class BackpackController : MonoBehaviour
         AddCardIfNotEmpty(seedInventory.alocasiaCard, Seed.SeedType.Alocasia);
         AddCardIfNotEmpty(seedInventory.teaktreeCard, Seed.SeedType.Teaktree);
 
-        // Stelle sicher, dass das Canvas standardm��ig deaktiviert ist
+        // Stelle sicher, dass das Canvas standardmäßig deaktiviert ist
         seedInventoryCanvas.SetActive(isCanvasVisible);
         Debug.Log("Start: Seed inventory canvas set to inactive.");
 
@@ -96,7 +106,23 @@ public class BackpackController : MonoBehaviour
         }
     }
 
-    void ToggleCanvasVisibility(InputAction.CallbackContext context)
+    void OnBackpackButtonPressed(InputAction.CallbackContext context)
+    {
+        // Toggle canvas visibility
+        ToggleCanvasVisibility();
+
+        // Show or hide blocks based on the canvas visibility
+        if (isCanvasVisible)
+        {
+            playerMovement.ShowAllBlocks();
+        }
+        else
+        {
+            playerMovement.HideAllBlocks();
+        }
+    }
+
+    void ToggleCanvasVisibility()
     {
         isCanvasVisible = !isCanvasVisible;
         seedInventoryCanvas.SetActive(isCanvasVisible); // Canvas ein- oder ausblenden
@@ -117,6 +143,16 @@ public class BackpackController : MonoBehaviour
         }
     }
 
+    public void ShowAllBlocks()
+    {
+        playerMovement.ShowAllBlocks();
+    }
+
+    public void HideAllBlocks()
+    {
+        playerMovement.HideAllBlocks();
+    }
+
     private void OnMove(InputAction.CallbackContext context) // Navigieren durch Samenkarten
     {
         if (Time.time - lastInputTime < inputCooldown)
@@ -126,7 +162,7 @@ public class BackpackController : MonoBehaviour
         }
 
         Debug.Log("OnMove");
-        //Debug.Log($"Anzahl der Samenkarten: {seedCards.Count}");
+        // Debug.Log($"Anzahl der Samenkarten: {seedCards.Count}");
 
         if (seedCards.Count > 0)
         {
@@ -148,7 +184,6 @@ public class BackpackController : MonoBehaviour
         }
     }
 
-
     private void UpdateCardVisibility()
     {
         if (seedCards.Count > 0)
@@ -163,10 +198,10 @@ public class BackpackController : MonoBehaviour
                 if (i == currentSelectionIndex)
                 {
                     currentSelectedSeed = seedCards[i].name;
-                    //Debug.Log("Selected: "+ seedCards[i].name);
+                    // Debug.Log("Selected: "+ seedCards[i].name);
                 }
 
-                //Debug.Log($"seedCard color: {seedCards[i].name} - {color}");
+                // Debug.Log($"seedCard color: {seedCards[i].name} - {color}");
             }
         }
         else
@@ -175,29 +210,26 @@ public class BackpackController : MonoBehaviour
         }
     }
 
-
     // Logik zum Einpflanzen des ausgewaehlten Samens
     private void OnSelect(InputAction.CallbackContext context)
     {
-        //Debug.Log("Selected seed card Number: " + currentSelectionIndex+ " - Name: " + seedCards[currentSelectionIndex].name);
+        // Debug.Log("Selected seed card Number: " + currentSelectionIndex+ " - Name: " + seedCards[currentSelectionIndex].name);
         HandlePlanting();
-        ToggleCanvasVisibility(context); // Schliesst Rucksack nach auswahl
+        ToggleCanvasVisibility(); // Schließt Rucksack nach Auswahl
     }
 
     private void OnCancel(InputAction.CallbackContext context)
     {
-        ToggleCanvasVisibility(context); // Schliesst Rucksack ohne auswahl
+        ToggleCanvasVisibility(); // Schließt Rucksack ohne Auswahl
     }
 
     private void HandlePlanting()
     {
-        if (backpack != null && backpack.GetSeedCount() > 0) // Ueberpriuefen ob Samen verfuegbar sind
+        if (backpack != null && backpack.GetSeedCount() > 0) // Überprüfen ob Samen verfügbar sind
         {
             if (playerMovement != null && animator != null) // TODO: vereinfachen
             {
-
                 playerMovement.HoldSeedAndReadyToPlant(currentSelectionIndex, currentSelectedSeed);
-
             }
         }
         else
@@ -205,5 +237,4 @@ public class BackpackController : MonoBehaviour
             Debug.Log("No seeds available to plant or Player input disabled.");
         }
     }
-
 }

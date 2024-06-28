@@ -20,10 +20,10 @@ public class PlayerMovement : MonoBehaviour
     private bool isAutoMovingFast = false;
     private bool isSeedInHand = false;
     private int requiredBlocksToPlant = 0;
+    public Vector2 middlePositionOfPlanting;
     private Vector2 autoMoveDirection;
 
     private Animator animator;
-    private Collider2D platformCollider;
     private CustomInputs input; // Referenz zum neuen Input System
 
     [SerializeField] private Rigidbody2D rb;
@@ -294,7 +294,7 @@ public class PlayerMovement : MonoBehaviour
         EnableMovement();
     }
 
-    private void ShowAllBlocks()
+    public void ShowAllBlocks()
     {
         foreach (Block block in blocks)
         {
@@ -305,7 +305,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    private void HideAllBlocks()
+    public void HideAllBlocks()
     {
         foreach (Block block in blocks)
         {
@@ -389,6 +389,8 @@ public class PlayerMovement : MonoBehaviour
 
         int freeBlocksRight = 0;
         int freeBlocksLeft = 0;
+        float rightmostFreeBlockX = startBlock.transform.position.x;
+        float leftmostFreeBlockX = startBlock.transform.position.x;
 
         // Suche nach rechts
         for (int i = startIndex; i < blocks.Count; i++)
@@ -396,8 +398,10 @@ public class PlayerMovement : MonoBehaviour
             if (!blocks[i].CheckPosition())
             {
                 freeBlocksRight++;
+                rightmostFreeBlockX = blocks[i].transform.position.x;
                 if (freeBlocksRight + freeBlocksLeft >= requiredFreeBlocks)
                 {
+                    middlePositionOfPlanting = new Vector2((rightmostFreeBlockX + leftmostFreeBlockX) / 2, startBlock.transform.position.y);
                     Debug.Log($"Free blocks found: {freeBlocksRight + freeBlocksLeft}");
                     return true;
                 }
@@ -414,8 +418,10 @@ public class PlayerMovement : MonoBehaviour
             if (!blocks[i].CheckPosition())
             {
                 freeBlocksLeft++;
+                leftmostFreeBlockX = blocks[i].transform.position.x;
                 if (freeBlocksRight + freeBlocksLeft >= requiredFreeBlocks)
                 {
+                    middlePositionOfPlanting = new Vector2((rightmostFreeBlockX + leftmostFreeBlockX) / 2, startBlock.transform.position.y);
                     Debug.Log($"Free blocks found: {freeBlocksRight + freeBlocksLeft}");
                     return true;
                 }
@@ -424,6 +430,15 @@ public class PlayerMovement : MonoBehaviour
             {
                 break;
             }
+        }
+
+        if (freeBlocksRight + freeBlocksLeft >= requiredFreeBlocks)
+        {
+            middlePositionOfPlanting = new Vector2((rightmostFreeBlockX + leftmostFreeBlockX) / 2, startBlock.transform.position.y);
+        }
+        else
+        {
+            middlePositionOfPlanting = Vector2.zero; // Falls keine ausreichenden freien Blöcke vorhanden sind
         }
 
         Debug.Log($"Free blocks found: {freeBlocksRight + freeBlocksLeft}");
@@ -494,7 +509,7 @@ public class PlayerMovement : MonoBehaviour
         animator.SetBool("HasObject", true);
         isSeedInHand = true;
 
-        ShowAllBlocks();
+        //ShowAllBlocks(); // Wird im BackpackController geoeffnet
         SeedToPlantMode(true); // Gleiche Tastenbelegung von B dekativieren und auf Abbrechen umlegen
     }
 
@@ -577,16 +592,17 @@ public class PlayerMovement : MonoBehaviour
                     offsetX = -0.5f;
                 }
 
-                Vector3 plantPosition = new Vector3(transform.position.x + offsetX, groundCheck.position.y + offsetY, transform.position.z); // Position von Pittis Füßen
+                Vector3 plantPosition = new Vector3(middlePositionOfPlanting.x, groundCheck.position.y + offsetY, transform.position.z);
+                Vector3 hillPosition = new Vector3(transform.position.x + offsetX, groundCheck.position.y + offsetY, transform.position.z);
 
                 // Bestimmen Sie die Neigung des Bodens an der Pflanzposition
                 float groundAngle = GetGroundAngle(plantPosition);
 
                 // Erstellen Sie den Erdhügel und richten Sie ihn an der Neigung des Bodens aus
-                GameObject plantInstance = Instantiate(plantPrefab, plantPosition, Quaternion.Euler(0, 0, groundAngle));
+                GameObject plantInstance = Instantiate(plantPrefab, hillPosition, Quaternion.Euler(0, 0, groundAngle));
 
                 // Starte die Wachstumsroutine
-                StartCoroutine(GrowPlant(plantInstance, newPlant.Type, newPlant.GrowthTime));
+                StartCoroutine(GrowPlant(plantInstance, newPlant.Type, newPlant.GrowthTime, plantPosition));
 
                 Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
             }
@@ -842,7 +858,7 @@ public class PlayerMovement : MonoBehaviour
         return nearestObject;
     }
 
-    private IEnumerator GrowPlant(GameObject plantInstance, Plant.PlantType plantType, float growTime)
+    private IEnumerator GrowPlant(GameObject plantInstance, Plant.PlantType plantType, float growTime, Vector3 plantPosition)
     {
         yield return new WaitForSeconds(growTime); // Warte für die Dauer der Wachstumszeit
 
@@ -869,8 +885,9 @@ public class PlayerMovement : MonoBehaviour
 
         if (newPlantPrefab != null)
         {
-            // Speichere die Position der aktuellen Pflanze
-            Vector3 plantPosition = plantInstance.transform.position;
+
+            // Vector3 plantPosition = plantInstance.transform.position; // Position des Erdhügel
+            //Vector3 plantPosition = new Vector3(middlePositionOfPlanting.x, groundCheck.position.y, plantInstance.transform.position.z);
 
             // Zerstöre die alte Pflanze
             Destroy(plantInstance);

@@ -20,7 +20,7 @@ public class Seed
     {
         System.Array seedTypes = System.Enum.GetValues(typeof(SeedType));
         SeedType randomType = (SeedType)seedTypes.GetValue(Random.Range(0, seedTypes.Length));
-        float randomGrowthTime = Random.Range(50f, 80f); // Beispielwerte für Wachstumszeit
+        float randomGrowthTime = Random.Range(5f, 8f); // Beispielwerte für Wachstumszeit
         return new Seed(randomType, randomGrowthTime, 0);
     }
 }

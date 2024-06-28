@@ -6,6 +6,7 @@ public class Backpack : MonoBehaviour
 {
     private List<Seed> seeds = new List<Seed>();
     private BackpackController backpackController;
+    private HudController hudController;
 
     [SerializeField] private List<GameObject> seedObjects; // Liste aller Samen-Objekte im Rucksack
 
@@ -16,7 +17,13 @@ public class Backpack : MonoBehaviour
         {
             Debug.LogError("BackpackController not found!");
         }
+        hudController = FindObjectOfType<HudController>();
+        if (hudController == null)
+        {
+            Debug.LogError("HudController not found!");
+        }
 
+        DeaktivateBackpack();
         UpdateSeedDisplay();
     }
 
@@ -34,6 +41,7 @@ public class Backpack : MonoBehaviour
             Debug.LogError("BackpackController reference is null");
         }
 
+        ActivateBackpack();
         UpdateSeedDisplay();
     }
 
@@ -84,6 +92,11 @@ public class Backpack : MonoBehaviour
                 // Aktualisiere die Anzeige der Samen
                 UpdateSeedDisplay();
 
+                if (seeds.Count <= 0)
+                {
+                    DeaktivateBackpack();
+                }
+
                 return seedToRemove;
             }
         }
@@ -99,5 +112,16 @@ public class Backpack : MonoBehaviour
         {
             seedObjects[i].SetActive(i < seeds.Count);
         }
+    }
+
+    private void ActivateBackpack()
+    {
+        hudController.ActivateBackpackHud();
+        backpackController.EnableBackpack();
+    }
+    private void DeaktivateBackpack()
+    {
+        hudController.DeaktivateBackpackHud();
+        backpackController.DisableBackpack();
     }
 }
