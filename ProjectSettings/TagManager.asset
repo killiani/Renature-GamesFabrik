@@ -12,6 +12,7 @@ TagManager:
   - StegBeiboot
   - StegHome
   - DayMarker
+  - Block
   layers:
   - Default
   - TransparentFX
