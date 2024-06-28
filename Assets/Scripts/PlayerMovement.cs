@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static Unity.Collections.AllocatorManager;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -48,6 +50,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private List<AudioClip> beibootDropSounds; // Liste der Geräusche für die Beiboot-Zone
     [SerializeField] private List<AudioClip> seedGrapSounds;
 
+
     // Denkbläsen-Prefabs
     [SerializeField] private GameObject nightThinkingBubblePrefab;
     [SerializeField] private GameObject plantsThinkingBubblePrefab;
@@ -69,6 +72,7 @@ public class PlayerMovement : MonoBehaviour
     private GoodNightScene goodNightScene;
     private GameObject nearestObject;
     private GameObject seedInHand; // Referenz auf den Samen in Pittis Hand
+    public List<Block> blocks; // Ppflanz-Plaetze
     private GameObject wateringCanInHand;
     private GameObject waterRunningOutOfCan;
 
@@ -157,6 +161,11 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         animator = GetComponentInChildren<Animator>(); // da Pitti in ParentPitti liegt
+
+        if (blocks == null || blocks.Count == 0)
+        {
+            Debug.LogError("Blocks list is not assigned or empty.");
+        }
 
         if (animator == null)
         {
@@ -283,18 +292,100 @@ public class PlayerMovement : MonoBehaviour
         EnableMovement();
     }
 
+    private Block GetBlockAtPosition(Vector2 position)
+    {
+        foreach (Block block in blocks)
+        {
+            if (block == null)
+            {
+                Debug.LogError("Ein Block in der Liste ist null.");
+                continue;
+            }
+
+            float distanceX = Mathf.Abs(block.transform.position.x - position.x);
+            float distanceY = Mathf.Abs(block.transform.position.y - (position.y - 1.5f)); // Passe den festen vertikalen Abstand an
+
+            Debug.Log($"Block Position: {block.transform.position}, Player Position: {position}, DistanceX: {distanceX}, DistanceY: {distanceY}");
+
+            // Überprüfe, ob die Distanz innerhalb einer bestimmten Toleranz liegt
+            if (distanceX < 0.3f && distanceY < 0.5f) // Toleranzwert für X und Y erhöht
+            {
+                return block;
+            }
+        }
+        return null;
+    }
+
+    private bool IsBetweenBlockedBlocks(Vector2 position)
+    {
+        float checkDistance = 0.3f; // Abstand zum Überprüfen der Nachbarblöcke
+        Block leftBlock = null;
+        Block rightBlock = null;
+
+        foreach (Block block in blocks)
+        {
+            if (block == null)
+            {
+                Debug.LogError("Ein Block in der Liste ist null.");
+                continue;
+            }
+
+            float distanceX = Mathf.Abs(block.transform.position.x - position.x);
+            float distanceY = Mathf.Abs(block.transform.position.y - (position.y - 1.5f));
+
+            if (distanceY < 0.5f)
+            {
+                if (block.transform.position.x < position.x && distanceX < checkDistance)
+                {
+                    leftBlock = block;
+                }
+                else if (block.transform.position.x > position.x && distanceX < checkDistance)
+                {
+                    rightBlock = block;
+                }
+            }
+        }
+
+        return leftBlock != null && rightBlock != null && leftBlock.CheckPosition() && rightBlock.CheckPosition();
+    }
+
+
+
     // Hack um es aus dem Backback heraus zu umgehen
     private void HandlePrimaryAction(InputAction.CallbackContext context)
     {
         if (isSeedInHand)
         {
-            TriggerPlant();
+            Vector2 playerPosition = transform.position; // Verwende die Position des Spielers
+            Block block = GetBlockAtPosition(playerPosition); // Hole den Block an der Spielerposition
+
+            if (block != null)
+            {
+                bool isBlocked = block.CheckPosition(); // Check ob Müll liegt
+                Debug.Log("Block gefunden. Kann ablegen: " + isBlocked);
+
+                bool isBetweenBlocked = IsBetweenBlockedBlocks(playerPosition);
+
+                if (!isBlocked && !isBetweenBlocked)
+                {
+                    TriggerPlant();
+                }
+                else
+                {
+                    Debug.Log("Ein benachbarter Block ist gesperrt oder Block ist gesperrt, kann nicht ablegen.");
+                }
+            }
+            else
+            {
+                Debug.Log("Kein Block an der Position gefunden.");
+            }
         }
         else
         {
             HandlePickupDrop();
         }
     }
+
 
     public void HoldSeedAndReadyToPlant(int currentSelectionIndex, string seedName)
     {

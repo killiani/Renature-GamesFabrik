@@ -48,17 +48,22 @@ public class Block : MonoBehaviour
         }
     }
 
+    public bool CheckPosition()
+    {
+        return hasObjectAbove;
+    }
+
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
             if (hasObjectAbove)
             {
-                Debug.Log("Pitti is on a red block.");
+                //Debug.Log("Pitti is on a red block.");
             }
             else
             {
-                Debug.Log("Pitti is on a non-red block.");
+                //Debug.Log("Pitti is on a non-red block.");
             }
         }
 
