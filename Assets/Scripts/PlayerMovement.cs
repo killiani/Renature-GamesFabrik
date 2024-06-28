@@ -614,10 +614,19 @@ public class PlayerMovement : MonoBehaviour
                 if (backpack != null)
                 {
                     PlayRandomSeedGrapSound(); // Spiele zufälligen Samen-Aufheb-Sound ab
-                    Seed randomSeed = Seed.GenerateRandomSeed();
-                    backpack.AddSeed(randomSeed);
-                    Debug.Log("Seed Pickup OK");
-                    nearestObject.SetActive(false); // Samen deaktivieren, nachdem er aufgesammelt wurde
+
+                    //Seed randomSeed = Seed.GenerateRandomSeed();
+                    //backpack.AddSeed(randomSeed);
+
+                    SeedObject seedObjectComponent = nearestObject.GetComponent<SeedObject>();
+                    if (seedObjectComponent != null)
+                    {
+                        Seed seed = seedObjectComponent.GetSeed();
+                        backpack.AddSeed(seed);
+
+                        Debug.Log("Seed Pickup OK");
+                        nearestObject.SetActive(false); // Samen deaktivieren, nachdem er aufgesammelt wurde
+                    }
                 }
                 else
                 {
