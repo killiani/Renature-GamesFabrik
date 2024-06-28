@@ -292,6 +292,28 @@ public class PlayerMovement : MonoBehaviour
         EnableMovement();
     }
 
+    private void ShowAllBlocks()
+    {
+        foreach (Block block in blocks)
+        {
+            if (block != null)
+            {
+                block.ShowBlock();
+            }
+        }
+    }
+
+    private void HideAllBlocks()
+    {
+        foreach (Block block in blocks)
+        {
+            if (block != null)
+            {
+                block.HideBlock();
+            }
+        }
+    }
+
     private Block GetBlockAtPosition(Vector2 position)
     {
         foreach (Block block in blocks)
@@ -349,7 +371,10 @@ public class PlayerMovement : MonoBehaviour
         return leftBlock != null && rightBlock != null && leftBlock.CheckPosition() && rightBlock.CheckPosition();
     }
 
-
+    private void RemoveNullBlocksFromList()
+    {
+        blocks.RemoveAll(block => block == null);
+    }
 
     // Hack um es aus dem Backback heraus zu umgehen
     private void HandlePrimaryAction(InputAction.CallbackContext context)
@@ -386,6 +411,46 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    //private void HandlePrimaryAction(InputAction.CallbackContext context)
+    //{
+    //    if (isSeedInHand)
+    //    {
+    //        Vector2 playerPosition = transform.position; // Verwende die Position des Spielers
+    //        Block block = GetBlockAtPosition(playerPosition); // Hole den Block an der Spielerposition
+
+    //        if (block != null && seedInHand != null)
+    //        {
+    //            // Hole den aktuellen Samen aus der Hand und bestimme die Anzahl der benötigten Blöcke
+    //            SeedObject seedObjectComponent = seedInHand.GetComponent<SeedObject>();
+    //            if (seedObjectComponent != null)
+    //            {
+    //                Seed seedInHandScript = seedObjectComponent.GetSeed();
+    //                int requiredBlocks = Plant.GetRequiredBlocks((Plant.PlantType)seedInHandScript.Type);
+
+    //                bool canPlant = block.CheckFreeAmountBlocks(requiredBlocks); // Check ob Müll liegt und ob genügend Blöcke frei sind
+
+    //                if (canPlant)
+    //                {
+    //                    Debug.Log("######## JA: Es gibt genügend freie Blöcke zum Pflanzen.");
+    //                    TriggerPlant(block);
+    //                }
+    //                else
+    //                {
+    //                    Debug.Log("######### NEIN: Es gibt nicht genügend freie Blöcke zum Pflanzen.");
+    //                }
+    //            }
+    //        }
+    //        else
+    //        {
+    //            Debug.Log("Kein Block an der Position gefunden.");
+    //        }
+    //    }
+    //    else
+    //    {
+    //        HandlePickupDrop();
+    //    }
+    //}
+
 
     public void HoldSeedAndReadyToPlant(int currentSelectionIndex, string seedName)
     {
@@ -410,6 +475,7 @@ public class PlayerMovement : MonoBehaviour
         animator.SetBool("HasObject", true);
         isSeedInHand = true;
 
+        ShowAllBlocks();
         SeedToPlantMode(true); // Gleiche Tastenbelegung von B dekativieren und auf Abbrechen umlegen
     }
 
@@ -418,15 +484,15 @@ public class PlayerMovement : MonoBehaviour
         if (isSeedInHand)
         {
             animator.SetTrigger("HandleGoPlant");
-
-            // Zeit versatz?
             animator.SetBool("HasObject", false);
             isSeedInHand = false;
             SeedToPlantMode(false); // Gleiche Tastenbelegung von B dekativieren und auf NightHandling umlegen
-                                    // Block löschen
+            HideAllBlocks();
+            // Block löschen
             if (block != null)
             {
                 Destroy(block.gameObject);
+                RemoveNullBlocksFromList();
             }
         }
     }
@@ -436,6 +502,7 @@ public class PlayerMovement : MonoBehaviour
         isSeedInHand = false;
         animator.SetBool("HasObject", false);
         SeedToPlantMode(false); // Gleiche Tastenbelegung von B dekativieren und auf NightHandling umlegen
+        HideAllBlocks();
         Destroy(seedInHand);
     }
 
