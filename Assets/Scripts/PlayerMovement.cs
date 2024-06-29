@@ -379,8 +379,13 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
+
+    public List<Block> freeBlocks = new List<Block>(); // Hinzugefügte Liste, um die freien Blöcke zu speichern
+
     public bool CheckForFreeBlocks(Block startBlock, int requiredFreeBlocks)
     {
+        freeBlocks.Clear(); // Leeren der Liste am Anfang
+
         int startIndex = blocks.IndexOf(startBlock);
         if (startIndex == -1)
         {
@@ -399,6 +404,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 freeBlocksRight++;
                 rightmostFreeBlockX = blocks[i].transform.position.x;
+                freeBlocks.Add(blocks[i]);
                 if (freeBlocksRight + freeBlocksLeft >= requiredFreeBlocks)
                 {
                     middlePositionOfPlanting = new Vector2((rightmostFreeBlockX + leftmostFreeBlockX) / 2, startBlock.transform.position.y);
@@ -419,6 +425,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 freeBlocksLeft++;
                 leftmostFreeBlockX = blocks[i].transform.position.x;
+                freeBlocks.Add(blocks[i]);
                 if (freeBlocksRight + freeBlocksLeft >= requiredFreeBlocks)
                 {
                     middlePositionOfPlanting = new Vector2((rightmostFreeBlockX + leftmostFreeBlockX) / 2, startBlock.transform.position.y);
@@ -435,15 +442,16 @@ public class PlayerMovement : MonoBehaviour
         if (freeBlocksRight + freeBlocksLeft >= requiredFreeBlocks)
         {
             middlePositionOfPlanting = new Vector2((rightmostFreeBlockX + leftmostFreeBlockX) / 2, startBlock.transform.position.y);
+            return true;
         }
         else
         {
             middlePositionOfPlanting = Vector2.zero; // Falls keine ausreichenden freien Blöcke vorhanden sind
+            freeBlocks.Clear(); // Leeren der Liste, wenn nicht genug Blöcke gefunden wurden
+            return false;
         }
-
-        Debug.Log($"Free blocks found: {freeBlocksRight + freeBlocksLeft}");
-        return freeBlocksRight + freeBlocksLeft >= requiredFreeBlocks;
     }
+
 
     // Hack um es aus dem Backback heraus zu umgehen
     private void HandlePrimaryAction(InputAction.CallbackContext context)
@@ -526,8 +534,14 @@ public class PlayerMovement : MonoBehaviour
             if (block != null)
             {
                 Destroy(block.gameObject);
-                RemoveNullBlocksFromList();
             }
+
+            // Alle freien Blöcke löschen
+            foreach (Block freeBlock in freeBlocks)
+            {
+                Destroy(freeBlock.gameObject);
+            }
+            RemoveNullBlocksFromList();
         }
     }
 
