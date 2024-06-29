@@ -20,6 +20,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isAutoMovingFast = false;
     private bool isSeedInHand = false;
     private int requiredBlocksToPlant = 0;
+    public List<Block> freeBlocks = new List<Block>(); // Hinzugefügte Liste, um die freien Blöcke zu speichern
     public Vector2 middlePositionOfPlanting;
     private Vector2 autoMoveDirection;
 
@@ -378,9 +379,6 @@ public class PlayerMovement : MonoBehaviour
         blocks.RemoveAll(block => block == null);
     }
 
-
-
-    public List<Block> freeBlocks = new List<Block>(); // Hinzugefügte Liste, um die freien Blöcke zu speichern
 
     public bool CheckForFreeBlocks(Block startBlock, int requiredFreeBlocks)
     {
