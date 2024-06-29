@@ -253,8 +253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!60 &20691408
@@ -2142,8 +2141,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 2
 --- !u!1 &233752132
@@ -2273,8 +2271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 2
 --- !u!60 &258649900
@@ -3059,8 +3056,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!1 &353154180
@@ -3331,8 +3327,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!1 &355690627
@@ -5239,8 +5234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!1 &635798720
@@ -6139,8 +6133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!60 &695700758
@@ -6345,8 +6338,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!60 &733161888
@@ -6695,8 +6687,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!60 &760472089
@@ -8416,8 +8407,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!1 &930932630
@@ -8695,8 +8685,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!60 &963336858
@@ -8997,8 +8986,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!60 &1005976370
@@ -9286,8 +9274,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!60 &1020046773
@@ -9645,8 +9632,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!60 &1145864676
@@ -9921,8 +9907,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!4 &1174093963 stripped
@@ -10385,8 +10370,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 2
 --- !u!60 &1223647649
@@ -10888,8 +10872,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!60 &1325355287
@@ -11585,8 +11568,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!60 &1389566475
@@ -11745,8 +11727,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!60 &1434199152
@@ -12318,8 +12299,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!60 &1554329218
@@ -12507,8 +12487,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!60 &1572365432
@@ -13196,8 +13175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!60 &1673449842
@@ -14676,8 +14654,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!60 &1869955489
@@ -14922,8 +14899,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 2
 --- !u!60 &1888427920
@@ -15572,8 +15548,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!60 &2006582133
@@ -15974,8 +15949,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97c1352958e331448ac191a84d6171e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectGlowColor: {r: 1, g: 0, b: 0, a: 1}
-  highlightColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  highlightColor: 
   checkHeight: 2
   checkWidth: 1
 --- !u!60 &2057206218

@@ -4,8 +4,8 @@ using UnityEngine;
 public class Block : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
-    public Color objectGlowColor = Color.red;
-    public Color highlightColor = Color.yellow;
+    private string blockedColor = "#B7C6DA";
+    private string highlightColor = "#EC7E4B";
     private Color originalColor;
     private bool hasObjectAbove = false;
     private bool isHighlighted = false; // Hinzugefügt: Verfolgt den Hervorhebungszustand
@@ -42,7 +42,7 @@ public class Block : MonoBehaviour
         {
             if (hasObjectAbove)
             {
-                spriteRenderer.color = objectGlowColor;
+                spriteRenderer.color = ConvertHexToColor(blockedColor);
             }
             else
             {
@@ -55,8 +55,7 @@ public class Block : MonoBehaviour
     {
         if (spriteRenderer != null)
         {
-            Debug.Log("Call Highlight");
-            spriteRenderer.color = highlightColor;
+            spriteRenderer.color = ConvertHexToColor(highlightColor);
             isHighlighted = true; // Block ist hervorgehoben
         }
     }
@@ -118,6 +117,20 @@ public class Block : MonoBehaviour
         {
             hasObjectAbove = false;
             UpdateColor();
+        }
+    }
+
+    private Color ConvertHexToColor(string hexColor)
+    {
+        Color newColor;
+        if (UnityEngine.ColorUtility.TryParseHtmlString(hexColor, out newColor))
+        {
+            return newColor;
+        }
+        else
+        {
+            Debug.LogError("Ungültiger Hexwert für die Farbe!");
+            return Color.white;
         }
     }
 
