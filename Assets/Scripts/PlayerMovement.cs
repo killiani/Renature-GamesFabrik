@@ -69,6 +69,7 @@ public class PlayerMovement : MonoBehaviour
     // Diese Referenz wird im Start-Methodenblock automatisch gesetzt
     private PickupScript pickupScript;
     private Backpack backpack;
+    private BackpackController backpackController;
     private NightZone nightZone;
     private GameMenu pauseMenu;
     private RotateObject skyDiscRotateObject;
@@ -101,6 +102,7 @@ public class PlayerMovement : MonoBehaviour
         input.Player.RunningFaster.canceled -= OnRunCanceled;
         input.Player.PrimaryAction.performed -= HandlePrimaryAction;
         input.Player.WateringAction.performed -= HandleWateringAction;
+        input.Player.NightAction.performed -= HandleNightAction;
 
         horizontal = 0f; // Setze die horizontale Bewegung auf Null
         rb.velocity = Vector2.zero; // Setze die Geschwindigkeit auf Null
@@ -146,6 +148,7 @@ public class PlayerMovement : MonoBehaviour
         input.Player.RunningFaster.canceled += OnRunCanceled;
         input.Player.PrimaryAction.performed += HandlePrimaryAction;
         input.Player.WateringAction.performed += HandleWateringAction;
+        input.Player.NightAction.performed += HandleNightAction;
 
         input.Player.Move.Enable(); // Aktiviere die Bewegungseingaben
         input.Player.RunningFaster.Enable(); // Aktiviere die Lauf-Eingaben
@@ -194,6 +197,12 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.LogError("Kein Backpack-Komponente im GameObject gefunden. Stelle sicher, dass das Backpack-Skript hinzugefügt ist.");
             backpack = gameObject.AddComponent<Backpack>();
+        }
+
+        backpackController = FindObjectOfType<BackpackController>();
+        if (backpackController == null)
+        {
+            Debug.LogError("BackpackController not found!");
         }
 
         nightZone = FindObjectOfType<NightZone>();
@@ -545,6 +554,7 @@ public class PlayerMovement : MonoBehaviour
 
         //ShowAllBlocks(); // Wird im BackpackController geoeffnet
         SeedToPlantMode(true); // Gleiche Tastenbelegung von B dekativieren und auf Abbrechen umlegen
+        backpackController.DisableBackpack();
     }
 
     private void TriggerPlant(Block block) // ausführen
@@ -568,6 +578,7 @@ public class PlayerMovement : MonoBehaviour
                 Destroy(freeBlock.gameObject);
             }
             RemoveNullBlocksFromList();
+            backpackController.EnableBackpack();
         }
     }
 
@@ -578,6 +589,7 @@ public class PlayerMovement : MonoBehaviour
         SeedToPlantMode(false); // Gleiche Tastenbelegung von B dekativieren und auf NightHandling umlegen
         HideAllBlocks();
         Destroy(seedInHand);
+        backpackController.EnableBackpack();
     }
 
 
