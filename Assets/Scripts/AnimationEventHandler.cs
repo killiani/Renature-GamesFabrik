@@ -57,4 +57,12 @@ public class AnimationEventHandler : MonoBehaviour
             playerMovement.OnWateringAnimationEnd();
         } 
     }
+
+    public void OnHoldingObjectEnd()
+    {
+        if (playerMovement != null)
+        {
+            playerMovement.OnHoldingObjectEnd();
+        }
+    }
 }

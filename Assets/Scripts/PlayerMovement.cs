@@ -110,6 +110,45 @@ public class PlayerMovement : MonoBehaviour
         rb.velocity = Vector2.zero; // Setze die Geschwindigkeit auf Null
         input.Player.Move.Disable(); // Deaktiviere die Bewegungseingaben
         input.Player.RunningFaster.Disable(); // Deaktiviere die Lauf-Eingaben
+        input.Player.PrimaryAction.Disable();
+        input.Player.WateringAction.Disable();
+        input.Player.NightAction.Disable();
+    }
+
+    // Hack
+    //public void StopPitti()
+    //{
+    //    input.Player.Move.performed -= OnMove;
+    //    input.Player.Move.canceled -= OnMoveCanceled;
+    //    input.Player.RunningFaster.performed -= OnRun;
+    //    input.Player.RunningFaster.canceled -= OnRunCanceled;
+    //    horizontal = 0f; // Setze die horizontale Bewegung auf Null
+    //    rb.velocity = Vector2.zero; // Setze die Geschwindigkeit auf Null
+    //    input.Player.Move.Disable(); // Deaktiviere die Bewegungseingaben
+    //    input.Player.RunningFaster.Disable(); // Deaktiviere die Lauf-Eingaben
+    //}
+
+    public void EnableMovement()
+    {
+        StartCoroutine(EnableMovementAfterDelay());
+    }
+
+    private IEnumerator EnableMovementAfterDelay()
+    {
+        yield return new WaitForSeconds(0.2f);
+        input.Player.Move.performed += OnMove;
+        input.Player.Move.canceled += OnMoveCanceled;
+        input.Player.RunningFaster.performed += OnRun;
+        input.Player.RunningFaster.canceled += OnRunCanceled;
+        input.Player.PrimaryAction.performed += HandlePrimaryAction;
+        input.Player.WateringAction.performed += HandleWateringAction;
+        input.Player.NightAction.performed += HandleNightAction;
+
+        input.Player.Move.Enable(); // Aktiviere die Bewegungseingaben
+        input.Player.RunningFaster.Enable(); // Aktiviere die Lauf-Eingaben
+        input.Player.PrimaryAction.Enable();
+        input.Player.WateringAction.Enable();
+        input.Player.NightAction.Enable();
     }
 
     /*
@@ -134,26 +173,6 @@ public class PlayerMovement : MonoBehaviour
             input.Player.AbortAction.Disable();
             pauseMenu.EnableShowMenu();
         }
-    }
-
-    public void EnableMovement()
-    {
-        StartCoroutine(EnableMovementAfterDelay());
-    }
-
-    private IEnumerator EnableMovementAfterDelay()
-    {
-        yield return new WaitForSeconds(0.2f);
-        input.Player.Move.performed += OnMove;
-        input.Player.Move.canceled += OnMoveCanceled;
-        input.Player.RunningFaster.performed += OnRun;
-        input.Player.RunningFaster.canceled += OnRunCanceled;
-        input.Player.PrimaryAction.performed += HandlePrimaryAction;
-        input.Player.WateringAction.performed += HandleWateringAction;
-        input.Player.NightAction.performed += HandleNightAction;
-
-        input.Player.Move.Enable(); // Aktiviere die Bewegungseingaben
-        input.Player.RunningFaster.Enable(); // Aktiviere die Lauf-Eingaben
     }
 
     void OnEnable()
@@ -493,6 +512,7 @@ public class PlayerMovement : MonoBehaviour
     // Hack um es aus dem Backback heraus zu umgehen
     private void HandlePrimaryAction(InputAction.CallbackContext context)
     {
+        DisableMovement();
         if (isSeedInHand)
         {
             Vector2 playerPosition = transform.position; // Verwende die Position des Spielers
@@ -502,10 +522,6 @@ public class PlayerMovement : MonoBehaviour
             {
                 bool isBlocked = currentBlock.CheckPosition(); // Check ob Müll liegt
                 bool isBetweenBlocked = IsBetweenBlockedBlocks(playerPosition); // liegt nebenan Müll
-
-                //bool canPlant = CheckForFreeBlocks(currentBlock, requiredBlocksToPlant);
-                //bool hasEnoughFreeBlocks = block.CheckFreeAmountBlocks(requiredBlocksToPlant);
-                //Debug.Log($"Kann gepflanzt werden?: {canPlant}");
 
                 if (!isBlocked && !isBetweenBlocked)
                 {
@@ -525,6 +541,7 @@ public class PlayerMovement : MonoBehaviour
         {
             HandlePickupDrop();
         }
+        EnableMovement();
     }
 
 
@@ -559,6 +576,11 @@ public class PlayerMovement : MonoBehaviour
         backpackController.DisableBackpack();
     }
 
+    public void OnHoldingObjectEnd()
+    {
+        EnableMovement();
+    }
+
     private void TriggerPlant(Block block) // ausführen
     { 
         if (isSeedInHand)
@@ -586,12 +608,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void TriggerDontPlant(InputAction.CallbackContext context) // Abbrechen
     {
+        DisableMovement();
         isSeedInHand = false;
         animator.SetBool("HasObject", false);
         SeedToPlantMode(false); // Gleiche Tastenbelegung von B dekativieren und auf NightHandling umlegen
         HideAllBlocks();
         Destroy(seedInHand);
         backpackController.EnableBackpack();
+        EnableMovement();
     }
 
 
@@ -656,7 +680,7 @@ public class PlayerMovement : MonoBehaviour
                 GameObject plantInstance = Instantiate(plantPrefab, hillPosition, Quaternion.Euler(0, 0, groundAngle));
 
                 // Starte die Wachstumsroutine
-                StartCoroutine(GrowPlant(plantInstance, newPlant.Type, newPlant.GrowthTime, plantPosition));
+                StartCoroutine(GrowPlant(newPlant.Type, newPlant.GrowthTime, plantPosition));
 
                 Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
             }
@@ -912,7 +936,7 @@ public class PlayerMovement : MonoBehaviour
         return nearestObject;
     }
 
-    private IEnumerator GrowPlant(GameObject plantInstance, Plant.PlantType plantType, float growTime, Vector3 plantPosition)
+    private IEnumerator GrowPlant(Plant.PlantType plantType, float growTime, Vector3 plantPosition)
     {
         yield return new WaitForSeconds(growTime); // Warte für die Dauer der Wachstumszeit
 
@@ -939,15 +963,15 @@ public class PlayerMovement : MonoBehaviour
 
         if (newPlantPrefab != null)
         {
+            GameObject newPlant = Instantiate(newPlantPrefab, plantPosition, Quaternion.identity);
 
-            // Vector3 plantPosition = plantInstance.transform.position; // Position des Erdhügel
-            //Vector3 plantPosition = new Vector3(middlePositionOfPlanting.x, groundCheck.position.y, plantInstance.transform.position.z);
-
-            // Zerstöre die alte Pflanze
-            Destroy(plantInstance);
-
-            // Erstelle die neue Pflanze an derselben Position
-            Instantiate(newPlantPrefab, plantPosition, Quaternion.identity);
+            // Zufällige Entscheidung, ob die Pflanze gespiegelt wird
+            if (Random.value > 0.5f)
+            {
+                Vector3 localScale = newPlant.transform.localScale;
+                localScale.x *= -1;
+                newPlant.transform.localScale = localScale;
+            }
         }
     }
 

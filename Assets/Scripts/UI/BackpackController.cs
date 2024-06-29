@@ -237,6 +237,7 @@ public class BackpackController : MonoBehaviour
         {
             if (playerMovement != null && animator != null) // TODO: vereinfachen
             {
+                playerMovement.DisableMovement(); // wird am ende der Holding Animation wieder aktiviert
                 playerMovement.HoldSeedAndReadyToPlant(currentSelectionIndex, currentSelectedSeed);
             }
         }
