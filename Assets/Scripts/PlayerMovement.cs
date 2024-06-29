@@ -745,7 +745,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 if (nearestObject.layer == LayerMask.NameToLayer("Seeds"))
                 {
-                    //Debug.Log("Try to grab Seed");
+                    //Debug.Log("Try to grap Seed");
                 }
                 else if (nearestObject.layer == LayerMask.NameToLayer("Objects"))
                 {

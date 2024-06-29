@@ -86,6 +86,12 @@ public class BackpackController : MonoBehaviour
         }
     }
 
+    public void SortSeedCards()
+    {
+        seedCards.Sort((a, b) => a.transform.GetSiblingIndex().CompareTo(b.transform.GetSiblingIndex()));
+    }
+
+
     public void RefreshSeedCards()
     {
         seedCards.Clear();
@@ -129,6 +135,7 @@ public class BackpackController : MonoBehaviour
 
         if (isCanvasVisible)
         {
+            SortSeedCards();
             input.Backpack.Move.performed += OnMove;
             input.Backpack.Select.performed += OnSelect;
             input.Backpack.Cancel.performed += OnCancel;
@@ -186,6 +193,7 @@ public class BackpackController : MonoBehaviour
 
     private void UpdateCardVisibility()
     {
+        SortSeedCards();
         if (seedCards.Count > 0)
         {
             for (int i = 0; i < seedCards.Count; i++)
