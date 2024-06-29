@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using static Unity.Collections.AllocatorManager;
 
 public class Block : MonoBehaviour
 {
     private SpriteRenderer spriteRenderer;
     public Color objectGlowColor = Color.red;
+    public Color highlightColor = Color.yellow;
     private Color originalColor;
     private bool hasObjectAbove = false;
+    private bool isHighlighted = false; // Hinzugefügt: Verfolgt den Hervorhebungszustand
     public float checkHeight = 2f; // Height to check above
     public float checkWidth = 1f; // Width of the BoxCast
 
@@ -37,7 +38,7 @@ public class Block : MonoBehaviour
 
     private void UpdateColor()
     {
-        if (spriteRenderer != null)
+        if (spriteRenderer != null && !isHighlighted) // Aktualisiert die Farbe nur, wenn der Block nicht hervorgehoben ist
         {
             if (hasObjectAbove)
             {
@@ -47,6 +48,26 @@ public class Block : MonoBehaviour
             {
                 spriteRenderer.color = originalColor;
             }
+        }
+    }
+
+    public void HighlightBlock()
+    {
+        if (spriteRenderer != null)
+        {
+            Debug.Log("Call Highlight");
+            spriteRenderer.color = highlightColor;
+            isHighlighted = true; // Block ist hervorgehoben
+        }
+    }
+
+    public void ResetBlockColor()
+    {
+        if (spriteRenderer != null)
+        {
+            Debug.Log("Call ResetBlock");
+            spriteRenderer.color = originalColor;
+            isHighlighted = false; // Hervorhebung zurücksetzen
         }
     }
 

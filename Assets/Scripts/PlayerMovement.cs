@@ -21,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isSeedInHand = false;
     private int requiredBlocksToPlant = 0;
     public List<Block> freeBlocks = new List<Block>(); // Hinzugefügte Liste, um die freien Blöcke zu speichern
+    private List<Block> highlightedBlocks = new List<Block>(); // die markierten bloecke
     public Vector2 middlePositionOfPlanting;
     private Vector2 autoMoveDirection;
 
@@ -317,6 +318,32 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    private void HighlightOrResetBlocks(bool canPlant, List<Block> tempFreeBlocks)
+    {
+        // Reset all previously highlighted blocks
+        ResetHighlightedBlocks();
+
+        if (canPlant)
+        {
+            // Highlight the new blocks
+            foreach (Block block in tempFreeBlocks)
+            {
+                block.HighlightBlock();
+                highlightedBlocks.Add(block);
+            }
+        }
+    }
+
+
+    private void ResetHighlightedBlocks()
+    {
+        foreach (Block block in highlightedBlocks)
+        {
+            block.ResetBlockColor();
+        }
+        highlightedBlocks.Clear();
+    }
+
     private Block GetBlockAtPosition(Vector2 position)
     {
         foreach (Block block in blocks)
@@ -380,9 +407,9 @@ public class PlayerMovement : MonoBehaviour
     }
 
 
-    public bool CheckForFreeBlocks(Block startBlock, int requiredFreeBlocks)
+    public bool CheckForFreeBlocks(Block startBlock, int requiredFreeBlocks, out List<Block> tempFreeBlocks)
     {
-        freeBlocks.Clear(); // Leeren der Liste am Anfang
+        tempFreeBlocks = new List<Block>(); // Temporäre Liste für die freien Blöcke
 
         int startIndex = blocks.IndexOf(startBlock);
         if (startIndex == -1)
@@ -402,7 +429,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 freeBlocksRight++;
                 rightmostFreeBlockX = blocks[i].transform.position.x;
-                freeBlocks.Add(blocks[i]);
+                tempFreeBlocks.Add(blocks[i]);
                 if (freeBlocksRight + freeBlocksLeft >= requiredFreeBlocks)
                 {
                     middlePositionOfPlanting = new Vector2((rightmostFreeBlockX + leftmostFreeBlockX) / 2, startBlock.transform.position.y);
@@ -423,7 +450,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 freeBlocksLeft++;
                 leftmostFreeBlockX = blocks[i].transform.position.x;
-                freeBlocks.Add(blocks[i]);
+                tempFreeBlocks.Add(blocks[i]);
                 if (freeBlocksRight + freeBlocksLeft >= requiredFreeBlocks)
                 {
                     middlePositionOfPlanting = new Vector2((rightmostFreeBlockX + leftmostFreeBlockX) / 2, startBlock.transform.position.y);
@@ -445,10 +472,11 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             middlePositionOfPlanting = Vector2.zero; // Falls keine ausreichenden freien Blöcke vorhanden sind
-            freeBlocks.Clear(); // Leeren der Liste, wenn nicht genug Blöcke gefunden wurden
+            tempFreeBlocks.Clear(); // Leeren der Liste, wenn nicht genug Blöcke gefunden wurden
             return false;
         }
     }
+
 
 
     // Hack um es aus dem Backback heraus zu umgehen
@@ -464,11 +492,11 @@ public class PlayerMovement : MonoBehaviour
                 bool isBlocked = currentBlock.CheckPosition(); // Check ob Müll liegt
                 bool isBetweenBlocked = IsBetweenBlockedBlocks(playerPosition); // liegt nebenan Müll
 
-                bool canPlant = CheckForFreeBlocks(currentBlock, requiredBlocksToPlant);
+                //bool canPlant = CheckForFreeBlocks(currentBlock, requiredBlocksToPlant);
                 //bool hasEnoughFreeBlocks = block.CheckFreeAmountBlocks(requiredBlocksToPlant);
-                Debug.Log($"Kann gepflanzt werden?: {canPlant}");
+                //Debug.Log($"Kann gepflanzt werden?: {canPlant}");
 
-                if (!isBlocked && !isBetweenBlocked && canPlant)
+                if (!isBlocked && !isBetweenBlocked)
                 {
                     TriggerPlant(currentBlock);
                 }
@@ -956,6 +984,25 @@ public class PlayerMovement : MonoBehaviour
             rb.velocity = new Vector2(horizontal * currentSpeed, rb.velocity.y);
         }
         Moving();
+
+        if (isSeedInHand)
+        {
+            Vector2 playerPosition = transform.position;
+            Block currentBlock = GetBlockAtPosition(playerPosition);
+
+            if (currentBlock != null)
+            {
+                List<Block> tempFreeBlocks;
+                bool canPlant = CheckForFreeBlocks(currentBlock, requiredBlocksToPlant, out tempFreeBlocks);
+
+                // Highlight or reset blocks based on whether planting is possible
+                HighlightOrResetBlocks(canPlant, tempFreeBlocks);
+            }
+            else
+            {
+                ResetHighlightedBlocks();
+            }
+        }
     }
 
 
