@@ -64,6 +64,8 @@ public class PlayerMovement : MonoBehaviour
     // Die Position, an der die Denkbläse angezeigt werden soll
     [SerializeField] private Transform thinkingBubblePosition;
     [SerializeField] private GameObject thinkingBubble; // wird für das scaling hier verwendet
+    private GameObject thinkingBubbleParent; // dienst für den gegenpoligen Flip von Pitti
+
 
 
     // Diese Referenz wird im Start-Methodenblock automatisch gesetzt
@@ -975,12 +977,28 @@ public class PlayerMovement : MonoBehaviour
 
     public void ShowNightThinkingBubble()
     {
+        // Vorhandene Blase und deren Eltern-GameObject entfernen, falls vorhanden
+        if (thinkingBubbleParent != null)
+        {
+            Destroy(thinkingBubbleParent);
+        }
+
+        // Neue Blase erstellen
         if (nightThinkingBubblePrefab != null && thinkingBubblePosition != null)
         {
-            thinkingBubble = Instantiate(nightThinkingBubblePrefab, thinkingBubblePosition.position, Quaternion.identity, thinkingBubblePosition);
-            thinkingBubble.transform.localScale *= 2;
+            // Erstelle das leere GameObject
+            thinkingBubbleParent = new GameObject("ThinkingBubbleParent");
+            thinkingBubbleParent.transform.SetParent(transform);
+            thinkingBubbleParent.transform.position = thinkingBubblePosition.position; // Setze die Position auf thinkingBubblePosition
+
+            // Instanziiere die neue thinkingBubble als Kind des leeren GameObjects
+            thinkingBubble = Instantiate(nightThinkingBubblePrefab, Vector3.zero, Quaternion.identity, thinkingBubbleParent.transform);
+            thinkingBubble.transform.localScale *= 1.2f;
         }
     }
+
+
+
 
 
     private void FixedUpdate()
@@ -1096,8 +1114,17 @@ public class PlayerMovement : MonoBehaviour
             Vector3 localScale = transform.localScale;
             localScale.x *= -1f;
             transform.localScale = localScale;
+
+            // Exclude thinkingBubbleParent from flipping
+            if (thinkingBubbleParent != null)
+            {
+                Vector3 parentScale = thinkingBubbleParent.transform.localScale;
+                parentScale.x *= -1f;
+                thinkingBubbleParent.transform.localScale = parentScale;
+            }
         }
     }
+
 
     private void FlipAutoMove()
     {
