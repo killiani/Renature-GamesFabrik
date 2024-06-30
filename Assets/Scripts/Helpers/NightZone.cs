@@ -39,6 +39,12 @@ public class NightZone : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
+        if(other.CompareTag("NightReadyMarker"))
+        {
+            playerMovement.EnableNightAction();
+            Debug.Log("Night Ready!!!!");
+        }
+
         if (other.CompareTag("NightMarker") && !hasTriggeredNightEvent)
         {
             TriggerNightEvent();

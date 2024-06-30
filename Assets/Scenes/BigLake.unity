@@ -547,6 +547,111 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1141825002}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &65783195
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 65783196}
+  - component: {fileID: 65783198}
+  - component: {fileID: 65783197}
+  m_Layer: 0
+  m_Name: Night Ready Marker
+  m_TagString: NightReadyMarker
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &65783196
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 65783195}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -8.7, y: 32.6, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 353154181}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!50 &65783197
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 65783195}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!61 &65783198
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 65783195}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -1.2311473, y: -1.5678139}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 5.171114, y: 5.0160646}
+  m_EdgeRadius: 0
 --- !u!1001 &90292050
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3089,6 +3194,7 @@ Transform:
   m_Children:
   - {fileID: 406630485}
   - {fileID: 1820692126}
+  - {fileID: 65783196}
   m_Father: {fileID: 322164614}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: -46.901}
 --- !u!114 &353154182
@@ -4449,6 +4555,8 @@ MonoBehaviour:
   xboxBackpack: {fileID: 183772706}
   keyboardWaterCan: {fileID: 470578724}
   xboxWaterCan: {fileID: 289299301}
+  keyboardNight: {fileID: 233752134}
+  xboxNight: {fileID: 449961579}
 --- !u!1 &470578722
 GameObject:
   m_ObjectHideFlags: 0
@@ -6834,13 +6942,13 @@ Transform:
   m_LocalScale: {x: 0.33, y: 0.33, z: 0.33}
   m_ConstrainProportionsScale: 1
   m_Children:
+  - {fileID: 1967679658}
   - {fileID: 2021024008}
   - {fileID: 1748712584}
   - {fileID: 1608104143}
   - {fileID: 201547900}
   - {fileID: 1803131608}
   - {fileID: 1647915508}
-  - {fileID: 1967679658}
   - {fileID: 1358578221}
   - {fileID: 1251097477}
   - {fileID: 975348150}
@@ -16974,6 +17082,10 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6884402048312564442, guid: e0ca0e4fb2b708d4cbfc76be77dddf58, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
     - target: {fileID: 8799432557264006128, guid: e0ca0e4fb2b708d4cbfc76be77dddf58, type: 3}
       propertyPath: m_Name
       value: Muell_Dose

@@ -74,6 +74,7 @@ public class PlayerMovement : MonoBehaviour
     private Backpack backpack;
     private BackpackController backpackController;
     private NightZone nightZone;
+    private HudController hudController;
     private GameMenu pauseMenu;
     private RotateObject skyDiscRotateObject;
     private GoodNightScene goodNightScene;
@@ -94,7 +95,8 @@ public class PlayerMovement : MonoBehaviour
         input.Player.PrimaryAction.performed += HandlePrimaryAction;
         input.Player.WateringAction.performed += HandleWateringAction;
         input.Player.WateringAction.Disable();
-        input.Player.NightAction.performed += HandleNightAction;
+        input.Player.NightAction.performed -= HandleNightAction;
+        input.Player.NightAction.Disable();
         input.Player.AbortAction.Disable();
     }
 
@@ -106,7 +108,6 @@ public class PlayerMovement : MonoBehaviour
         input.Player.RunningFaster.canceled -= OnRunCanceled;
         input.Player.PrimaryAction.performed -= HandlePrimaryAction;
         input.Player.WateringAction.performed -= HandleWateringAction;
-        input.Player.NightAction.performed -= HandleNightAction;
 
         horizontal = 0f; // Setze die horizontale Bewegung auf Null
         rb.velocity = Vector2.zero; // Setze die Geschwindigkeit auf Null
@@ -114,7 +115,7 @@ public class PlayerMovement : MonoBehaviour
         input.Player.RunningFaster.Disable(); // Deaktiviere die Lauf-Eingaben
         input.Player.PrimaryAction.Disable();
         input.Player.WateringAction.Disable();
-        input.Player.NightAction.Disable();
+
     }
 
     public void EnableMovement()
@@ -130,18 +131,30 @@ public class PlayerMovement : MonoBehaviour
         input.Player.RunningFaster.performed += OnRun;
         input.Player.RunningFaster.canceled += OnRunCanceled;
         input.Player.PrimaryAction.performed += HandlePrimaryAction;
-        input.Player.NightAction.performed += HandleNightAction;
 
         input.Player.Move.Enable(); // Aktiviere die Bewegungseingaben
         input.Player.RunningFaster.Enable(); // Aktiviere die Lauf-Eingaben
         input.Player.PrimaryAction.Enable();
-        input.Player.NightAction.Enable();
 
         if(hasWaterCan)
         {
             input.Player.WateringAction.performed += HandleWateringAction;
             input.Player.WateringAction.Enable();
         }
+    }
+
+    public void EnableNightAction()
+    {
+        input.Player.NightAction.performed += HandleNightAction;
+        input.Player.NightAction.Enable();
+        hudController.ActivateNight();
+    }
+
+    public void DisableNightAction()
+    {
+        input.Player.NightAction.performed -= HandleNightAction;
+        input.Player.NightAction.Disable();
+        hudController.DeaktivateNight();
     }
 
     /*
@@ -224,6 +237,13 @@ public class PlayerMovement : MonoBehaviour
         if (nightZone == null)
         {
             Debug.LogError("Kein NightZone Script gefunden ");
+        }
+
+        hudController = FindObjectOfType<HudController>();
+
+        if (hudController == null)
+        {
+            Debug.LogError("Kein HudController Script gefunden ");
         }
 
         GameObject skyDisc = GameObject.FindWithTag("SkyDisc");

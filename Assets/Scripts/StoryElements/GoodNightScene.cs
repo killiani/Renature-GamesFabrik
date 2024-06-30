@@ -181,6 +181,7 @@ namespace Assets.Scripts.StoryElements
 
             // Bewegung aktivieren
             playerMovement.EnableMovement();
+            playerMovement.DisableNightAction();
 
             isSceneActive = false;
         }
