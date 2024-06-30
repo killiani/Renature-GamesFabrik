@@ -704,15 +704,15 @@ public class PlayerMovement : MonoBehaviour
 
                 // Setze den Erdhügel in den Zustand nicht gegossen
                 hillOfDirt.isWatered = false;
-
-                // Starte die Wachstumsroutine
-                StartCoroutine(GrowPlant(newPlant.Type, newPlant.GrowthTime, plantPosition, hillOfDirt));
+                hillOfDirt.plantType = newPlant.Type; // Speichere den Pflanzentyp
+                hillOfDirt.plantPosition = plantPosition; // Speichere die Pflanzenposition
 
                 Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
             }
             currentSeedIndex = -1; // Zurücksetzen des Index nach dem Pflanzen
         }
     }
+
 
 
     private void HandleWateringAction(InputAction.CallbackContext context)
@@ -989,11 +989,9 @@ public class PlayerMovement : MonoBehaviour
         return nearestObject;
     }
 
-    private IEnumerator GrowPlant(Plant.PlantType plantType, float growTime, Vector3 plantPosition, HillOfDirt hillOfDirt)
+    private IEnumerator GrowPlant(Plant.PlantType plantType, Vector3 plantPosition, HillOfDirt hillOfDirt)
     {
-        yield return new WaitUntil(() => hillOfDirt.isWatered); // Warte, bis der Erdhügel gegossen wurde
-
-        yield return new WaitForSeconds(growTime); // Warte für die Dauer der Wachstumszeit
+        yield return new WaitForSeconds(1f); // Warte für 1 Sekunde
 
         // Bestimme das richtige Prefab basierend auf dem Pflanzentyp
         GameObject newPlantPrefab = null;
@@ -1028,9 +1026,24 @@ public class PlayerMovement : MonoBehaviour
                 newPlant.transform.localScale = localScale;
             }
         }
+
+        // Erdhügel entfernen
         Destroy(hillOfDirt.gameObject);
     }
 
+
+    public void GrowAllWateredHillsOvernight()
+    {
+        HillOfDirt[] allHills = FindObjectsOfType<HillOfDirt>();
+        foreach (HillOfDirt hill in allHills)
+        {
+            if (hill.isWatered)
+            {
+                // Starte die Wachstumsroutine für gewässerte Erdhügel
+                StartCoroutine(GrowPlant(hill.plantType, hill.plantPosition, hill));
+            }
+        }
+    }
 
     private void HandleNightAction(InputAction.CallbackContext context)
     {

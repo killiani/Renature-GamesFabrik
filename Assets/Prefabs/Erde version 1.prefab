@@ -121,6 +121,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isWatered: 0
+  plantType: 0
+  plantPosition: {x: 0, y: 0, z: 0}
 --- !u!60 &6989682486340529073
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -136,7 +138,7 @@ PolygonCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2

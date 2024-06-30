@@ -161,6 +161,9 @@ namespace Assets.Scripts.StoryElements
             // Bild dunkel werden lassen
             yield return StartCoroutine(FadeTo(0f, -10f, 0f));
 
+            // Alle gewaesserten Pflanzen wachsen lassen
+            playerMovement.GrowAllWateredHillsOvernight();
+
             // Bild wieder hell werden lassen - nächster Morgen
             yield return StartCoroutine(FadeTo(-10f, 0f, 0f));
             //yield return StartCoroutine(FadeToClear());
