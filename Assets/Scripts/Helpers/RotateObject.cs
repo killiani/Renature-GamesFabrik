@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class RotateObject : MonoBehaviour
 {
-    public float rotationSpeed = 0.31f;
-    private float targetRotationSpeed = 18f;
+    public float rotationSpeed = 0.9f;
+    private float targetRotationSpeed = 40f;
     public bool rotate = false;
 
     void Update()

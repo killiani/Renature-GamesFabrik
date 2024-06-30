@@ -186,6 +186,8 @@ namespace Assets.Scripts.StoryElements
             playerMovement.EnableMovement();
             playerMovement.DisableNightAction();
 
+            nightZone.hasTriggeredNightEvent = false; // zuruecksetzen
+
             isSceneActive = false;
         }
 

@@ -991,7 +991,7 @@ public class PlayerMovement : MonoBehaviour
 
     private IEnumerator GrowPlant(Plant.PlantType plantType, Vector3 plantPosition, HillOfDirt hillOfDirt)
     {
-        yield return new WaitForSeconds(1f); // Warte für 1 Sekunde
+        yield return new WaitForSeconds(0.1f); // Warte für 1 Sekunde
 
         // Bestimme das richtige Prefab basierend auf dem Pflanzentyp
         GameObject newPlantPrefab = null;
