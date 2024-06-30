@@ -1,3 +1,5 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class PickupScript : MonoBehaviour
@@ -5,6 +7,21 @@ public class PickupScript : MonoBehaviour
     public Transform frontHandPosition; // Referenz zur Front-Hand-Position des Charakters
     public Transform backHandPosition; // Referenz zur Back-Hand-Position des Charakters
     [HideInInspector] public GameObject carriedObject; // Das aktuell getragene Objekt
+
+    private PlayerMovement playerMovement;
+    private HudController hudController;
+
+    private void Start()
+    {
+        playerMovement = FindObjectOfType<PlayerMovement>();
+
+        hudController = FindObjectOfType<HudController>();
+        if (hudController == null)
+        {
+            Debug.LogError("HudController not found!");
+        }
+        hudController.DeaktivateWaterCanHud();
+    }
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -32,6 +49,23 @@ public class PickupScript : MonoBehaviour
         obj.transform.localRotation = Quaternion.identity;
 
         carriedObject = obj; // Setze das getragene Objekt
+
+        StartCoroutine(CheckTagAfterDelay(obj));
+    }
+
+    private IEnumerator CheckTagAfterDelay(GameObject obj)
+    {
+        // Warte 1 Sekunde
+        yield return new WaitForSeconds(1f);
+
+        // Überprüfe das Tag des Objekts
+        if (obj.CompareTag("WaterCan"))
+        {
+            Debug.Log("WaterCan wurde aufgenommen");
+            Destroy(obj);
+            playerMovement.TriggerHasNoObject();
+            hudController.ActivateWaterCanHud();
+        }
     }
 
     public void DropObject()

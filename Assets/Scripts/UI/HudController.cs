@@ -13,6 +13,8 @@ public class HudController : MonoBehaviour
 
     public Image keyboardBackpack;
     public Image xboxBackpack;
+    public Image keyboardWaterCan;
+    public Image xboxWaterCan;
 
     private string deaktivateColor = "#B7C6DA";
     private string activateColor = "#FFFFFF";
@@ -61,6 +63,18 @@ public class HudController : MonoBehaviour
     {
         xboxBackpack.color = ConvertHexToColor(deaktivateColor);
         keyboardBackpack.color = ConvertHexToColor(deaktivateColor);
+    }
+
+    public void ActivateWaterCanHud()
+    {
+        xboxWaterCan.color = ConvertHexToColor(activateColor);
+        keyboardWaterCan.color = ConvertHexToColor(activateColor);
+    }
+
+    public void DeaktivateWaterCanHud()
+    {
+        xboxWaterCan.color = ConvertHexToColor(deaktivateColor);
+        keyboardWaterCan.color = ConvertHexToColor(deaktivateColor);
     }
 
     private Color ConvertHexToColor(string hexColor)

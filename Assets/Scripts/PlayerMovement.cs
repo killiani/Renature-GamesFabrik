@@ -14,11 +14,12 @@ public class PlayerMovement : MonoBehaviour
     private float speedFaster = 2.3f; // running
     private bool isRunning = false;
     private bool isFacingRight = true;
-    private bool switchMovement = false; // Gibt an, ob der Charakter ein Objekt trägt
+    public bool switchMovement = false; // Gibt an, ob der Charakter ein Objekt trägt
     private bool isPickingUp = false; // Zustand des Aufhebens/Ablegens
     private bool isAutoMoving = false;
     private bool isAutoMovingFast = false;
     private bool isSeedInHand = false;
+    public bool hasWaterCan = false;
     private int requiredBlocksToPlant = 0;
     public List<Block> freeBlocks = new List<Block>(); // Hinzugefügte Liste, um die freien Blöcke zu speichern
     private List<Block> highlightedBlocks = new List<Block>(); // die markierten bloecke
@@ -92,6 +93,7 @@ public class PlayerMovement : MonoBehaviour
         input.Player.RunningFaster.canceled += ctx => OnRunCanceled(ctx);
         input.Player.PrimaryAction.performed += HandlePrimaryAction;
         input.Player.WateringAction.performed += HandleWateringAction;
+        input.Player.WateringAction.Disable();
         input.Player.NightAction.performed += HandleNightAction;
         input.Player.AbortAction.Disable();
     }
@@ -115,19 +117,6 @@ public class PlayerMovement : MonoBehaviour
         input.Player.NightAction.Disable();
     }
 
-    // Hack
-    //public void StopPitti()
-    //{
-    //    input.Player.Move.performed -= OnMove;
-    //    input.Player.Move.canceled -= OnMoveCanceled;
-    //    input.Player.RunningFaster.performed -= OnRun;
-    //    input.Player.RunningFaster.canceled -= OnRunCanceled;
-    //    horizontal = 0f; // Setze die horizontale Bewegung auf Null
-    //    rb.velocity = Vector2.zero; // Setze die Geschwindigkeit auf Null
-    //    input.Player.Move.Disable(); // Deaktiviere die Bewegungseingaben
-    //    input.Player.RunningFaster.Disable(); // Deaktiviere die Lauf-Eingaben
-    //}
-
     public void EnableMovement()
     {
         StartCoroutine(EnableMovementAfterDelay());
@@ -141,14 +130,18 @@ public class PlayerMovement : MonoBehaviour
         input.Player.RunningFaster.performed += OnRun;
         input.Player.RunningFaster.canceled += OnRunCanceled;
         input.Player.PrimaryAction.performed += HandlePrimaryAction;
-        input.Player.WateringAction.performed += HandleWateringAction;
         input.Player.NightAction.performed += HandleNightAction;
 
         input.Player.Move.Enable(); // Aktiviere die Bewegungseingaben
         input.Player.RunningFaster.Enable(); // Aktiviere die Lauf-Eingaben
         input.Player.PrimaryAction.Enable();
-        input.Player.WateringAction.Enable();
         input.Player.NightAction.Enable();
+
+        if(hasWaterCan)
+        {
+            input.Player.WateringAction.performed += HandleWateringAction;
+            input.Player.WateringAction.Enable();
+        }
     }
 
     /*
@@ -604,6 +597,14 @@ public class PlayerMovement : MonoBehaviour
             RemoveNullBlocksFromList();
             backpackController.EnableBackpack();
         }
+    }
+
+    public void TriggerHasNoObject()
+    {
+        hasWaterCan = true;
+        switchMovement = false;
+        animator.SetBool("HasObject", false);
+        EnableMovement();
     }
 
     private void TriggerDontPlant(InputAction.CallbackContext context) // Abbrechen

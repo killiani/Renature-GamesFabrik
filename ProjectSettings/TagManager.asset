@@ -13,6 +13,7 @@ TagManager:
   - StegHome
   - DayMarker
   - Block
+  - WaterCan
   layers:
   - Default
   - TransparentFX
