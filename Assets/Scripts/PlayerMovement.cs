@@ -83,6 +83,7 @@ public class PlayerMovement : MonoBehaviour
     public List<Block> blocks; // Pflanzen-Plaetze
     private GameObject wateringCanInHand;
     private GameObject waterRunningOutOfCan;
+    public BoxCollider2D wateringZoneCheck; // Dies ist der Triggerbereich
 
     void Awake()
     {
@@ -677,7 +678,7 @@ public class PlayerMovement : MonoBehaviour
             Seed seedToPlant = backpack.GetAndRemoveSeedByName(currentSeedIndex, currentSeedName);
             if (seedToPlant != null)
             {
-                Plant newPlant = new Plant((Plant.PlantType)seedToPlant.Type, seedToPlant.GrowthTime);
+                Plant newPlant = new Plant((Plant.PlantType)seedToPlant.Type, seedToPlant.GrowthTime, 0);
 
                 float offsetY = 0.5f; // versatz nach unten
                 float offsetX = 0.0f; // versatz L oder R
@@ -698,16 +699,21 @@ public class PlayerMovement : MonoBehaviour
                 float groundAngle = GetGroundAngle(plantPosition);
 
                 // Erstellen Sie den Erdhügel und richten Sie ihn an der Neigung des Bodens aus
-                GameObject plantInstance = Instantiate(plantPrefab, hillPosition, Quaternion.Euler(0, 0, groundAngle));
+                GameObject hillOfDirtObject = Instantiate(plantPrefab, hillPosition, Quaternion.Euler(0, 0, groundAngle));
+                HillOfDirt hillOfDirt = hillOfDirtObject.GetComponent<HillOfDirt>();
+
+                // Setze den Erdhügel in den Zustand nicht gegossen
+                hillOfDirt.isWatered = false;
 
                 // Starte die Wachstumsroutine
-                StartCoroutine(GrowPlant(newPlant.Type, newPlant.GrowthTime, plantPosition));
+                StartCoroutine(GrowPlant(newPlant.Type, newPlant.GrowthTime, plantPosition, hillOfDirt));
 
                 Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
             }
             currentSeedIndex = -1; // Zurücksetzen des Index nach dem Pflanzen
         }
     }
+
 
     private void HandleWateringAction(InputAction.CallbackContext context)
     {
@@ -736,6 +742,18 @@ public class PlayerMovement : MonoBehaviour
         Invoke("SpawnWater", 0.1f);
     }
 
+    // Nur zur Hilfe
+    //private void OnDrawGizmosSelected()
+    //{
+    //    if (wateringZoneCheck != null)
+    //    {
+    //        Gizmos.color = Color.blue; // Setze die Gizmo-Farbe auf Blau
+    //                                   // Zeichne eine Drahtbox an der Position und mit der Größe des BoxColliders
+    //        Gizmos.DrawWireCube(wateringZoneCheck.bounds.center, wateringZoneCheck.bounds.size);
+    //    }
+    //}
+
+
 
     private void SpawnWater()
     {
@@ -753,6 +771,19 @@ public class PlayerMovement : MonoBehaviour
         waterRunningOutOfCan.transform.parent = wateringCanInHand.transform;
         waterRunningOutOfCan.transform.localScale *= 0.5f; // verkleinern
         waterRunningOutOfCan.transform.localPosition = new Vector3(-2.4f, 1.2f, 0);
+
+        // ________ Erdhuegel nass machen - planting ready
+        // Finde alle Colliders innerhalb des Triggerbereichs
+        Collider2D[] hitColliders = Physics2D.OverlapBoxAll(wateringZoneCheck.bounds.center, wateringZoneCheck.bounds.size, 0f);
+        foreach (var hitCollider in hitColliders)
+        {
+            HillOfDirt hill = hitCollider.GetComponent<HillOfDirt>();
+            if (hill != null)
+            {
+                hill.WaterHill();
+                Debug.Log("Erdhügel wurde gegossen!");
+            }
+        }
 
         if (!isFacingRight) // Wasser horizontal spiegeln
         {
@@ -958,8 +989,10 @@ public class PlayerMovement : MonoBehaviour
         return nearestObject;
     }
 
-    private IEnumerator GrowPlant(Plant.PlantType plantType, float growTime, Vector3 plantPosition)
+    private IEnumerator GrowPlant(Plant.PlantType plantType, float growTime, Vector3 plantPosition, HillOfDirt hillOfDirt)
     {
+        yield return new WaitUntil(() => hillOfDirt.isWatered); // Warte, bis der Erdhügel gegossen wurde
+
         yield return new WaitForSeconds(growTime); // Warte für die Dauer der Wachstumszeit
 
         // Bestimme das richtige Prefab basierend auf dem Pflanzentyp
@@ -995,7 +1028,9 @@ public class PlayerMovement : MonoBehaviour
                 newPlant.transform.localScale = localScale;
             }
         }
+        Destroy(hillOfDirt.gameObject);
     }
+
 
     private void HandleNightAction(InputAction.CallbackContext context)
     {

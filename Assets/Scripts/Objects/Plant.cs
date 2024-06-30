@@ -6,12 +6,14 @@ public class Plant
     public PlantType Type { get; private set; }
     public float GrowthTime { get; private set; }
     public int RequiredBlocks { get; private set; }
+    public int GrowthStatus { get; private set; }
 
-    public Plant(PlantType type, float growthTime)
+    public Plant(PlantType type, float growthTime, int growthStatus)
     {
         Type = type;
         GrowthTime = growthTime;
         RequiredBlocks = GetRequiredBlocks(type);
+        GrowthStatus = growthStatus;
     }
 
     public static int GetRequiredBlocks(PlantType type)
