@@ -863,6 +863,7 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(delay);
         if (audioSource != null && audioClip != null)
         {
+            audioSource.volume = 0.1f;
             audioSource.PlayOneShot(audioClip);
         }
     }
