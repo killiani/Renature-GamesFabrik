@@ -9,7 +9,6 @@ public class PlantSeeds : MonoBehaviour
     private void Awake()
     {
         DeactivateSeeds();
-        Debug.Log("PlantSeeds runs");
     }
 
     public void WaterPlant()
@@ -21,11 +20,6 @@ public class PlantSeeds : MonoBehaviour
             {
                 ActivateSeeds();
             }
-            Debug.Log($"{gameObject.name} wurde gegossen!"); // Debug-Log hinzugefügt
-        }
-        else
-        {
-            Debug.Log($"{gameObject.name} ist bereits gegossen!"); // Debug-Log hinzugefügt
         }
     }
 
@@ -35,6 +29,12 @@ public class PlantSeeds : MonoBehaviour
         foreach (GameObject seed in seeds)
         {
             seed.SetActive(true);
+            Rigidbody2D seedRigidbody = seed.GetComponent<Rigidbody2D>();
+            if (seedRigidbody != null)
+            {
+                seedRigidbody.isKinematic = false; // Physik aktivieren
+                seedRigidbody.gravityScale = 1f; // Schwerkraft aktivieren
+            }
         }
     }
 
@@ -44,6 +44,12 @@ public class PlantSeeds : MonoBehaviour
         foreach (GameObject seed in seeds)
         {
             seed.SetActive(false);
+            Rigidbody2D seedRigidbody = seed.GetComponent<Rigidbody2D>();
+            if (seedRigidbody != null)
+            {
+                seedRigidbody.isKinematic = true; // Physik deaktivieren
+                seedRigidbody.gravityScale = 0f; // Schwerkraft deaktivieren
+            }
         }
     }
 
@@ -51,8 +57,14 @@ public class PlantSeeds : MonoBehaviour
     {
         foreach (GameObject seed in seeds)
         {
-            // Füge die Logik hinzu, um die Samen fallen zu lassen
-            seed.SetActive(false);
+            // Füge die Logik hinzu, um die Samen fallen zu lassen, wenn Pitti in die Nähe kommt
+            seed.SetActive(true);
+            Rigidbody2D seedRigidbody = seed.GetComponent<Rigidbody2D>();
+            if (seedRigidbody != null)
+            {
+                seedRigidbody.isKinematic = false; // Physik aktivieren
+                seedRigidbody.gravityScale = 1f; // Schwerkraft aktivieren
+            }
         }
         seedsActive = false;
     }
