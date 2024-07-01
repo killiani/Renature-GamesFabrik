@@ -13,7 +13,7 @@ public class SeedTrigger : MonoBehaviour
         Debug.Log("SeedTrigger runs");
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (playerTransform != null && plant != null)
         {

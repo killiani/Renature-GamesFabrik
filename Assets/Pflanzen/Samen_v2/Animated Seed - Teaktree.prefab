@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 9157720091436113899}
   - component: {fileID: 7085275712544037077}
   m_Layer: 10
-  m_Name: Animated Seed
+  m_Name: Animated Seed - Teaktree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

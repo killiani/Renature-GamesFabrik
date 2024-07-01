@@ -80,6 +80,24 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Cheat Up"",
+                    ""type"": ""Button"",
+                    ""id"": ""9b3999a6-314b-4afc-be93-f4923af88ff6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Cheat Right"",
+                    ""type"": ""Button"",
+                    ""id"": ""b5910cf8-9375-4cb1-b8aa-406d4c232945"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -355,6 +373,28 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Night Action"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fdedd0cf-844c-44c7-89b6-583183248976"",
+                    ""path"": ""<XInputController>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cheat Up"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""83fa5562-510e-4083-a37c-d1be9f004f11"",
+                    ""path"": ""<XInputController>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cheat Right"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1142,6 +1182,8 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
         m_Player_RunningFaster = m_Player.FindAction("Running Faster", throwIfNotFound: true);
         m_Player_WateringAction = m_Player.FindAction("Watering Action", throwIfNotFound: true);
         m_Player_NightAction = m_Player.FindAction("Night Action", throwIfNotFound: true);
+        m_Player_CheatUp = m_Player.FindAction("Cheat Up", throwIfNotFound: true);
+        m_Player_CheatRight = m_Player.FindAction("Cheat Right", throwIfNotFound: true);
         // HUD
         m_HUD = asset.FindActionMap("HUD", throwIfNotFound: true);
         m_HUD_HideButton = m_HUD.FindAction("Hide Button", throwIfNotFound: true);
@@ -1227,6 +1269,8 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_RunningFaster;
     private readonly InputAction m_Player_WateringAction;
     private readonly InputAction m_Player_NightAction;
+    private readonly InputAction m_Player_CheatUp;
+    private readonly InputAction m_Player_CheatRight;
     public struct PlayerActions
     {
         private @CustomInputs m_Wrapper;
@@ -1237,6 +1281,8 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
         public InputAction @RunningFaster => m_Wrapper.m_Player_RunningFaster;
         public InputAction @WateringAction => m_Wrapper.m_Player_WateringAction;
         public InputAction @NightAction => m_Wrapper.m_Player_NightAction;
+        public InputAction @CheatUp => m_Wrapper.m_Player_CheatUp;
+        public InputAction @CheatRight => m_Wrapper.m_Player_CheatRight;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1264,6 +1310,12 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
             @NightAction.started += instance.OnNightAction;
             @NightAction.performed += instance.OnNightAction;
             @NightAction.canceled += instance.OnNightAction;
+            @CheatUp.started += instance.OnCheatUp;
+            @CheatUp.performed += instance.OnCheatUp;
+            @CheatUp.canceled += instance.OnCheatUp;
+            @CheatRight.started += instance.OnCheatRight;
+            @CheatRight.performed += instance.OnCheatRight;
+            @CheatRight.canceled += instance.OnCheatRight;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1286,6 +1338,12 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
             @NightAction.started -= instance.OnNightAction;
             @NightAction.performed -= instance.OnNightAction;
             @NightAction.canceled -= instance.OnNightAction;
+            @CheatUp.started -= instance.OnCheatUp;
+            @CheatUp.performed -= instance.OnCheatUp;
+            @CheatUp.canceled -= instance.OnCheatUp;
+            @CheatRight.started -= instance.OnCheatRight;
+            @CheatRight.performed -= instance.OnCheatRight;
+            @CheatRight.canceled -= instance.OnCheatRight;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1543,6 +1601,8 @@ public partial class @CustomInputs: IInputActionCollection2, IDisposable
         void OnRunningFaster(InputAction.CallbackContext context);
         void OnWateringAction(InputAction.CallbackContext context);
         void OnNightAction(InputAction.CallbackContext context);
+        void OnCheatUp(InputAction.CallbackContext context);
+        void OnCheatRight(InputAction.CallbackContext context);
     }
     public interface IHUDActions
     {

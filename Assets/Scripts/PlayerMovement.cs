@@ -99,6 +99,8 @@ public class PlayerMovement : MonoBehaviour
         input.Player.NightAction.performed -= HandleNightAction;
         input.Player.NightAction.Disable();
         input.Player.AbortAction.Disable();
+        input.Player.CheatUp.performed += CheatUp;
+        input.Player.CheatRight.performed += CheatRight;
     }
 
     public void DisableMovement()
@@ -137,7 +139,7 @@ public class PlayerMovement : MonoBehaviour
         input.Player.RunningFaster.Enable(); // Aktiviere die Lauf-Eingaben
         input.Player.PrimaryAction.Enable();
 
-        if(hasWaterCan)
+        if (hasWaterCan)
         {
             input.Player.WateringAction.performed += HandleWateringAction;
             input.Player.WateringAction.Enable();
@@ -272,9 +274,19 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.LogError("GameMenu/ PauseMenu script not found in the scene.");
         }
-
-
     }
+
+    private void CheatUp(InputAction.CallbackContext context)
+    {
+        Debug.Log("Up - Grow all watered Plants");
+        GrowAllWateredHillsOvernight();
+    }
+    private void CheatRight(InputAction.CallbackContext context)
+    {
+        Debug.Log("Right - Grow all Seeds where plants are watered");
+        GrowAllSeedsOvernight();
+    }
+
 
     void Update()
     {
@@ -1078,18 +1090,20 @@ public class PlayerMovement : MonoBehaviour
         {
             if (hill.isWatered)
             {
-                // Starte die Wachstumsroutine für gewässerte Erdhügel
                 StartCoroutine(GrowPlant(hill.plantType, hill.plantPosition, hill));
             }
         }
     }
 
-    public void GrowAllSeedsOvernight()
+    public void GrowAllSeedsOvernight() // Samen an Bäumen wachsen lassen
     {
         PlantSeeds[] allPlants = FindObjectsOfType<PlantSeeds>();
         foreach (PlantSeeds plant in allPlants)
         {
-            plant.GrowSeedsOvernight();
+            if(plant.isWatered)
+            {
+                plant.GrowSeedsOvernight();
+            }
         }
     }
 
