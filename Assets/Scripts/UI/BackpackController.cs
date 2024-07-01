@@ -140,6 +140,7 @@ public class BackpackController : MonoBehaviour
             input.Backpack.Select.performed += OnSelect;
             input.Backpack.Cancel.performed += OnCancel;
             playerMovement.DisableMovement();
+            playerMovement.DisableNightAction();
         }
         else
         {
@@ -147,6 +148,7 @@ public class BackpackController : MonoBehaviour
             input.Backpack.Select.performed -= OnSelect;
             input.Backpack.Cancel.performed -= OnCancel;
             playerMovement.EnableMovement();
+            playerMovement.EnableNightAction();
         }
     }
 

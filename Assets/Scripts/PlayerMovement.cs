@@ -709,8 +709,14 @@ public class PlayerMovement : MonoBehaviour
                 }
 
                 Vector3 plantPosition = new Vector3(middlePositionOfPlanting.x, groundCheck.position.y + offsetY, transform.position.z);
-                Vector3 hillPosition = new Vector3(transform.position.x + offsetX, groundCheck.position.y + offsetY, transform.position.z);
+                if (requiredBlocksToPlant <= 1) // Pflanzen die nur einen BLock brauchen werden an der Stelle von Pitti gepflanzt
+                {
+                    float offsetXSinglePlant = -1.8f;
+                    plantPosition = new Vector3(transform.position.x + offsetXSinglePlant, groundCheck.position.y, transform.position.z);
+                }
 
+
+                Vector3 hillPosition = new Vector3(transform.position.x + offsetX, groundCheck.position.y + offsetY, transform.position.z);
                 // Bestimmen Sie die Neigung des Bodens an der Pflanzposition
                 float groundAngle = GetGroundAngle(plantPosition);
 
