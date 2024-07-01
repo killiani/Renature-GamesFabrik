@@ -15,6 +15,7 @@ TagManager:
   - Block
   - WaterCan
   - NightReadyMarker
+  - Plant
   layers:
   - Default
   - TransparentFX

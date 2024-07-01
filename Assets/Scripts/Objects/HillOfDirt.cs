@@ -4,7 +4,7 @@ public class HillOfDirt : MonoBehaviour
 {
     public bool isWatered = false;
     private string wet = "#97A6BE";
-    private string dry = "#FFFFFF";
+    //private string dry = "#FFFFFF";
     public Plant.PlantType plantType;
     public Vector3 plantPosition;
 

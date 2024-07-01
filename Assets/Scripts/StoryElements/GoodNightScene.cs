@@ -161,8 +161,11 @@ namespace Assets.Scripts.StoryElements
             // Bild dunkel werden lassen
             yield return StartCoroutine(FadeTo(0f, -10f, 0f));
 
-            // Alle gewaesserten Pflanzen wachsen lassen
+            // Alle Erdhuegel werden zu Pflanzen
             playerMovement.GrowAllWateredHillsOvernight();
+
+            // Alle gewaesserten Pflanzen geben Samen
+            playerMovement.GrowAllSeedsOvernight();
 
             // Bild wieder hell werden lassen - nächster Morgen
             yield return StartCoroutine(FadeTo(-10f, 0f, 0f));
@@ -224,11 +227,11 @@ namespace Assets.Scripts.StoryElements
             // Warte, bis Pitti den houseTrigger erreicht hat
             while (!houseTriggerScript.IsPlayerInZone())
             {
-                Debug.Log("Moving towards house...");
+                //Debug.Log("Moving towards house...");
                 yield return null;
             }
 
-            Debug.Log("Pitti reached the house!");
+            //Debug.Log("Pitti reached the house!");
             playerMovement.StopAutoMove();
         }
 
@@ -240,11 +243,11 @@ namespace Assets.Scripts.StoryElements
             // Warte, bis Pitti den startDayTrigger erreicht hat
             while (!startDayTriggerScript.IsPlayerInZone())
             {
-                Debug.Log("Moving towards start day...");
+                //Debug.Log("Moving towards start day...");
                 yield return null;
             }
 
-            Debug.Log("Pitti reached the start day position!");
+            //Debug.Log("Pitti reached the start day position!");
             playerMovement.StopAutoMove();
         }
 

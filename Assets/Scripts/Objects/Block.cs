@@ -64,7 +64,7 @@ public class Block : MonoBehaviour
     {
         if (spriteRenderer != null)
         {
-            Debug.Log("Call ResetBlock");
+            //Debug.Log("Call ResetBlock");
             spriteRenderer.color = originalColor;
             isHighlighted = false; // Hervorhebung zurücksetzen
         }

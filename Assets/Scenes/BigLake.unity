@@ -5043,7 +5043,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 2.0689151, y: 0.07609475}
+  m_Offset: {x: 2.0689151, y: -2.0989683}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -5054,7 +5054,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 5.1378293, y: 3.0515068}
+  m_Size: {x: 5.1378293, y: 7.401632}
   m_EdgeRadius: 0
 --- !u!1 &514704734 stripped
 GameObject:
@@ -17563,9 +17563,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8300000, guid: a528ed037b72afe4e98968e600f1c0e2, type: 3}
     - target: {fileID: 1409047262736464372, guid: 2da44b754591f604c96ae44391bcf4ef, type: 3}
+      propertyPath: farnPrefab
+      value: 
+      objectReference: {fileID: 5099936227037948275, guid: c02acbf51086edf439c8087fb4967e2b, type: 3}
+    - target: {fileID: 1409047262736464372, guid: 2da44b754591f604c96ae44391bcf4ef, type: 3}
       propertyPath: pickupSound
       value: 
       objectReference: {fileID: 8300000, guid: 78f2e8fb2e3ce654baf8719ab18c6dca, type: 3}
+    - target: {fileID: 1409047262736464372, guid: 2da44b754591f604c96ae44391bcf4ef, type: 3}
+      propertyPath: crotonPrefab
+      value: 
+      objectReference: {fileID: 5693601200162590397, guid: 85bae2e64b98025479ea0ab30df5375d, type: 3}
     - target: {fileID: 1409047262736464372, guid: 2da44b754591f604c96ae44391bcf4ef, type: 3}
       propertyPath: runningSound
       value: 

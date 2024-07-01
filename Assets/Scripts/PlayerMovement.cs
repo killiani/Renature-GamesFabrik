@@ -596,7 +596,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void TriggerPlant(Block block) // ausführen
-    { 
+    {
         if (isSeedInHand)
         {
             animator.SetTrigger("HandleGoPlant");
@@ -604,21 +604,25 @@ public class PlayerMovement : MonoBehaviour
             isSeedInHand = false;
             SeedToPlantMode(false); // Gleiche Tastenbelegung von B dekativieren und auf NightHandling umlegen
             HideAllBlocks();
-            // Block löschen
+
+            // Aktualisiere die Liste der freien Blöcke
             if (block != null)
             {
+                bool canPlant = CheckForFreeBlocks(block, requiredBlocksToPlant, out freeBlocks);
+                if (canPlant)
+                {
+                    Debug.Log($"Free blocks count: {freeBlocks.Count}");
+                }
+
+                // Nur den aktuellen Block löschen, die anderen Blöcke werden in `OnPlantingAnimation` gelöscht
+                Debug.Log($"Lösche aktuellen Block: {block.gameObject.name}");
                 Destroy(block.gameObject);
             }
 
-            // Alle freien Blöcke löschen
-            foreach (Block freeBlock in freeBlocks)
-            {
-                Destroy(freeBlock.gameObject);
-            }
-            RemoveNullBlocksFromList();
             backpackController.EnableBackpack();
         }
     }
+
 
     public void TriggerHasNoObject()
     {
@@ -710,6 +714,18 @@ public class PlayerMovement : MonoBehaviour
                 Debug.Log($"Planted a {newPlant.Type} seed with growth time of {newPlant.GrowthTime} seconds.");
             }
             currentSeedIndex = -1; // Zurücksetzen des Index nach dem Pflanzen
+
+            // Entferne alle freien Blöcke aus der temporären Liste
+            for (int i = freeBlocks.Count - 1; i >= 0; i--)
+            {
+                if (freeBlocks[i] != null)
+                {
+                    Debug.Log($"Lösche Block: {freeBlocks[i].gameObject.name}");
+                    Destroy(freeBlocks[i].gameObject);
+                }
+            }
+            freeBlocks.Clear(); // Liste leeren
+            RemoveNullBlocksFromList();
         }
     }
 
@@ -740,20 +756,47 @@ public class PlayerMovement : MonoBehaviour
         wateringCanInHand.transform.localPosition = new Vector3(-0.8f, 0, 0);
 
         Invoke("SpawnWater", 0.1f);
+
+        // ________ Giessen logic planting ready
+
+        // Finde alle Colliders innerhalb des Triggerbereichs
+        Collider2D[] hitColliders = Physics2D.OverlapBoxAll(wateringZoneCheck.bounds.center, wateringZoneCheck.bounds.size, 0f);
+        Debug.Log($"Found {hitColliders.Length} colliders in the watering zone.");
+
+                foreach (var hitCollider in hitColliders)
+        {
+            Debug.Log("Found collider on: " + hitCollider.gameObject.name); // Debug-Log hinzugefügt
+
+            if (hitCollider.CompareTag("Plant"))
+            {
+                Debug.Log("Plant collider found.");
+
+                PlantSeeds plant = hitCollider.GetComponent<PlantSeeds>();
+                if (plant != null)
+                {
+                    plant.WaterPlant();
+                    Debug.Log("Pflanze wurde gegossen!");
+                }
+                else
+                {
+                   Debug.Log("Kein PlantSeeds Skript gefunden auf: " + hitCollider.gameObject.name);
+                }
+            }
+            else
+            {
+                HillOfDirt hill = hitCollider.GetComponent<HillOfDirt>();
+                if (hill != null)
+                {
+                    hill.WaterHill();
+                    Debug.Log("Erdhügel wurde gegossen!");
+                }
+                else
+                {
+                    Debug.Log("Kein HillOfDirt Skript gefunden auf: " + hitCollider.gameObject.name);
+                }
+            }
+        }
     }
-
-    // Nur zur Hilfe
-    //private void OnDrawGizmosSelected()
-    //{
-    //    if (wateringZoneCheck != null)
-    //    {
-    //        Gizmos.color = Color.blue; // Setze die Gizmo-Farbe auf Blau
-    //                                   // Zeichne eine Drahtbox an der Position und mit der Größe des BoxColliders
-    //        Gizmos.DrawWireCube(wateringZoneCheck.bounds.center, wateringZoneCheck.bounds.size);
-    //    }
-    //}
-
-
 
     private void SpawnWater()
     {
@@ -772,24 +815,20 @@ public class PlayerMovement : MonoBehaviour
         waterRunningOutOfCan.transform.localScale *= 0.5f; // verkleinern
         waterRunningOutOfCan.transform.localPosition = new Vector3(-2.4f, 1.2f, 0);
 
-        // ________ Erdhuegel nass machen - planting ready
-        // Finde alle Colliders innerhalb des Triggerbereichs
-        Collider2D[] hitColliders = Physics2D.OverlapBoxAll(wateringZoneCheck.bounds.center, wateringZoneCheck.bounds.size, 0f);
-        foreach (var hitCollider in hitColliders)
-        {
-            HillOfDirt hill = hitCollider.GetComponent<HillOfDirt>();
-            if (hill != null)
-            {
-                hill.WaterHill();
-                Debug.Log("Erdhügel wurde gegossen!");
-            }
-        }
-
         if (!isFacingRight) // Wasser horizontal spiegeln
         {
             Vector3 localScale = waterRunningOutOfCan.transform.localScale;
             localScale.x *= -1f;
             waterRunningOutOfCan.transform.localScale = localScale;
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        if (wateringZoneCheck != null)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireCube(wateringZoneCheck.bounds.center, wateringZoneCheck.bounds.size);
         }
     }
 
@@ -1019,12 +1058,12 @@ public class PlayerMovement : MonoBehaviour
             GameObject newPlant = Instantiate(newPlantPrefab, plantPosition, Quaternion.identity);
 
             // Zufällige Entscheidung, ob die Pflanze gespiegelt wird
-            if (Random.value > 0.5f)
-            {
-                Vector3 localScale = newPlant.transform.localScale;
-                localScale.x *= -1;
-                newPlant.transform.localScale = localScale;
-            }
+            //if (Random.value > 0.5f)
+            //{
+            //    Vector3 localScale = newPlant.transform.localScale;
+            //    localScale.x *= -1;
+            //    newPlant.transform.localScale = localScale;
+            //}
         }
 
         // Erdhügel entfernen
@@ -1042,6 +1081,15 @@ public class PlayerMovement : MonoBehaviour
                 // Starte die Wachstumsroutine für gewässerte Erdhügel
                 StartCoroutine(GrowPlant(hill.plantType, hill.plantPosition, hill));
             }
+        }
+    }
+
+    public void GrowAllSeedsOvernight()
+    {
+        PlantSeeds[] allPlants = FindObjectsOfType<PlantSeeds>();
+        foreach (PlantSeeds plant in allPlants)
+        {
+            plant.GrowSeedsOvernight();
         }
     }
 
